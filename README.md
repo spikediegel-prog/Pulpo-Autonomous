@@ -26,6 +26,39 @@ The physical-systems model adds a few crucial rules:
 - Telemetry loss can leave execution state as UNKNOWN rather than FAILED → RETRY.
 - A remote system may continue only inside the authority previously granted by Pulpo Autonomous.
 
+## Repository layout
+
+```text
+pulpo-autonomous/
+├── core/
+│   └── README.md
+├── domains/
+│   ├── README.md
+│   ├── robotics/
+│   ├── drones/
+│   ├── vehicles/
+│   └── spacecraft/
+├── adapters/
+│   ├── README.md
+│   ├── simulated/
+│   ├── ros2/
+│   ├── mavlink/
+│   ├── vehicle/
+│   └── spacecraft/
+├── proofs/
+├── pulpo/
+├── tests/
+├── docs/
+├── authority-service/
+├── custody-service/
+├── README.md
+├── pyproject.toml
+├── plugin.json
+└── AGENTS.md
+```
+
+The universal kernel remains in `core/`, while mission-specific policy enters through `domains/` and execution integration occurs through `adapters/`.
+
 ## Proven now
 
 The base dependency-free suite and optional asymmetric-authority suite prove:

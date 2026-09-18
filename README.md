@@ -199,6 +199,12 @@ Authority-service abuse controls, progressive backoff, rate-limit behavior,
 and the distributed-deployment boundary are documented in
 [abuse resistance](docs/ABUSE_RESISTANCE.md).
 
+Spacecraft-specific mission-time, contact-window, command-sequence, resource,
+sensor, and fault-recovery controls are documented in
+[spacecraft operations](docs/SPACECRAFT_OPERATIONS.md). These are subordinate
+admission checks; they do not issue permits or replace flight-system
+interlocks.
+
 The abuse guard is defense-in-depth and process-local. Production deployments
 with multiple replicas must enforce equivalent limits at a trusted gateway or
 shared state layer, including request-size, concurrency, timeout, polling, and
@@ -233,6 +239,10 @@ The base dependency-free suite and optional asymmetric-authority suite prove:
 - dependency-surface validation and the locked optional MCP graph pass the
   repository security checks, with no known vulnerabilities reported by the
   current `pip-audit` run.
+- spacecraft operations tests reject mission-time rollback, stale or
+  out-of-order commands, contact-window violations, resource shortfalls,
+  sensor disagreement, and faulted execution until fresh attestation and
+  reconciliation complete.
 
 PulpoGit provides a read-only clarity projection for local source state. It
 distinguishes canonical, proposal, stale, diverged, detached, and dirty
@@ -243,6 +253,7 @@ checkouts without inferring tests or authority. See the
 python -m unittest discover -s tests -v
 python scripts/verify_dependency_surface.py
 python -m pip_audit -r requirements-mcp.lock --progress-spinner off
+python -m unittest tests.test_spacecraft_operations -v
 ```
 
 ## Minimal example

@@ -214,6 +214,9 @@ Camera, OCR, QR, and vision-model input is treated as untrusted observation
 and proposal-only data. The permit, safety, and controller boundaries are
 documented in [vision input security](docs/VISION_INPUT_SECURITY.md).
 
+Outbound authority, provider, and tunnel transport trust hardening is
+documented in [transport security](docs/TRANSPORT_SECURITY.md).
+
 Microphone, speech, audible, ultrasonic, and subsonic audio input is likewise
 untrusted proposal-only data. The audio boundary and CVE applicability
 inventory are documented in [audio input security](docs/AUDIO_INPUT_SECURITY.md).

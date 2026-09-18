@@ -1,0 +1,19 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "pulpo-autonomous",
+  "version": "0.1.0",
+  "description": "Governed autonomy plugin for robots, vehicles, and spacecraft operating under bounded authority.",
+  "author": {
+    "name": "Iron & Ember"
+  },
+  "repository": "https://github.com/your-org/pulpo-autonomous",
+  "keywords": [
+    "autonomy",
+    "governance",
+    "mcp",
+    "evidence",
+    "agent",
+    "robotics",
+    "spacecraft"
+  ]
+}

@@ -164,6 +164,20 @@ These removals narrow onboard capability and certification scope. They do not
 change the canonical Pulpo authority model or grant authority to the autonomy
 layer.
 
+## Communications threat requirements
+
+Pulpo Autonomous treats wired and wireless communications as hostile inputs.
+The unit must reject forged, replayed, stale, substituted, delayed, or
+unverifiable commands; preserve only bounded authority during jamming or
+disconnection; record uncertain outcomes as `UNKNOWN`; and use only a
+pre-authorized safe fallback when authority or communication limits are
+reached.
+
+The complete requirements for pirate signals, man-in-the-middle attacks,
+spoofed navigation and timing, replay, key compromise, update integrity,
+evidence, recovery, and hardware boundaries are in
+[communications threat requirements](docs/COMMUNICATIONS_THREAT_REQUIREMENTS.md).
+
 ## Proven now
 
 The base dependency-free suite and optional asymmetric-authority suite prove:

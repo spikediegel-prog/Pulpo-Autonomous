@@ -28,3 +28,8 @@ governed reconciliation client; it must not receive a second authority source.
 The profile is a packaging boundary, not a claim that any hardware adapter is
 flight-ready. Hardware integration remains subject to its own verification,
 security review, and authorized interface contract.
+
+Communications are hostile by default. The onboard implementation must satisfy
+the [communications threat requirements](../../docs/COMMUNICATIONS_THREAT_REQUIREMENTS.md)
+before hardware integration. In particular, a pirate signal, stronger
+transmitter, replay, or jammed link must not create or extend authority.

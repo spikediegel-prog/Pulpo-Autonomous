@@ -35,3 +35,12 @@ This change narrows the runtime capability surface. It does not delete
 historical governance evidence or grant new authority. The removed web and
 onboard command surfaces have no relevant temporal-transfer proof; no temporal
 claim is made.
+
+## Communications boundary
+
+The runtime must treat every external message as untrusted until it passes the
+identity, cryptographic, freshness, exact-intent, and mission-state checks in
+[communications threat requirements](COMMUNICATIONS_THREAT_REQUIREMENTS.md).
+Jamming, spoofing, or a pirate transmitter can deny service but cannot become a
+new authority source. Hardware-level protections and radio-resilience claims
+remain outside this software boundary.

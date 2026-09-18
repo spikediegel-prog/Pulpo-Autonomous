@@ -84,6 +84,12 @@ state, and call `finish_reconciliation()`. Execution is blocked during
 reconciliation. An uncertain result must be recorded as `UNKNOWN`; it is never
 converted into automatic retry authority.
 
+`OfflineMissionLease.max_commands` optionally bounds the number of distinct
+commands that may be sent while the lease is active. Duplicate command IDs are
+idempotent and are never resent. When the permit expires, the offline window
+ends, or the command budget is exhausted, execution records the lease's
+pre-authorized `safe_fallback` instead of sending a new command.
+
 ## Development
 
 Run the focused offline protocol proof:

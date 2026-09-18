@@ -38,6 +38,7 @@ class OfflineAutonomyTests(unittest.TestCase):
             max_disconnected=timedelta(hours=1),
             safe_fallback="hold",
             issued_at=self.start,
+            max_commands=1,
         )
         self.protocol = OfflineProtocol(lease)
 
@@ -71,6 +72,48 @@ class OfflineAutonomyTests(unittest.TestCase):
                 [record.event for record in journal.read()],
                 ["planned", "sent", "unknown"],
             )
+
+    def test_duplicate_command_is_not_resent(self):
+        with TemporaryDirectory() as directory:
+            journal = DurableJournal(Path(directory) / "events.jsonl")
+            tracker = ExecutionTracker(self.protocol, journal)
+            unit = SimulatedOfflineUnit(tracker)
+            self.assertEqual(
+                unit.execute("command-1", "observe", self.start),
+                ExecutionState.SENT,
+            )
+            self.assertEqual(
+                unit.execute("command-1", "observe", self.start + timedelta(seconds=1)),
+                ExecutionState.SENT,
+            )
+            self.assertEqual(
+                [record.event for record in journal.read()],
+                ["planned", "sent"],
+            )
+
+    def test_command_budget_runs_only_pre_authorized_fallback(self):
+        with TemporaryDirectory() as directory:
+            journal = DurableJournal(Path(directory) / "events.jsonl")
+            tracker = ExecutionTracker(self.protocol, journal)
+            unit = SimulatedOfflineUnit(tracker)
+            unit.execute("command-1", "observe", self.start)
+            self.assertEqual(
+                unit.execute("command-2", "observe", self.start),
+                ExecutionState.SAFE_FALLBACK,
+            )
+            self.assertEqual(journal.read()[-1].payload["fallback"], "hold")
+
+    def test_expired_lease_runs_fallback_not_new_command(self):
+        with TemporaryDirectory() as directory:
+            journal = DurableJournal(Path(directory) / "events.jsonl")
+            tracker = ExecutionTracker(self.protocol, journal)
+            unit = SimulatedOfflineUnit(tracker)
+            expired = self.start + timedelta(hours=2, seconds=1)
+            self.assertEqual(
+                unit.execute("command-1", "observe", expired),
+                ExecutionState.SAFE_FALLBACK,
+            )
+            self.assertEqual(journal.read()[-1].event, "safe_fallback")
 
     def test_journal_tampering_fails_closed(self):
         with TemporaryDirectory() as directory:

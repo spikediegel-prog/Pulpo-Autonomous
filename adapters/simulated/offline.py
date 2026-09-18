@@ -12,10 +12,7 @@ class SimulatedOfflineUnit:
     tracker: ExecutionTracker
 
     def execute(self, command_id: str, action: str, now: datetime) -> ExecutionState:
-        timestamp = now.isoformat()
-        self.tracker.plan(command_id, action, timestamp)
-        self.tracker.send(command_id, timestamp)
-        return ExecutionState.SENT
+        return self.tracker.execute(command_id, action, now.isoformat())
 
     def report_unknown(self, command_id: str, now: datetime) -> ExecutionState:
         return self.tracker.observe(command_id, ExecutionState.UNKNOWN, now.isoformat())

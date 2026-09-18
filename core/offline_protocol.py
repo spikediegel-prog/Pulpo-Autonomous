@@ -22,6 +22,7 @@ class ExecutionState(str, Enum):
     OBSERVED_SUCCESS = "observed_success"
     OBSERVED_FAILURE = "observed_failure"
     UNKNOWN = "unknown"
+    SAFE_FALLBACK = "safe_fallback"
 
 
 @dataclass(frozen=True)
@@ -38,12 +39,15 @@ class OfflineMissionLease:
     max_disconnected: timedelta
     safe_fallback: str
     issued_at: datetime
+    max_commands: int | None = None
 
     def __post_init__(self) -> None:
         if self.max_disconnected <= timedelta(0):
             raise ValueError("max_disconnected_must_be_positive")
         if not self.safe_fallback:
             raise ValueError("safe_fallback_required")
+        if self.max_commands is not None and self.max_commands <= 0:
+            raise ValueError("max_commands_must_be_positive")
 
     @classmethod
     def issue(
@@ -59,6 +63,7 @@ class OfflineMissionLease:
         max_disconnected: timedelta,
         safe_fallback: str,
         issued_at: datetime | None = None,
+        max_commands: int | None = None,
     ) -> "OfflineMissionLease":
         return cls(
             envelope=envelope,
@@ -71,6 +76,7 @@ class OfflineMissionLease:
             max_disconnected=max_disconnected,
             safe_fallback=safe_fallback,
             issued_at=issued_at or datetime.now(timezone.utc),
+            max_commands=max_commands,
         )
 
     def active_at(self, now: datetime) -> bool:
@@ -134,3 +140,6 @@ class OfflineProtocol:
 
     def fallback_required(self, now: datetime) -> bool:
         return not self.can_execute(now)
+
+    def can_fallback(self) -> bool:
+        return self.connectivity != ConnectivityState.RECONCILING

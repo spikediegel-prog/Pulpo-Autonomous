@@ -26,6 +26,13 @@ The physical-systems model adds a few crucial rules:
 - Telemetry loss can leave execution state as UNKNOWN rather than FAILED → RETRY.
 - A remote system may continue only inside the authority previously granted by Pulpo Autonomous.
 
+The offline protocol in `core/offline_protocol.py` models bounded mission leases
+and the `CONNECTED → DISCONNECTED → RECONNECTING → RECONCILING` lifecycle.
+`core/journal.py` provides an append-only, hash-chained local evidence journal.
+It records permits, commands, observations, vetoes, and unknown outcomes, but
+it is not a second authority ledger. An uncertain command remains `UNKNOWN`;
+the protocol never turns telemetry loss into retry authority.
+
 ## Repository layout
 
 ```text

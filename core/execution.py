@@ -5,12 +5,14 @@ from datetime import datetime
 
 from .journal import DurableJournal
 from .offline_protocol import ExecutionState, OfflineProtocol
+from .cold_boot import ColdBootGuard
 
 
 @dataclass
 class ExecutionTracker:
     protocol: OfflineProtocol
     journal: DurableJournal
+    security: ColdBootGuard | None = None
 
     def plan(self, command_id: str, action: str, now: str) -> ExecutionState:
         self.journal.append(
@@ -27,6 +29,12 @@ class ExecutionTracker:
         return ExecutionState.SENT
 
     def execute(self, command_id: str, action: str, now: str) -> ExecutionState:
+        if self.security is not None and not self.security.can_execute():
+            self.journal.append(
+                "vetoed",
+                {"command_id": command_id, "reason": "verified_boot_required", "at": now},
+            )
+            raise PermissionError("key_release_requires_verified_boot")
         existing = self._existing_state(command_id)
         if existing is not None:
             return existing

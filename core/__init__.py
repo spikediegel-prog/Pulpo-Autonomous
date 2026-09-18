@@ -13,6 +13,7 @@ from .offline_protocol import (
     OfflineMissionLease,
     OfflineProtocol,
 )
+from .cold_boot import BootEvidence, ColdBootGuard, HardwareKeyProvider, KeyUseRequest
 
 __all__ = [
     "DelegatedAuthority",
@@ -30,4 +31,8 @@ __all__ = [
     "ExecutionState",
     "OfflineMissionLease",
     "OfflineProtocol",
+    "BootEvidence",
+    "ColdBootGuard",
+    "HardwareKeyProvider",
+    "KeyUseRequest",
 ]

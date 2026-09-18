@@ -178,6 +178,12 @@ spoofed navigation and timing, replay, key compromise, update integrity,
 evidence, recovery, and hardware boundaries are in
 [communications threat requirements](docs/COMMUNICATIONS_THREAT_REQUIREMENTS.md).
 
+Cold-boot mitigation requirements and the software key-residency boundary are
+in [cold-boot and key-residency requirements](docs/COLD_BOOT_AND_KEY_RESIDENCY.md).
+Pulpo never receives long-term private keys; verified boot and hardware-backed
+key use are required at the platform boundary. Unexpected reset invalidates
+volatile execution state and requires fresh boot evidence before execution.
+
 ## Proven now
 
 The base dependency-free suite and optional asymmetric-authority suite prove:

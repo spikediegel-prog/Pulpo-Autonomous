@@ -33,3 +33,9 @@ Communications are hostile by default. The onboard implementation must satisfy
 the [communications threat requirements](../../docs/COMMUNICATIONS_THREAT_REQUIREMENTS.md)
 before hardware integration. In particular, a pirate signal, stronger
 transmitter, replay, or jammed link must not create or extend authority.
+
+The onboard platform must also satisfy the
+[cold-boot and key-residency requirements](../../docs/COLD_BOOT_AND_KEY_RESIDENCY.md).
+Long-term private keys belong in hardware-backed storage, and an unexpected
+reset must invalidate volatile authority until verified boot evidence is
+available again.

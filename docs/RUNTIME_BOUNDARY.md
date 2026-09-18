@@ -44,3 +44,12 @@ identity, cryptographic, freshness, exact-intent, and mission-state checks in
 Jamming, spoofing, or a pirate transmitter can deny service but cannot become a
 new authority source. Hardware-level protections and radio-resilience claims
 remain outside this software boundary.
+
+## Cold-boot boundary
+
+`core/cold_boot.py` provides a fail-closed software gate around verified boot,
+monotonic boot evidence, key-use binding, and reset invalidation. It does not
+read, store, or export long-term private keys. RAM remanence resistance,
+encrypted memory, DMA isolation, secure-element non-exportability, and abrupt
+power-loss zeroization require representative hardware evidence and remain
+**Unknown** until tested.

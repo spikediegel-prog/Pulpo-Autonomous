@@ -190,6 +190,10 @@ documented in [CVE applicability and dependency controls](docs/CVE_APPLICABILITY
 The optional offboard MCP dependency graph is pinned in
 `requirements-mcp.lock`; it is not part of the onboard runtime profile.
 
+Authority-service abuse controls, progressive backoff, rate-limit behavior,
+and the distributed-deployment boundary are documented in
+[abuse resistance](docs/ABUSE_RESISTANCE.md).
+
 ## Proven now
 
 The base dependency-free suite and optional asymmetric-authority suite prove:

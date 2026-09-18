@@ -1,5 +1,6 @@
 """Independent Pulpo authority service package."""
 
+from .abuse import AbuseLimitExceeded, AbuseLimits, InMemoryAbuseGuard
 from .core import (
     ApprovalRequest,
     AuthorityConfig,
@@ -12,6 +13,8 @@ from .core import (
 from .contract import ApprovalEnvelope, AuthorityTrust
 
 __all__ = [
+    "AbuseLimitExceeded",
+    "AbuseLimits",
     "ApprovalRequest",
     "ApprovalEnvelope",
     "AuthorityConfig",
@@ -21,4 +24,5 @@ __all__ = [
     "CredentialRecord",
     "InMemoryEvidenceSink",
     "InMemoryState",
+    "InMemoryAbuseGuard",
 ]

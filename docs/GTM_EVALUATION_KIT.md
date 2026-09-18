@@ -42,6 +42,18 @@ or mission-safety claim.
 6. Produce a deployment evidence bundle containing the exact commit, dependency
    and platform hashes, hardware identity, test results, and unresolved
    limitations.
+7. Validate the adopter-supplied manifest before sharing it:
+
+   ```bash
+   python scripts/validate_deployment_evidence.py path/to/deployment-evidence.json
+   ```
+
+   Start from the [deployment evidence manifest schema](../evidence/deployment-evidence-manifest.schema.json).
+   The manifest is a deterministic record, not a permit or a second ledger:
+   it binds the exact source commit, software/dependency/platform/hardware
+   identity, test-output hashes, limitations, claim classifications, and
+   integration owners. Keep credentials, private keys, telemetry secrets, and
+   mission data out of it.
 
 ## Suggested proof scenarios
 
@@ -68,3 +80,14 @@ Run the evaluation with:
 Claims in evaluation artifacts must be labeled **Verified**, **Recorded**,
 **Inferred**, **Proposed**, or **Unknown**. A successful simulator run does not
 transfer hardware, firmware, network, or mission-level safety claims.
+
+## Pilot evidence acceptance
+
+An adopter pilot is ready for review only when the manifest validates and every
+test result is either `pass` or explicitly `not_run` with a limitation. Record
+the exact command and SHA-256 of each test output; do not replace failed or
+missing evidence with a narrative claim. Integration boundaries must name the
+adopter owner and the control that remains outside Pulpo, including the
+existing controller, local interlocks, emergency stop, secure boot, and
+deployment identity. This workflow changes no authority and does not certify a
+mission, vehicle, hardware, or safety case.

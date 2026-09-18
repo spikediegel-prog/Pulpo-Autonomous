@@ -223,8 +223,11 @@ inventory are documented in [audio input security](docs/AUDIO_INPUT_SECURITY.md)
 
 For an adopter-facing, reproducible simulator demonstration and shared
 responsibility model, see the [GTM evaluation kit](docs/GTM_EVALUATION_KIT.md).
-It includes an evidence-bundle generator and makes no flight-control,
-hardware-safety, or certification claim.
+It includes an evidence-bundle generator, a deterministic
+[deployment evidence manifest schema](evidence/deployment-evidence-manifest.schema.json),
+and a dependency-free validator
+(`python scripts/validate_deployment_evidence.py <manifest>`). It makes no
+flight-control, hardware-safety, or certification claim.
 
 The abuse guard is defense-in-depth and process-local. Production deployments
 with multiple replicas must enforce equivalent limits at a trusted gateway or

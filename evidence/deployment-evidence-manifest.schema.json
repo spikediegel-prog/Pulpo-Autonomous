@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pulpo.dev/schemas/deployment-evidence-manifest.v1.json",
+  "title": "Pulpo Autonomous deployment evidence manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "commit",
+    "software",
+    "dependencies",
+    "platform",
+    "hardware",
+    "tests",
+    "limitations",
+    "claims",
+    "integration_boundaries",
+    "authority_effect",
+    "governed_effect"
+  ],
+  "properties": {
+    "schema": {"const": "pulpo-autonomous.deployment-evidence.v1"},
+    "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "software": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "source_tree_sha256"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "version": {"type": "string", "minLength": 1},
+        "source_tree_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "dependencies": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "version", "source"],
+        "properties": {
+          "name": {"type": "string", "minLength": 1},
+          "version": {"type": "string", "minLength": 1},
+          "source": {"type": "string", "minLength": 1},
+          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        }
+      }
+    },
+    "platform": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["os", "architecture", "python"],
+      "properties": {
+        "os": {"type": "string", "minLength": 1},
+        "architecture": {"type": "string", "minLength": 1},
+        "python": {"type": "string", "minLength": 1},
+        "kernel": {"type": "string"}
+      }
+    },
+    "hardware": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["manufacturer", "model", "identity", "identity_source"],
+      "properties": {
+        "manufacturer": {"type": "string", "minLength": 1},
+        "model": {"type": "string", "minLength": 1},
+        "identity": {"type": "string", "minLength": 1},
+        "identity_source": {"type": "string", "minLength": 1}
+      }
+    },
+    "tests": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "command", "result", "output_sha256"],
+        "properties": {
+          "name": {"type": "string", "minLength": 1},
+          "command": {"type": "string", "minLength": 1},
+          "result": {"enum": ["pass", "not_run"]},
+          "output_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "notes": {"type": "string"}
+        }
+      }
+    },
+    "limitations": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+    "claims": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["claim", "classification", "evidence"],
+        "properties": {
+          "claim": {"type": "string", "minLength": 1},
+          "classification": {"enum": ["Verified", "Recorded", "Inferred", "Proposed", "Unknown"]},
+          "evidence": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "integration_boundaries": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["boundary", "owner", "required_control"],
+        "properties": {
+          "boundary": {"type": "string", "minLength": 1},
+          "owner": {"type": "string", "minLength": 1},
+          "required_control": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "authority_effect": {"const": "none"},
+    "governed_effect": {"type": "string", "minLength": 1}
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "schema": "pulpo-autonomous.onboard-profile.v0",
+  "authority_source": "pulpo",
+  "required_packages": [
+    "pulpo",
+    "core",
+    "domains",
+    "adapters"
+  ],
+  "select_one_domain": true,
+  "select_one_adapter": true,
+  "requires_durable_journal": true,
+  "excluded_surfaces": [
+    "mcp",
+    "github",
+    "telegram",
+    "commerce",
+    "namecom",
+    "web_deployment",
+    "authority_service_server",
+    "custody_service_server",
+    "development_experiments"
+  ],
+  "claim_boundary": "packaging profile only; no hardware or production-readiness claim"
+}

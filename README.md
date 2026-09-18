@@ -130,15 +130,39 @@ pulpo-autonomous/
 ├── pulpo/
 ├── tests/
 ├── docs/
+├── deployments/
+│   └── onboard/
 ├── authority-service/
 ├── custody-service/
 ├── README.md
 ├── pyproject.toml
-├── plugin.json
 └── AGENTS.md
 ```
 
 The universal kernel remains in `core/`, while mission-specific policy enters through `domains/` and execution integration occurs through `adapters/`.
+
+`deployments/onboard/` defines the constrained unit-side profile. Authority,
+custody, MCP, provider, web, and development integrations remain offboard or
+archival and are not onboard runtime dependencies. See
+[runtime boundary](docs/RUNTIME_BOUNDARY.md).
+
+## Runtime-surface change log
+
+### v0.1.0
+
+- Removed the unused Vercel web-deployment configuration.
+- Removed the MCP tunnel console command from the base package; MCP remains an
+  optional offboard integration.
+- Excluded authority-service, custody-service, commerce, provider, GitHub,
+  Telegram, and web/development surfaces from the onboard profile without
+  deleting their inherited governance evidence.
+- Added an onboard manifest and runtime-boundary documentation.
+- Corrected the plugin metadata to point to
+  `https://github.com/spikediegel-prog/Pulpo-Autonomous`.
+
+These removals narrow onboard capability and certification scope. They do not
+change the canonical Pulpo authority model or grant authority to the autonomy
+layer.
 
 ## Proven now
 

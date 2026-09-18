@@ -214,6 +214,10 @@ Camera, OCR, QR, and vision-model input is treated as untrusted observation
 and proposal-only data. The permit, safety, and controller boundaries are
 documented in [vision input security](docs/VISION_INPUT_SECURITY.md).
 
+Microphone, speech, audible, ultrasonic, and subsonic audio input is likewise
+untrusted proposal-only data. The audio boundary and CVE applicability
+inventory are documented in [audio input security](docs/AUDIO_INPUT_SECURITY.md).
+
 For an adopter-facing, reproducible simulator demonstration and shared
 responsibility model, see the [GTM evaluation kit](docs/GTM_EVALUATION_KIT.md).
 It includes an evidence-bundle generator and makes no flight-control,
@@ -264,6 +268,9 @@ The base dependency-free suite and optional asymmetric-authority suite prove:
   `UNKNOWN` outcome handling, and journal-tamper detection within simulation.
 - visual-input tests reject malicious text, malformed or oversized QR payloads,
   extra authority fields, and mismatched or expired permits.
+- audio-input tests reject malicious speech, malformed or oversized acoustic
+  payloads, non-finite frequency metadata, and mismatched or expired permits
+  across audible, ultrasonic, and subsonic channels.
 
 PulpoGit provides a read-only clarity projection for local source state. It
 distinguishes canonical, proposal, stale, diverged, detached, and dirty
@@ -278,6 +285,7 @@ python -m unittest tests.test_spacecraft_operations -v
 python -m unittest tests.test_shared_safety -v
 python scripts/run_gtm_evaluation.py
 python -m unittest tests.test_vision_boundary -v
+python -m unittest tests.test_audio_boundary -v
 ```
 
 ## Minimal example

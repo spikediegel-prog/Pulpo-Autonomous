@@ -8,3 +8,6 @@ Typical concerns:
 - mission windows and flight phases
 - delayed telemetry and lost-link behavior
 - hazard vetoes for retry and re-entry
+
+Drone adapters should combine the shared checks with flight-specific altitude,
+airspace, return-to-home, lost-link, battery, and propulsion interlocks.

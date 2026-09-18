@@ -205,6 +205,11 @@ sensor, and fault-recovery controls are documented in
 admission checks; they do not issue permits or replace flight-system
 interlocks.
 
+Shared robotics, drone, vehicle, marine, and industrial safety controls for
+geofences, sensor health, resource budgets, degraded modes, emergency stops,
+human-presence vetoes, and command freshness are documented in
+[physical-system safety](docs/PHYSICAL_SYSTEM_SAFETY.md).
+
 The abuse guard is defense-in-depth and process-local. Production deployments
 with multiple replicas must enforce equivalent limits at a trusted gateway or
 shared state layer, including request-size, concurrency, timeout, polling, and
@@ -243,6 +248,9 @@ The base dependency-free suite and optional asymmetric-authority suite prove:
   out-of-order commands, contact-window violations, resource shortfalls,
   sensor disagreement, and faulted execution until fresh attestation and
   reconciliation complete.
+- shared physical-system tests reject geofence violations, stale sensors,
+  resource exhaustion, replayed commands, human-presence conflicts, and
+  emergency-stop bypass attempts.
 
 PulpoGit provides a read-only clarity projection for local source state. It
 distinguishes canonical, proposal, stale, diverged, detached, and dirty
@@ -254,6 +262,7 @@ python -m unittest discover -s tests -v
 python scripts/verify_dependency_surface.py
 python -m pip_audit -r requirements-mcp.lock --progress-spinner off
 python -m unittest tests.test_spacecraft_operations -v
+python -m unittest tests.test_shared_safety -v
 ```
 
 ## Minimal example

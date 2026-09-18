@@ -33,6 +33,74 @@ It records permits, commands, observations, vetoes, and unknown outcomes, but
 it is not a second authority ledger. An uncertain command remains `UNKNOWN`;
 the protocol never turns telemetry loss into retry authority.
 
+## Offline autonomy quick start
+
+The offline layer is designed for units that may lose wired or wireless
+connectivity for extended periods:
+
+```python
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
+
+from core import (
+    DurableJournal,
+    ExecutionEnvelope,
+    ExecutionTracker,
+    OfflineMissionLease,
+    OfflineProtocol,
+)
+
+issued = datetime.now(timezone.utc)
+envelope = ExecutionEnvelope(
+    permit_id="permit-1",
+    action="observe",
+    target="unit-1",
+    machine_id="unit-1",
+    domain="robotics",
+    issued_at=issued,
+    expires_at=issued + timedelta(hours=2),
+)
+lease = OfflineMissionLease.issue(
+    envelope,
+    lease_id="lease-1",
+    principal="operator-1",
+    policy_id="policy-1",
+    deployment_id="deployment-1",
+    session_id="session-1",
+    nonce="nonce-1",
+    max_disconnected=timedelta(hours=1),
+    safe_fallback="hold",
+    issued_at=issued,
+)
+protocol = OfflineProtocol(lease)
+journal = DurableJournal(Path("unit-events.jsonl"))
+tracker = ExecutionTracker(protocol, journal)
+```
+
+The unit may continue only while both the original permit and the bounded
+offline lease remain active. On reconnect, call `reconnect()`,
+`begin_reconciliation()`, reconcile the journal with the canonical Pulpo
+state, and call `finish_reconciliation()`. Execution is blocked during
+reconciliation. An uncertain result must be recorded as `UNKNOWN`; it is never
+converted into automatic retry authority.
+
+## Development
+
+Run the focused offline protocol proof:
+
+```bash
+python -m unittest tests.test_offline_autonomy -v
+```
+
+Run the complete inherited Pulpo suite:
+
+```bash
+python -m unittest discover -s tests -v
+```
+
+The full suite includes platform-sensitive inherited tests. A passing
+offline-protocol proof is the required minimum for changes to this layer.
+
 ## Repository layout
 
 ```text

@@ -13,4 +13,18 @@ pulpo-git-clarity = "pulpo.git_clarity:main"
 pulpo-mcp-tunnel = "pulpo.mcp_tunnel:main"
 
 [tool.setuptools]
-packages = ["pulpo"]
+packages = [
+    "pulpo",
+    "core",
+    "domains",
+    "adapters",
+    "domains.robotics",
+    "domains.drones",
+    "domains.vehicles",
+    "domains.spacecraft",
+    "adapters.simulated",
+    "adapters.ros2",
+    "adapters.mavlink",
+    "adapters.vehicle",
+    "adapters.spacecraft",
+]

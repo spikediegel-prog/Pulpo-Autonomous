@@ -19,7 +19,14 @@
     "web_deployment",
     "authority_service_server",
     "custody_service_server",
-    "development_experiments"
+    "development_experiments",
+    "openai",
+    "anthropic",
+    "claude",
+    "codex",
+    "mcp-remote",
+    "mcp-inspector",
+    "tunnel-client"
   ],
   "claim_boundary": "packaging profile only; no hardware or production-readiness claim"
 }

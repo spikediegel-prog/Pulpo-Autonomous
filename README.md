@@ -184,6 +184,12 @@ Pulpo never receives long-term private keys; verified boot and hardware-backed
 key use are required at the platform boundary. Unexpected reset invalidates
 volatile execution state and requires fresh boot evidence before execution.
 
+The current OpenAI, Claude/Anthropic, and MCP CVE applicability review,
+dependency pin, direct-component SBOM, and onboard exclusion controls are
+documented in [CVE applicability and dependency controls](docs/CVE_APPLICABILITY.md).
+The optional offboard MCP dependency graph is pinned in
+`requirements-mcp.lock`; it is not part of the onboard runtime profile.
+
 ## Proven now
 
 The base dependency-free suite and optional asymmetric-authority suite prove:

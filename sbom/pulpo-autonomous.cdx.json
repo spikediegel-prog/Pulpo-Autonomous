@@ -1,0 +1,44 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.5",
+  "serialNumber": "urn:uuid:8c2c5a4a-2a6f-4a17-ae6d-4d93e40f0e2b",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-09-18T08:00:00Z",
+    "component": {
+      "type": "application",
+      "name": "pulpo-autonomous",
+      "version": "0.1.0"
+    }
+  },
+  "components": [
+    {
+      "type": "library",
+      "name": "cryptography",
+      "version": "50.0.1",
+      "scope": "optional-authority",
+      "purl": "pkg:pypi/cryptography@50.0.1"
+    },
+    {
+      "type": "library",
+      "name": "mcp",
+      "version": "2.2.0",
+      "scope": "optional-offboard",
+      "purl": "pkg:pypi/mcp@2.2.0"
+    }
+  ],
+  "properties": [
+    {
+      "name": "pulpo.authority_source",
+      "value": "pulpo"
+    },
+    {
+      "name": "pulpo.onboard_excludes",
+      "value": "mcp,openai,anthropic,claude,codex,mcp-remote,mcp-inspector,tunnel-client"
+    },
+    {
+      "name": "pulpo.external_binary_inventory",
+      "value": "none bundled; operator-installed tunnel-client requires separate provenance and CVE review"
+    }
+  ]
+}

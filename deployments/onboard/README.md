@@ -39,3 +39,11 @@ The onboard platform must also satisfy the
 Long-term private keys belong in hardware-backed storage, and an unexpected
 reset must invalidate volatile authority until verified boot evidence is
 available again.
+
+The onboard image excludes all AI/operator transport tooling and external MCP
+helpers. See the [CVE applicability record](../../docs/CVE_APPLICABILITY.md)
+and validate the selected deployment with:
+
+```bash
+python scripts/verify_dependency_surface.py
+```

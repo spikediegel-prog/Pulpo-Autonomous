@@ -159,6 +159,11 @@ archival and are not onboard runtime dependencies. See
 - Added an onboard manifest and runtime-boundary documentation.
 - Corrected the plugin metadata to point to
   `https://github.com/spikediegel-prog/Pulpo-Autonomous`.
+- Added authority-service abuse resistance with request budgets,
+  progressive authentication and WebAuthn assertion lockouts, and
+  `Retry-After` responses for exhausted limits.
+- Added CI checks for dependency audits, the locked MCP graph, onboard
+  dependency exclusions, and SBOM consistency.
 
 These removals narrow onboard capability and certification scope. They do not
 change the canonical Pulpo authority model or grant authority to the autonomy
@@ -194,6 +199,12 @@ Authority-service abuse controls, progressive backoff, rate-limit behavior,
 and the distributed-deployment boundary are documented in
 [abuse resistance](docs/ABUSE_RESISTANCE.md).
 
+The abuse guard is defense-in-depth and process-local. Production deployments
+with multiple replicas must enforce equivalent limits at a trusted gateway or
+shared state layer, including request-size, concurrency, timeout, polling, and
+monitoring controls. These controls reduce brute-force and resource-exhaustion
+risk without changing Pulpo authority.
+
 ## Proven now
 
 The base dependency-free suite and optional asymmetric-authority suite prove:
@@ -217,6 +228,11 @@ The base dependency-free suite and optional asymmetric-authority suite prove:
   using the kernel's trusted clock.
 - transactional SQLite commerce state preserves reservations, attempted orders,
   reconciliation, and spend across restart.
+- authority-service worker authentication and WebAuthn assertion abuse limits
+  return `429` with `Retry-After` after repeated failures;
+- dependency-surface validation and the locked optional MCP graph pass the
+  repository security checks, with no known vulnerabilities reported by the
+  current `pip-audit` run.
 
 PulpoGit provides a read-only clarity projection for local source state. It
 distinguishes canonical, proposal, stale, diverged, detached, and dirty
@@ -225,6 +241,8 @@ checkouts without inferring tests or authority. See the
 
 ```bash
 python -m unittest discover -s tests -v
+python scripts/verify_dependency_surface.py
+python -m pip_audit -r requirements-mcp.lock --progress-spinner off
 ```
 
 ## Minimal example

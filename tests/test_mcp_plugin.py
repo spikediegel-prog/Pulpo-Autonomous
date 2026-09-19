@@ -152,8 +152,8 @@ class MCPPluginTests(unittest.TestCase):
             "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
             manifest["$schema"],
         )
-        self.assertEqual("pulpo", manifest["name"])
-        self.assertIn("Read-only", manifest["description"])
+        self.assertEqual("pulpo-autonomous", manifest["name"])
+        self.assertIn("Governed autonomy", manifest["description"])
         self.assertNotIn("extensions", manifest)
 
         self.assertEqual(

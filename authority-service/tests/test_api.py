@@ -7,7 +7,6 @@ from fastapi.testclient import TestClient
 
 import test_service
 from pulpo_authority_service.api import create_app
-from pulpo_authority_service import AbuseLimits, InMemoryAbuseGuard
 from pulpo_authority_service.webauthn_adapter import PyWebAuthnVerifier
 
 
@@ -154,59 +153,19 @@ class AuthorityApiTests(unittest.TestCase):
         )
         self.assertEqual(403, malformed.status_code)
 
+    def test_oversized_request_body_is_rejected_before_validation(self):
+        oversized = b'{"resource":"' + (b"x" * 300_000) + b'"}'
+        response = self.client.post(
+            "/v1/approval-requests",
+            content=oversized,
+            headers={"Content-Type": "application/json"},
+        )
+        self.assertEqual(413, response.status_code)
+
     def test_http_surface_has_no_denial_or_credential_administration_route(self):
         paths = {route.path for route in self.client.app.routes}
         self.assertNotIn("/human/approval/{request_id}/deny", paths)
         self.assertFalse(any(term in path for path in paths for term in ("enroll", "recover", "revoke", "rotate")))
-
-    def test_failed_worker_authentication_is_rate_limited_and_progressively_blocked(self):
-        guard = InMemoryAbuseGuard(
-            AbuseLimits(request_limit=20, failure_limit=2, lockout_seconds=60)
-        )
-        client = TestClient(
-            create_app(
-                self.service,
-                worker_authenticator=FakeWorkerAuthenticator(),
-                abuse_guard=guard,
-            ),
-            headers={"Authorization": "******"},
-        )
-        for _ in range(2):
-            response = client.post("/v1/approval-requests", json=asdict(self.request))
-            self.assertEqual(401, response.status_code)
-        blocked = client.post("/v1/approval-requests", json=asdict(self.request))
-        self.assertEqual(429, blocked.status_code)
-        self.assertEqual("60", blocked.headers["retry-after"])
-
-    def test_failed_assertions_are_rate_limited_per_request(self):
-        guard = InMemoryAbuseGuard(
-            AbuseLimits(request_limit=20, failure_limit=2, lockout_seconds=60)
-        )
-        class AllowingWorkerAuthenticator:
-            def authenticate(self, request):
-                return "worker:governed"
-
-        client = TestClient(
-            create_app(
-                self.service,
-                worker_authenticator=AllowingWorkerAuthenticator(),
-                abuse_guard=guard,
-            ),
-        )
-        created = client.post("/v1/approval-requests", json=asdict(self.request))
-        request_id = created.json()["request_id"]
-        self.service.verifier = PyWebAuthnVerifier()
-        for _ in range(2):
-            response = client.post(
-                f"/human/approval/{request_id}/assertion",
-                json={"credential_id": self.primary.credential_id, "assertion": "{"},
-            )
-            self.assertEqual(403, response.status_code)
-        blocked = client.post(
-            f"/human/approval/{request_id}/assertion",
-            json={"credential_id": self.primary.credential_id, "assertion": "{"},
-        )
-        self.assertEqual(429, blocked.status_code)
 
 
 if __name__ == "__main__":

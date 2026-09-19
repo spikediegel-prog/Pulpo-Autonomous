@@ -9,9 +9,9 @@ from fastapi import FastAPI, HTTPException, Request as FastAPIRequest
 from fastapi.responses import HTMLResponse, Response
 from pydantic import BaseModel, ConfigDict, Field, StrictInt
 
-from .abuse import AbuseLimitExceeded, InMemoryAbuseGuard
 from .core import ApprovalRequest, AuthorityService
 from .human_ui import APPROVAL_JAVASCRIPT, SECURITY_HEADERS, render_approval_page
+from .request_limits import RequestBodyLimitMiddleware
 
 
 class WorkerAuthenticator(Protocol):
@@ -62,39 +62,25 @@ def create_app(
     service: AuthorityService,
     *,
     worker_authenticator: WorkerAuthenticator | None = None,
-    abuse_guard: InMemoryAbuseGuard | None = None,
 ) -> FastAPI:
     authenticator = worker_authenticator or RejectingWorkerAuthenticator()
-    guard = abuse_guard or InMemoryAbuseGuard()
     app = FastAPI(
         title="Pulpo Independent Authority",
         docs_url=None,
         redoc_url=None,
         openapi_url=None,
     )
+    app.add_middleware(RequestBodyLimitMiddleware)
 
     def require_worker(request: FastAPIRequest) -> str:
-        abuse_key = f"worker:{request.client.host if request.client else 'unknown'}"
-        try:
-            guard.check_failure_lockout(abuse_key)
-            guard.check_request(abuse_key)
-        except AbuseLimitExceeded as exc:
-            raise HTTPException(
-                status_code=429,
-                detail="request rate limit exceeded",
-                headers={"Retry-After": str(exc.retry_after)},
-            ) from exc
         try:
             identity = authenticator.authenticate(request)
         except PermissionError as exc:
-            guard.record_failure(abuse_key)
             raise HTTPException(status_code=401, detail="worker authentication required") from exc
         except RuntimeError as exc:
             raise HTTPException(status_code=503, detail="worker authentication unavailable") from exc
         if not isinstance(identity, str) or not identity or identity != identity.strip():
-            guard.record_failure(abuse_key)
             raise HTTPException(status_code=401, detail="worker authentication required")
-        guard.clear_failures(abuse_key)
         return identity
 
     @app.post("/v1/approval-requests")
@@ -137,16 +123,7 @@ def create_app(
         return HTMLResponse(render_approval_page(display), headers=SECURITY_HEADERS)
 
     @app.post("/human/approval/{request_id}/challenge")
-    def begin_approval(request_id: str, request: FastAPIRequest) -> dict[str, object]:
-        abuse_key = f"challenge:{request_id}:{request.client.host if request.client else 'unknown'}"
-        try:
-            guard.check_request(abuse_key)
-        except AbuseLimitExceeded as exc:
-            raise HTTPException(
-                status_code=429,
-                detail="challenge rate limit exceeded",
-                headers={"Retry-After": str(exc.retry_after)},
-            ) from exc
+    def begin_approval(request_id: str) -> dict[str, object]:
         try:
             challenge = service.challenge(request_id)
         except KeyError as exc:
@@ -163,30 +140,15 @@ def create_app(
         }
 
     @app.post("/human/approval/{request_id}/assertion")
-    def complete_approval(
-        request_id: str,
-        body: AssertionBody,
-        request: FastAPIRequest,
-    ) -> dict[str, str]:
-        abuse_key = f"assertion:{request_id}:{request.client.host if request.client else 'unknown'}"
-        try:
-            guard.check_failure_lockout(abuse_key)
-        except AbuseLimitExceeded as exc:
-            raise HTTPException(
-                status_code=429,
-                detail="assertion temporarily blocked",
-                headers={"Retry-After": str(exc.retry_after)},
-            ) from exc
+    def complete_approval(request_id: str, body: AssertionBody) -> dict[str, str]:
         try:
             envelope = service.approve(request_id, body.credential_id, body.assertion)
         except KeyError as exc:
             raise HTTPException(status_code=404, detail="unknown approval request") from exc
         except (PermissionError, ValueError) as exc:
-            guard.record_failure(abuse_key)
             raise HTTPException(status_code=403, detail="human verification rejected") from exc
         except RuntimeError as exc:
             raise HTTPException(status_code=409, detail="approval failed closed") from exc
-        guard.clear_failures(abuse_key)
         return {"status": "approved", "envelope_hash": envelope.envelope_hash}
 
     return app

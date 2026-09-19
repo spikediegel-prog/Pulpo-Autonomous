@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 from pathlib import Path
+import subprocess
 import unittest
 
 
@@ -17,6 +19,27 @@ spec.loader.exec_module(module)
 class TemporalTransferProofZeroTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        freeze = json.loads(module.FREEZE_PATH.read_text())
+        required_commits = (
+            module.FREEZE_COMMIT,
+            str(freeze["historical_commit"]),
+            str(freeze["reference_commit"]),
+        )
+        missing = []
+        for commit in required_commits:
+            probe = subprocess.run(
+                ["git", "cat-file", "-e", f"{commit}^{{commit}}"],
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+            )
+            if probe.returncode != 0:
+                missing.append(commit)
+        if missing:
+            raise unittest.SkipTest(
+                "temporal-transfer proof source history is not present in this repository: "
+                + ", ".join(missing)
+            )
         cls.result = module.run()
         cls.cases = {item["id"]: item for item in cls.result["cases"]}
 

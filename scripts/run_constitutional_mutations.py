@@ -117,8 +117,8 @@ MUTATIONS: tuple[Mutation, ...] = (
     Mutation(
         "permit_spent_guard_removed",
         "pulpo/state.py",
-        'valid = self._issued.get(permit) == intent_hash and permit not in self._spent',
-        'valid = self._issued.get(permit) == intent_hash',
+        '            and issued[0] == intent_hash\n            and permit not in self._spent\n            and expires_at_ns is not None',
+        '            and issued[0] == intent_hash\n            and expires_at_ns is not None',
         ("tests.test_kernel.GovernanceKernelTests.test_allowed_intent_gets_bound_one_use_permit",),
     ),
     Mutation(

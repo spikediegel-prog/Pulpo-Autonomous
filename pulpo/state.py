@@ -2030,4 +2030,3 @@ class SQLiteKernelState:
 
     def close(self) -> None:
         self._connection.close()
-

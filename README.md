@@ -17,6 +17,22 @@ This repository is intentionally shared across autonomous domains. The domain-sp
 - safety vetoes
 - unknown-state handling for uncertain outcomes
 
+## Current release direction — v0.2.0
+
+The current `main` line adds a substantial governance and security hardening layer beyond v0.1.1. The changes preserve Pulpo's authority boundary while reducing ambient capability and the cost of maintaining verifiable state.
+
+### Security and governance hardening
+
+- **Deny-by-default host ingress:** runtime listener inspection starts from an empty allowlist, supports Linux and Windows enumeration, fails closed on enumeration failure, and emits `pulpo.network-exposure.v1` evidence. The custody service may listen inside its private container network, but host publication remains separately governed.
+- **Prompt-injection capability containment:** local-intelligence proofs treat hostile instructions as untrusted input rather than relying on model refusal. The hardened macOS proof denies network egress by default, isolates HOME, excludes secret-like environment state, and requires explicit PREPARE-time widening for model network access or file-auth projection.
+- **Bounded untrusted input:** authority/custody HTTP bodies, provider JSON, Telegram/Name.com responses, and filesystem evidence snapshots are subject to explicit byte, depth, item, string, traversal, and file-size bounds on the tested surfaces.
+- **Bounded one-use permits:** permits have a policy-bound TTL, approval-backed permits cannot outlive approval, expired permits remain expired across restart, and legacy persisted permits without expiry fail closed.
+- **Canonical delta audit:** delta records and indexes accelerate the existing authoritative audit path without becoming a second ledger. Delta-chain continuity and tamper failure remain part of verification.
+- **SQLite integrity fast path:** verified audit state can be reused for safe lookups, while external SQLite mutation detected through `PRAGMA data_version` forces full revalidation. Restart and external-tamper cases remain fail closed.
+- **Atomic governance persistence:** paired governance mutations roll back when required audit evidence cannot be committed, and overlapping SQLite writers serialize audit-tip selection.
+
+These controls narrow capability; they do not grant authority to models, transports, provider state, evidence, or successful prior execution.
+
 ## Core invariants for autonomy
 
 The physical-systems model adds a few crucial rules:
@@ -147,6 +163,19 @@ archival and are not onboard runtime dependencies. See
 [runtime boundary](docs/RUNTIME_BOUNDARY.md).
 
 ## Runtime-surface change log
+
+### v0.2.0 candidate
+
+- Added fail-closed host listener verification with Linux and Windows enumeration and machine-readable evidence.
+- Hardened local-intelligence execution against ambient capability use and prompt/instruction injection.
+- Added bounded request, provider-response, JSON-structure, and evidence-snapshot limits.
+- Added policy-bound one-use permit expiry with restart-safe expiry denial.
+- Added canonical delta logging, audit indexes, and performance regression coverage without creating a second authority ledger.
+- Added audit-integrity caching with external-mutation invalidation and streamed/filtered audit reads.
+- Added atomic rollback coverage for failed governance-state/audit writes and concurrent audit-tip serialization.
+- Synchronized later Pulpo governance-state hardening and Windows-safe regression coverage.
+
+The v0.2.0 candidate is a governance/security hardening line. It does not claim production readiness or physical-system safety outside the tested topology.
 
 ### v0.1.0
 
@@ -315,11 +344,9 @@ if decision.outcome == "allow":
 
 ## Boundary
 
-Pulpo Autonomous currently proves governance, pinned asymmetric external-verifier contract
-semantics, local restart-safe kernel replay state, and restart-durable bounded-commerce
-state with dependency-free SQLite backends. It does not yet claim an independently deployed
-human signer, trusted verifier bootstrap, rollback-proof host storage, a real payment rail,
-network isolation, hostile-code sandboxing, distributed identity, or production readiness.
+Pulpo Autonomous currently proves governance semantics and a growing set of bounded security properties in the repository's tested topology: pinned asymmetric external-verifier contracts, one-use expiring permits, restart-safe replay state, tamper-detecting SQLite audit state, bounded commerce state, host-listener admission checks, bounded untrusted-input handling, and local-intelligence capability restrictions.
+
+Those proofs must not be generalized beyond their evidence. Pulpo Autonomous does **not** yet claim an independently deployed human signer, trusted verifier bootstrap, rollback-proof host storage, a real payment rail, universal network isolation, universal hostile-code containment, distributed identity, certified physical safety, or production readiness. A deployed host is not proven free of unexpected listeners until the runtime network-exposure check executes there, and platform-specific sandbox behavior remains bounded to the environments actually tested.
 
 The repo remains valid for autonomous systems, including robotics, drones, vehicles, and
 spacecraft, because the authority model is domain-agnostic while the domain adapters add

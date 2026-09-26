@@ -17,8 +17,8 @@ through `torch.version.hip`. Use `--device auto`, `--device cuda`, or
 `--device rocm` to select or require the backend.
 
 Install the optional dependency in an environment with a compatible CUDA or
-ROCm PyTorch build and its required driver/runtime. The extra declares PyTorch;
-it does not install a GPU driver or choose the correct vendor-specific wheel:
+ROCm PyTorch build and its required driver/runtime. The extra declares PyTorch and NumPy; it does not install a GPU driver or choose
+the correct vendor-specific PyTorch wheel:
 
 ```bash
 python -m pip install -e ".[gpu]"

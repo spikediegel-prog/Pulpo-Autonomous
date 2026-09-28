@@ -33,6 +33,23 @@ The current `main` line adds a substantial governance and security hardening lay
 
 These controls narrow capability; they do not grant authority to models, transports, provider state, evidence, or successful prior execution.
 
+### Optional GPU audit-hash benchmark
+
+Pulpo Autonomous includes an optional benchmark helper for parallel SHA-256
+recomputation of canonical audit-record bodies on CUDA or ROCm GPUs. The helper
+is not connected to `GovernanceKernel.verify_audit()`: the kernel continues to
+verify audit records on the CPU. GPU hashes must match the CPU reference before
+the benchmark reports timings. Chain and delta-root linkage, policy, permits,
+authority decisions, replay protection, durable state, and final verification
+remain CPU-authoritative.
+
+This is a benchmark path, not a GPU execution or scheduling authority path.
+The upstream [Pulpo PR #267](https://github.com/Ironnember/Pulpo1.0/pull/267)
+reported correctness-checked RX 7900 XT runs near CPU parity at larger batches,
+not a speedup; canonical serialization and host-side preparation remained
+major costs. See [GPU audit hashing](docs/GPU_ACCELERATION.md) for setup and
+benchmark details.
+
 ## Core invariants for autonomy
 
 The physical-systems model adds a few crucial rules:

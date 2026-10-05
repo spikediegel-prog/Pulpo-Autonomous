@@ -35,6 +35,7 @@ from .target_reconcile import (
     TargetObligationStatus,
 )
 from .targets import evaluate_locked_target_with_approval
+from .traffic import Backpressure, Dispatch, Lane, Path, TrafficControl, Work
 
 __all__ = [
     "AgentGrant",
@@ -47,19 +48,23 @@ __all__ = [
     "ApprovalVerifier",
     "AuthorityTrust",
     "AuthorityTrustError",
+    "Backpressure",
     "AuthorizationAttempt",
     "Decision",
+    "Dispatch",
     "Ed25519ApprovalVerifier",
     "EvidenceSnapshot",
     "GovernanceKernel",
     "GovernedTargetReconciliation",
     "InMemoryKernelState",
     "Intent",
+    "Lane",
     "KernelState",
     "LockedTarget",
     "NameComCoreAdapter",
     "OrchestrationError",
     "P256ApprovalVerifier",
+    "Path",
     "Policy",
     "PulpoOrchestrator",
     "SQLiteBudgetAccount",
@@ -67,5 +72,7 @@ __all__ = [
     "StateIntegrityError",
     "TargetObligationStatus",
     "TargetResolution",
+    "TrafficControl",
+    "Work",
     "evaluate_locked_target_with_approval",
 ]

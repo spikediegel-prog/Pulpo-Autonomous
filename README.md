@@ -17,6 +17,39 @@ This repository is intentionally shared across autonomous domains. The domain-sp
 - safety vetoes
 - unknown-state handling for uncertain outcomes
 
+## Current release direction — v0.2.0
+
+The current `main` line adds a substantial governance and security hardening layer beyond v0.1.1. The changes preserve Pulpo's authority boundary while reducing ambient capability and the cost of maintaining verifiable state.
+
+### Security and governance hardening
+
+- **Deny-by-default host ingress:** runtime listener inspection starts from an empty allowlist, supports Linux and Windows enumeration, fails closed on enumeration failure, and emits `pulpo.network-exposure.v1` evidence. The custody service may listen inside its private container network, but host publication remains separately governed.
+- **Prompt-injection capability containment:** local-intelligence proofs treat hostile instructions as untrusted input rather than relying on model refusal. The hardened macOS proof denies network egress by default, isolates HOME, excludes secret-like environment state, and requires explicit PREPARE-time widening for model network access or file-auth projection.
+- **Bounded untrusted input:** authority/custody HTTP bodies, provider JSON, Telegram/Name.com responses, and filesystem evidence snapshots are subject to explicit byte, depth, item, string, traversal, and file-size bounds on the tested surfaces.
+- **Bounded one-use permits:** permits have a policy-bound TTL, approval-backed permits cannot outlive approval, expired permits remain expired across restart, and legacy persisted permits without expiry fail closed.
+- **Canonical delta audit:** delta records and indexes accelerate the existing authoritative audit path without becoming a second ledger. Delta-chain continuity and tamper failure remain part of verification.
+- **SQLite integrity fast path:** verified audit state can be reused for safe lookups, while external SQLite mutation detected through `PRAGMA data_version` forces full revalidation. Restart and external-tamper cases remain fail closed.
+- **Atomic governance persistence:** paired governance mutations roll back when required audit evidence cannot be committed, and overlapping SQLite writers serialize audit-tip selection.
+
+These controls narrow capability; they do not grant authority to models, transports, provider state, evidence, or successful prior execution.
+
+### Optional GPU audit-hash benchmark
+
+Pulpo Autonomous includes an optional benchmark helper for parallel SHA-256
+recomputation of canonical audit-record bodies on CUDA or ROCm GPUs. The helper
+is not connected to `GovernanceKernel.verify_audit()`: the kernel continues to
+verify audit records on the CPU. GPU hashes must match the CPU reference before
+the benchmark reports timings. Chain and delta-root linkage, policy, permits,
+authority decisions, replay protection, durable state, and final verification
+remain CPU-authoritative.
+
+This is a benchmark path, not a GPU execution or scheduling authority path.
+The upstream [Pulpo PR #267](https://github.com/Ironnember/Pulpo1.0/pull/267)
+reported correctness-checked RX 7900 XT runs near CPU parity at larger batches,
+not a speedup; canonical serialization and host-side preparation remained
+major costs. See [GPU audit hashing](docs/GPU_ACCELERATION.md) for setup and
+benchmark details.
+
 ## Core invariants for autonomy
 
 The physical-systems model adds a few crucial rules:
@@ -147,6 +180,19 @@ archival and are not onboard runtime dependencies. See
 [runtime boundary](docs/RUNTIME_BOUNDARY.md).
 
 ## Runtime-surface change log
+
+### v0.2.0 candidate
+
+- Added fail-closed host listener verification with Linux and Windows enumeration and machine-readable evidence.
+- Hardened local-intelligence execution against ambient capability use and prompt/instruction injection.
+- Added bounded request, provider-response, JSON-structure, and evidence-snapshot limits.
+- Added policy-bound one-use permit expiry with restart-safe expiry denial.
+- Added canonical delta logging, audit indexes, and performance regression coverage without creating a second authority ledger.
+- Added audit-integrity caching with external-mutation invalidation and streamed/filtered audit reads.
+- Added atomic rollback coverage for failed governance-state/audit writes and concurrent audit-tip serialization.
+- Synchronized later Pulpo governance-state hardening and Windows-safe regression coverage.
+
+The v0.2.0 candidate is a governance/security hardening line. It does not claim production readiness or physical-system safety outside the tested topology.
 
 ### v0.1.0
 
@@ -315,11 +361,51 @@ if decision.outcome == "allow":
 
 ## Boundary
 
-Pulpo Autonomous currently proves governance, pinned asymmetric external-verifier contract
-semantics, local restart-safe kernel replay state, and restart-durable bounded-commerce
-state with dependency-free SQLite backends. It does not yet claim an independently deployed
-human signer, trusted verifier bootstrap, rollback-proof host storage, a real payment rail,
-network isolation, hostile-code sandboxing, distributed identity, or production readiness.
+Pulpo Autonomous currently proves governance semantics and a growing set of bounded security properties in the repository's tested topology: pinned asymmetric external-verifier contracts, one-use expiring permits, restart-safe replay state, tamper-detecting SQLite audit state, bounded commerce state, host-listener admission checks, bounded untrusted-input handling, and local-intelligence capability restrictions.
+
+Those proofs must not be generalized beyond their evidence. Pulpo Autonomous does **not** yet claim an independently deployed human signer, trusted verifier bootstrap, rollback-proof host storage, a real payment rail, universal network isolation, universal hostile-code containment, distributed identity, certified physical safety, or production readiness. A deployed host is not proven free of unexpected listeners until the runtime network-exposure check executes there, and platform-specific sandbox behavior remains bounded to the environments actually tested.
+
+## Host bound and Pulpo bound
+
+**Recorded — contract and deployment boundary; host integrity remains Unknown
+without independent deployment evidence.**
+
+Pulpo's security guarantees depend on the stated contract and deployment
+assumptions, including host enforcement of process, file, and boot policy. The
+operator and integrator are responsible for establishing and maintaining those
+platform assumptions: boot chain, firmware, NVRAM, unused or hidden partitions,
+storage-controller firmware, management controller, service-account privileges,
+and decisions about continuing operation when the host can no longer be
+measured. An OS reimage, snapshot, or rollback alone does not establish the
+integrity of those layers.
+
+A compromised host can bypass the Pulpo process, replace local state, or omit
+records. Evidence integrity does not establish host integrity or prove that all
+governed effects were observed. Host compromise may make governance outcomes
+unverifiable; those outcomes remain **Unknown** unless independent evidence
+establishes them. A valid local audit chain alone cannot rule out omissions,
+bypass, or replacement with an internally consistent history.
+
+Responsibility for such an incident depends on the stated contract, deployment
+assumptions, and evidence, and may be shared across Pulpo, the operator, and the
+integrator. Host compromise is not a categorical exemption from a Pulpo control
+failure. Pulpo remains accountable for enforcing its specified controls and
+detecting specified tampering under their stated assumptions, including
+failing closed on a visible broken audit chain. Failure of a specified control
+while its assumptions hold is a Pulpo failure; failure to establish or maintain
+required platform protections is an operator or integration failure. When those
+assumptions or the relevant evidence cannot be verified, attribution also
+remains **Unknown** rather than defaulting to an operator-only incident.
+
+Pulpo's bounded contract includes failing closed on unknown, incomplete, and
+over-budget intents; binding one-use permits to exact intents; preserving grant
+limits during loss of contact; and keeping uncertain execution unknown without
+creating retry authority. These properties are bounded to the tested topology.
+They do not establish survival of arbitrary host compromise, rollback-proof
+storage, trusted verifier bootstrap, universal network isolation, or universal
+hostile-code containment. Each deployment must identify which protections are
+Pulpo controls and which require operator or integration enforcement, with
+assumptions and evidence for each.
 
 The repo remains valid for autonomous systems, including robotics, drones, vehicles, and
 spacecraft, because the authority model is domain-agnostic while the domain adapters add

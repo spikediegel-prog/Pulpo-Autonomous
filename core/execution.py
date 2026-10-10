@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 
 from .journal import DurableJournal
 from .offline_protocol import ExecutionState, OfflineProtocol
 from .cold_boot import ColdBootGuard
+from .traffic import CommandTrafficIntake, CommandTrafficSettings
 
 
 @dataclass
@@ -13,6 +14,12 @@ class ExecutionTracker:
     protocol: OfflineProtocol
     journal: DurableJournal
     security: ColdBootGuard | None = None
+    traffic_settings: CommandTrafficSettings | None = None
+    _traffic_intake: CommandTrafficIntake | None = field(init=False, repr=False, default=None)
+
+    def __post_init__(self):
+        if self.traffic_settings is not None:
+            self._traffic_intake = CommandTrafficIntake(self.traffic_settings)
 
     def plan(self, command_id: str, action: str, now: str) -> ExecutionState:
         self.journal.append(
@@ -29,6 +36,8 @@ class ExecutionTracker:
         return ExecutionState.SENT
 
     def execute(self, command_id: str, action: str, now: str) -> ExecutionState:
+        if self._traffic_intake is not None:
+            self._traffic_intake.check(command_id, action, now)
         if self.security is not None and not self.security.can_execute():
             self.journal.append(
                 "vetoed",

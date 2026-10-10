@@ -17,9 +17,38 @@ This repository is intentionally shared across autonomous domains. The domain-sp
 - safety vetoes
 - unknown-state handling for uncertain outcomes
 
-## Current release direction — v0.2.0
+## Current release — v0.3.0: bounded routing and trustworthy JSON
 
-The current `main` line adds a substantial governance and security hardening layer beyond v0.1.1. The changes preserve Pulpo's authority boundary while reducing ambient capability and the cost of maintaining verifiable state.
+The lead improvements are **bounded command traffic routing** and **trustworthy
+JSON data handling**: deterministic audit/evidence records plus bounded parsing.
+The new opt-in router joins the JSON and governance foundations introduced in
+v0.2.0, while preserving the existing authority and execution boundaries.
+See the [v0.3.0 release notes](docs/releases/v0.3.0.md) for changes, verification
+and setup.
+
+### Bounded command traffic router
+
+The existing `ExecutionTracker.execute()` path can now reject overloaded,
+expired, malformed or substituted traffic before command processing. Item,
+byte and TTL budgets are explicit; contention rejects without unbounded intake
+waiting. Valid commands continue unchanged through the original lease, boot,
+replay and reconciliation checks. UNKNOWN never becomes retry authority.
+Fallback and observations remain outside routing. The integration is opt-in
+and reuses the existing standalone scheduling package; see
+[configuration and proof limits](docs/AUTONOMOUS_TRAFFIC_ROUTER.md).
+
+### JSON audit/evidence and bounded parsing
+
+Canonical JSON and hash-chained audit/evidence records make changes detectable
+without creating another ledger. Indexed/filtered reads and verified-integrity
+reuse reduce repeated audit work while external SQLite mutation forces
+revalidation. These foundations carry forward from v0.2.0.
+
+Bounded parsing constrains bytes, depth, items and strings on tested HTTP,
+provider and evidence paths. New HTTP probing admission hardening bounds request
+targets and headers before routing. Valid JSON is data, not authority. These
+features lead this release's data-handling story; autonomous hardware performance
+and fleet-scale gains remain unproven.
 
 ### Security and governance hardening
 

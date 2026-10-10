@@ -5,6 +5,7 @@ from .observation import ObservationRecord
 from .offline_authority import OfflineAuthority
 from .replay import ReplayGuard
 from .safety_veto import SafetyVeto, VetoResult
+from .traffic import CommandTrafficSettings, CommandTrafficRejected
 from .execution import ExecutionTracker
 from .journal import DurableJournal, JournalRecord
 from .offline_protocol import (
@@ -25,6 +26,8 @@ __all__ = [
     "SafetyVeto",
     "VetoResult",
     "ExecutionTracker",
+    "CommandTrafficSettings",
+    "CommandTrafficRejected",
     "DurableJournal",
     "JournalRecord",
     "ConnectivityState",

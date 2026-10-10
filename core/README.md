@@ -13,3 +13,9 @@ The policy boundary remains the same across robot and spacecraft deployments:
 - safety vetoes
 
 Pulpo Autonomous may enforce authority and translate it into machine-executable operations, but it never becomes a second authority source.
+
+
+Optional `CommandTrafficSettings` places passive bounded transport inspection
+at the existing `ExecutionTracker.execute()` boundary. Default callers remain
+unchanged. The intake retains no governed writer, and fallback/observation paths
+remain outside it. See [the integration proof and limits](../docs/AUTONOMOUS_TRAFFIC_ROUTER.md).

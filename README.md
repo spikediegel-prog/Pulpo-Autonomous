@@ -123,6 +123,19 @@ idempotent and are never resent. When the permit expires, the offline window
 ends, or the command budget is exhausted, execution records the lease's
 pre-authorized `safe_fallback` instead of sending a new command.
 
+## Optional command traffic router
+
+The existing offline `ExecutionTracker` can opt into the same passive traffic
+router used in local Pulpo work. It bounds transport bytes and TTL, rejects
+exhausted budgets, and delivers unchanged commands to the existing tracker.
+Routing cannot grant authority, alter leases, retry UNKNOWN outcomes, or replace
+the durable journal. Fallback and observation recording remain outside intake.
+
+Defaults remain off. See [configuration, tests and boundary limits](docs/AUTONOMOUS_TRAFFIC_ROUTER.md)
+for installing the existing local scheduling package and enabling
+`CommandTrafficSettings`. This is a simulated command-path integration;
+hardware safety, fleet performance and historical transfer remain unproven.
+
 ## Development
 
 Run the focused offline protocol proof:

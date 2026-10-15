@@ -19,6 +19,12 @@ sys.path.insert(0, str(ROOT))
 from tests.simulation_support import DeterministicWorld, SCENARIOS, SimulationFixture, Motion, run_case
 
 
+def git(*args):
+    # A read-only bind mount may have another uid inside the disposable container.
+    # Trust only this explicit checkout for these two read-only provenance calls.
+    return subprocess.check_output(["git", "-c", f"safe.directory={ROOT}", *args], cwd=ROOT, text=True)
+
+
 def benchmark(iterations):
     samples = []
     cpu_start = time.process_time_ns()
@@ -65,8 +71,8 @@ def main():
     if not 1 <= args.iterations <= 1000:
         parser.error("iterations must be between 1 and 1000")
     report = {"schema": "pulpo.simulation-test.v1", "backend": args.backend,
-              "commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
-              "dirty": bool(subprocess.check_output(["git", "status", "--porcelain"], cwd=ROOT)),
+              "commit": git("rev-parse", "HEAD").strip(),
+              "dirty": bool(git("status", "--porcelain")),
               "python": sys.version, "platform": platform.platform(), "results": [],
               "source_hashes": {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
                                 for pattern in ("tests/*simulation*.py", "scripts/*simulation*.py",

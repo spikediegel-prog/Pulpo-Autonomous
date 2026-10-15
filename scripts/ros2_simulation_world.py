@@ -3,7 +3,9 @@
 Hardcoded disposable topics only. Importing this module never starts a process.
 """
 import os
+from contextlib import suppress
 from pathlib import Path
+import signal
 import subprocess
 import time
 
@@ -29,11 +31,11 @@ class GazeboWorld:
         self.rclpy, self.Twist = rclpy, Twist
         try:
             world = Path(__file__).resolve().parents[1] / "experiments/ros2-gazebo/world.sdf"
-            self.processes.append(subprocess.Popen(["gz", "sim", "-s", "-r", str(world)]))
+            self.processes.append(subprocess.Popen(["gz", "sim", "-s", "-r", str(world)], start_new_session=True))
             self.processes.append(subprocess.Popen([
                 "ros2", "run", "ros_gz_bridge", "parameter_bridge",
                 "/pulpo_sim/cmd_vel@geometry_msgs/msg/Twist]gz.msgs.Twist",
-                "/pulpo_sim/odom@nav_msgs/msg/Odometry[gz.msgs.Odometry"]))
+                "/pulpo_sim/odom@nav_msgs/msg/Odometry[gz.msgs.Odometry"], start_new_session=True))
             rclpy.init()
             self.node = rclpy.create_node("pulpo_disposable_sim_test")
             self.publisher = self.node.create_publisher(Twist, "/pulpo_sim/cmd_vel", 10)
@@ -89,18 +91,22 @@ class GazeboWorld:
 
     def __exit__(self, *args):
         if self.node is not None:
-            try:
+            with suppress(Exception):
                 self.publisher.publish(self.Twist())
                 self._spin(0.1)
-            finally:
-                if hasattr(self, "attack_node"):
+            if hasattr(self, "attack_node"):
+                with suppress(Exception):
                     self.attack_node.destroy_node()
+            with suppress(Exception):
                 self.node.destroy_node()
+            with suppress(Exception):
                 self.rclpy.shutdown()
         for process in reversed(self.processes):
-            process.terminate()
+            with suppress(ProcessLookupError):
+                os.killpg(process.pid, signal.SIGTERM)
             try:
                 process.wait(timeout=5)
             except subprocess.TimeoutExpired:
-                process.kill()
+                with suppress(ProcessLookupError):
+                    os.killpg(process.pid, signal.SIGKILL)
                 process.wait(timeout=5)

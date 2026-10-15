@@ -173,11 +173,30 @@ def run_case(name, world):
                 "observed_motion" if name == "permitted" else "no_observed_effect")
     audit = fixture.kernel.audit
     audit_valid = fixture.kernel.verify_audit()
+    expected_reason = {
+        "permitted": "canonical_permit_consumed", "local_interlock": "canonical_permit_consumed",
+        "denied": "directive_action_not_allowed", "substitution": "motion_binding_mismatch",
+        "human_presence": "human_presence_veto", "stale_sensor": "sensor_health_veto",
+        "geofence": "geofence_veto", "resource_budget": "resource_budget_veto",
+        "emergency_stop": "safety_mode_blocks_motion", "degraded_mode": "safety_mode_blocks_motion",
+        "replay": "canonical_permit_rejected", "expiry": "canonical_permit_rejected",
+        "revocation": "canonical_permit_rejected",
+        "raw_cmd_vel_bypass": "direct_actuator_path", "remapped_cmd_vel_bypass": "direct_actuator_path",
+    }[name]
+    control_valid = (reason == expected_reason and
+                     consumed == (name in {"permitted", "local_interlock"}) and
+                     decision.outcome == ("deny" if name == "denied" else "allow"))
+    if name in {"replay", "expiry", "revocation"}:
+        control_valid = control_valid and audit[-1]["event"] == "permit_rejected"
+    if name == "revocation":
+        control_valid = control_valid and audit[-1]["payload"]["directive_status"] == "directive_revoked"
     return {"scenario": name, "classification": "Unknown" if outcome == "unknown" else "Verified",
-            "passed": outcome == expected and audit_valid,
+            "passed": outcome == expected and audit_valid and control_valid,
             "decision": decision.outcome, "reason": reason, "permit_consumed": consumed,
             "before_x": before, "after_x": after, "reconciliation": outcome,
             "expected": expected, "attempt_ns": elapsed, "audit_valid": audit_valid,
             "policy_hash": fixture.kernel.policy_hash, "intent_hash": fixture.kernel.intent_hash(intent),
-            "audit": audit, "authority_effect": "none",
+            "audit": audit, "deployed_authority_effect": "none",
+            "fixture_authority_effect": "synthetic_directive_activated_then_revoked" if name == "revocation"
+                                        else "synthetic_directive_activated",
             "containment_proven": False if name.endswith("bypass") else None}

@@ -1,0 +1,63 @@
+[
+    {
+        "Architecture": "amd64",
+        "Config": {
+            "Entrypoint": [
+                "/ros_entrypoint.sh",
+                "python3",
+                "scripts/test_simulation.py",
+                "--backend",
+                "gazebo"
+            ],
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "LANG=C.UTF-8",
+                "LC_ALL=C.UTF-8",
+                "ROS_DISTRO=jazzy",
+                "PULPO_DISPOSABLE_SIMULATION=1",
+                "ROS_DOMAIN_ID=173",
+                "ROS_LOCALHOST_ONLY=1"
+            ],
+            "Labels": {
+                "org.opencontainers.image.version": "24.04"
+            },
+            "WorkingDir": "/fixture"
+        },
+        "Created": "2026-10-15T16:55:26.807283528-07:00",
+        "Descriptor": {
+            "digest": "sha256:7f5c9e7fe49316fcb7b0a66227039a9915e7d602ad7a28714dd02bcc6d7bc004",
+            "mediaType": "application/vnd.oci.image.manifest.v1+json",
+            "size": 2921
+        },
+        "Id": "sha256:7f5c9e7fe49316fcb7b0a66227039a9915e7d602ad7a28714dd02bcc6d7bc004",
+        "Metadata": {
+            "LastTagTime": "2026-10-15T23:55:26.920078124Z"
+        },
+        "Os": "linux",
+        "Parent": "sha256:7efb719c7bd5431eff762a0487d0597f255bb4a5cccf9b5add4d6139d77ae0f1",
+        "RepoDigests": [
+            "pulpo-disposable-sim@sha256:7f5c9e7fe49316fcb7b0a66227039a9915e7d602ad7a28714dd02bcc6d7bc004"
+        ],
+        "RepoTags": [
+            "pulpo-disposable-sim:latest"
+        ],
+        "RootFS": {
+            "Layers": [
+                "sha256:d81fb2a7c6ee3be05fdefaa7fd223be219c1ab172083ec1b994c3ecda33ac0a8",
+                "sha256:ee1adf8ff799b5ee5ffe226bcf30b12adb49997e5eed39938f6d19c7d7fd3038",
+                "sha256:652e62d86369541c8139e1d06af67d76b0c34655c10cb1a12ce2f5e3ffbbfb8c",
+                "sha256:29fa225c9b246ed8f1e592722c31407ab5764f18222711d6409d8dc97a4af3a7",
+                "sha256:1b91eb4ad77361dcda239007ce1cc4763afbd61c404524557ab793765f17c0df",
+                "sha256:1498974ead45f5c90029934cbfb456ab9133d5eaad1fb62d11d7a264dfc47c68",
+                "sha256:63374bfdc99ca6d3c78b262e557e0cb860d15bfb99a0e70e75d32323b83754b2",
+                "sha256:03195f294facf050c604ce00e8a5e49c37c0b91225eeb2e785a0000fd7f9c374",
+                "sha256:95622f076f0dda79f2f67d5d87ede8c61f0c43744df278aef1e40f8df5673e02",
+                "sha256:967aa5be1a038d49d89a05d14ee5dbb2fd425ed23d87625af42260bf3c1b6561",
+                "sha256:1c561360f00fe699b36408aecb5c1c628045603cfc431e4d012e0e7b81a80c4d",
+                "sha256:9222e71276366020730e6082bbc381c54561f786bc77ed30283f6e73c4f7bb23"
+            ],
+            "Type": "layers"
+        },
+        "Size": 1069120010
+    }
+]

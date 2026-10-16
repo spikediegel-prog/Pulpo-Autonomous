@@ -1,0 +1,1078 @@
+test_metadata_hold_check_runs_even_if_quarantine_fails (test_admission_hold_workflow_trust.AdmissionHoldWorkflowTrustTests.test_metadata_hold_check_runs_even_if_quarantine_fails) ... ok
+test_never_overrides_checkout_to_pr_metadata_or_head (test_admission_hold_workflow_trust.AdmissionHoldWorkflowTrustTests.test_never_overrides_checkout_to_pr_metadata_or_head) ... ok
+test_quarantine_precedes_metadata_denial (test_admission_hold_workflow_trust.AdmissionHoldWorkflowTrustTests.test_quarantine_precedes_metadata_denial) ... ok
+test_targets_main_pull_request_target_only (test_admission_hold_workflow_trust.AdmissionHoldWorkflowTrustTests.test_targets_main_pull_request_target_only) ... ok
+test_workflow_does_not_require_external_credentials (test_admission_hold_workflow_trust.AdmissionHoldWorkflowTrustTests.test_workflow_does_not_require_external_credentials) ... ok
+test_write_scope_is_only_pull_request_mutation_plus_read (test_admission_hold_workflow_trust.AdmissionHoldWorkflowTrustTests.test_write_scope_is_only_pull_request_mutation_plus_read) ... ok
+test_invalid_or_non_finite_audio_metadata_fails_closed (test_audio_boundary.AudioBoundaryTests.test_invalid_or_non_finite_audio_metadata_fails_closed) ... ok
+test_matching_existing_permit_is_required_and_expiry_is_enforced (test_audio_boundary.AudioBoundaryTests.test_matching_existing_permit_is_required_and_expiry_is_enforced) ... ok
+test_speech_malicious_text_and_malformed_payloads_do_not_become_commands (test_audio_boundary.AudioBoundaryTests.test_speech_malicious_text_and_malformed_payloads_do_not_become_commands) ... ok
+test_subsonic_or_ultrasonic_payload_is_only_a_proposal (test_audio_boundary.AudioBoundaryTests.test_subsonic_or_ultrasonic_payload_is_only_a_proposal) ... ok
+test_approval_id_and_nonce_are_each_single_use (test_authority.VerifiedApprovalTests.test_approval_id_and_nonce_are_each_single_use) ... ok
+test_approval_path_rejects_actions_that_do_not_need_approval (test_authority.VerifiedApprovalTests.test_approval_path_rejects_actions_that_do_not_need_approval) ... ok
+test_caller_boolean_bypass_is_removed_for_every_kernel (test_authority.VerifiedApprovalTests.test_caller_boolean_bypass_is_removed_for_every_kernel) ... ok
+test_clock_failure_and_rollback_fail_closed_with_evidence (test_authority.VerifiedApprovalTests.test_clock_failure_and_rollback_fail_closed_with_evidence) ... ok
+test_envelope_bindings_fail_closed_even_with_valid_authority_signature (test_authority.VerifiedApprovalTests.test_envelope_bindings_fail_closed_even_with_valid_authority_signature) ... ok
+test_every_intent_field_is_bound_by_the_signed_envelope (test_authority.VerifiedApprovalTests.test_every_intent_field_is_bound_by_the_signed_envelope) ... ok
+test_invalid_or_missing_signature_fails_closed (test_authority.VerifiedApprovalTests.test_invalid_or_missing_signature_fails_closed) ... ok
+test_issued_at_ttl_and_verification_time_fail_closed (test_authority.VerifiedApprovalTests.test_issued_at_ttl_and_verification_time_fail_closed) ... ok
+test_malformed_envelope_is_rejected_before_verification (test_authority.VerifiedApprovalTests.test_malformed_envelope_is_rejected_before_verification) ... ok
+test_malformed_envelope_object_fails_closed (test_authority.VerifiedApprovalTests.test_malformed_envelope_object_fails_closed) ... ok
+test_old_envelope_is_invalid_after_separately_configured_key_rotation (test_authority.VerifiedApprovalTests.test_old_envelope_is_invalid_after_separately_configured_key_rotation) ... ok
+test_policy_hash_is_canonical (test_authority.VerifiedApprovalTests.test_policy_hash_is_canonical) ... ok
+test_policy_requires_and_hashes_pinned_authority_trust (test_authority.VerifiedApprovalTests.test_policy_requires_and_hashes_pinned_authority_trust) ... ok
+test_session_and_time_are_not_caller_controlled (test_authority.VerifiedApprovalTests.test_session_and_time_are_not_caller_controlled) ... ok
+test_substituted_verifier_fails_at_bootstrap (test_authority.VerifiedApprovalTests.test_substituted_verifier_fails_at_bootstrap) ... ok
+test_truthy_non_boolean_verifier_result_is_rejected (test_authority.VerifiedApprovalTests.test_truthy_non_boolean_verifier_result_is_rejected) ... ok
+test_valid_external_envelope_issues_one_bound_permit (test_authority.VerifiedApprovalTests.test_valid_external_envelope_issues_one_bound_permit) ... ok
+test_verified_evidence_records_pinned_public_trust (test_authority.VerifiedApprovalTests.test_verified_evidence_records_pinned_public_trust) ... ok
+test_verifier_exception_fails_closed (test_authority.VerifiedApprovalTests.test_verifier_exception_fails_closed) ... ok
+test_verifier_is_configured_at_kernel_boundary (test_authority.VerifiedApprovalTests.test_verifier_is_configured_at_kernel_boundary) ... ok
+test_verifier_replacement_after_bootstrap_fails_closed (test_authority.VerifiedApprovalTests.test_verifier_replacement_after_bootstrap_fails_closed) ... ok
+test_evidence_is_split_without_recording_private_credentials (test_authority_boundary_decision.AuthorityBoundaryDecisionTests.test_evidence_is_split_without_recording_private_credentials) ... ok
+test_owner_authorization_is_not_misclassified_as_deployment (test_authority_boundary_decision.AuthorityBoundaryDecisionTests.test_owner_authorization_is_not_misclassified_as_deployment) ... ok
+test_owner_selected_exact_origin_and_isolated_managed_cloud_boundary (test_authority_boundary_decision.AuthorityBoundaryDecisionTests.test_owner_selected_exact_origin_and_isolated_managed_cloud_boundary) ... ok
+test_primary_authority_requires_non_syncable_hardware_and_human_verification (test_authority_boundary_decision.AuthorityBoundaryDecisionTests.test_primary_authority_requires_non_syncable_hardware_and_human_verification) ... ok
+test_provider_and_runtime_particulars_remain_unset_before_real_deployment (test_authority_boundary_decision.AuthorityBoundaryDecisionTests.test_provider_and_runtime_particulars_remain_unset_before_real_deployment) ... ok
+test_recovery_cannot_approve_normal_intents (test_authority_boundary_decision.AuthorityBoundaryDecisionTests.test_recovery_cannot_approve_normal_intents) ... ok
+test_worker_can_request_but_cannot_create_or_administer_authority (test_authority_boundary_decision.AuthorityBoundaryDecisionTests.test_worker_can_request_but_cannot_create_or_administer_authority) ... ok
+test_approved_poll_parses_exact_envelope (test_authority_client.AuthorityClientTests.test_approved_poll_parses_exact_envelope) ... ok
+test_client_exposes_only_request_and_poll (test_authority_client.AuthorityClientTests.test_client_exposes_only_request_and_poll) ... ok
+test_https_transport_rejects_oversized_response (test_authority_client.AuthorityClientTests.test_https_transport_rejects_oversized_response) ... ok
+test_non_https_and_cross_origin_human_urls_fail_closed (test_authority_client.AuthorityClientTests.test_non_https_and_cross_origin_human_urls_fail_closed) ... ok
+test_request_and_poll_use_only_fixed_worker_paths (test_authority_client.AuthorityClientTests.test_request_and_poll_use_only_fixed_worker_paths) ... ok
+test_pinned_ed25519_public_key_verifies_exact_envelope_once (test_authority_crypto.Ed25519AuthorityTests.test_pinned_ed25519_public_key_verifies_exact_envelope_once) ... ok
+test_same_authority_with_substituted_public_key_fails_bootstrap (test_authority_crypto.Ed25519AuthorityTests.test_same_authority_with_substituted_public_key_fails_bootstrap) ... ok
+test_signature_and_payload_substitution_fail_closed (test_authority_crypto.Ed25519AuthorityTests.test_signature_and_payload_substitution_fail_closed) ... ok
+test_activation_approval_cannot_be_retargeted (test_capability_activation_authority.CapabilityActivationAuthorityTests.test_activation_approval_cannot_be_retargeted) ... ok
+test_exact_approval_issues_one_bound_activation_permit (test_capability_activation_authority.CapabilityActivationAuthorityTests.test_exact_approval_issues_one_bound_activation_permit) ... ok
+test_inspection_permit_cannot_be_substituted_for_activation (test_capability_activation_authority.CapabilityActivationAuthorityTests.test_inspection_permit_cannot_be_substituted_for_activation) ... ok
+test_read_only_permission_does_not_authorize_capability_activation (test_capability_activation_authority.CapabilityActivationAuthorityTests.test_read_only_permission_does_not_authorize_capability_activation) ... ok
+test_ambiguous_identity_and_invalid_inventory_fail_closed (test_cloud_runtime_discovery.CloudRuntimeDiscoveryTests.test_ambiguous_identity_and_invalid_inventory_fail_closed) ... ok
+test_exact_read_only_inventory_produces_bounded_evidence (test_cloud_runtime_discovery.CloudRuntimeDiscoveryTests.test_exact_read_only_inventory_produces_bounded_evidence) ... ok
+test_substituted_or_mutating_commands_are_rejected (test_cloud_runtime_discovery.CloudRuntimeDiscoveryTests.test_substituted_or_mutating_commands_are_rejected) ... ok
+test_wrong_operator_fails_before_project_or_inventory (test_cloud_runtime_discovery.CloudRuntimeDiscoveryTests.test_wrong_operator_fails_before_project_or_inventory) ... ok
+test_wrong_project_fails_before_resource_inventory (test_cloud_runtime_discovery.CloudRuntimeDiscoveryTests.test_wrong_project_fails_before_resource_inventory) ... ok
+test_boot_rollback_and_substitution_fail_closed (test_cold_boot.ColdBootTests.test_boot_rollback_and_substitution_fail_closed) ... ok
+test_key_use_requires_verified_current_boot (test_cold_boot.ColdBootTests.test_key_use_requires_verified_current_boot) ... ok
+test_reset_blocks_offline_execution (test_cold_boot.ColdBootTests.test_reset_blocks_offline_execution) ... ok
+test_reset_invalidates_volatile_authority_until_new_attestation (test_cold_boot.ColdBootTests.test_reset_invalidates_volatile_authority_until_new_attestation) ... ok
+test_contended_transport_rejects_without_wait_or_evidence (test_command_traffic.CommandTrafficTests.test_contended_transport_rejects_without_wait_or_evidence) ... skipped 'install the local sentry-traffic package for router integration tests'
+test_expired_authority_and_wrong_action_still_use_existing_denial_path (test_command_traffic.CommandTrafficTests.test_expired_authority_and_wrong_action_still_use_existing_denial_path) ... skipped 'install the local sentry-traffic package for router integration tests'
+test_fallback_and_observations_bypass_transport_saturation_but_keep_original_guards (test_command_traffic.CommandTrafficTests.test_fallback_and_observations_bypass_transport_saturation_but_keep_original_guards) ... skipped 'install the local sentry-traffic package for router integration tests'
+test_fault_or_substituted_bytes_never_reach_existing_execution (test_command_traffic.CommandTrafficTests.test_fault_or_substituted_bytes_never_reach_existing_execution) ... skipped 'install the local sentry-traffic package for router integration tests'
+test_malformed_and_oversize_transport_inputs_are_terminal_rejections (test_command_traffic.CommandTrafficTests.test_malformed_and_oversize_transport_inputs_are_terminal_rejections) ... skipped 'install the local sentry-traffic package for router integration tests'
+test_passive_intake_has_no_governed_handle_and_no_priority_dedup_or_recirculation (test_command_traffic.CommandTrafficTests.test_passive_intake_has_no_governed_handle_and_no_priority_dedup_or_recirculation) ... skipped 'install the local sentry-traffic package for router integration tests'
+test_queue_and_byte_backpressure_reject_without_canonical_mutation (test_command_traffic.CommandTrafficTests.test_queue_and_byte_backpressure_reject_without_canonical_mutation) ... skipped 'install the local sentry-traffic package for router integration tests'
+test_reconciliation_blocks_commands_and_boot_guard_remains_authoritative (test_command_traffic.CommandTrafficTests.test_reconciliation_blocks_commands_and_boot_guard_remains_authoritative) ... skipped 'install the local sentry-traffic package for router integration tests'
+test_ttl_exhaustion_is_terminal_drop_without_authority_or_evidence (test_command_traffic.CommandTrafficTests.test_ttl_exhaustion_is_terminal_drop_without_authority_or_evidence) ... skipped 'install the local sentry-traffic package for router integration tests'
+test_unknown_restart_replay_and_tamper_boss_round (test_command_traffic.CommandTrafficTests.test_unknown_restart_replay_and_tamper_boss_round) ... skipped 'install the local sentry-traffic package for router integration tests'
+test_valid_and_duplicate_traffic_matches_baseline_journal_and_governed_bytes (test_command_traffic.CommandTrafficTests.test_valid_and_duplicate_traffic_matches_baseline_journal_and_governed_bytes) ... skipped 'install the local sentry-traffic package for router integration tests'
+test_default_needs_no_router_and_opt_in_has_no_missing_dependency_fallback (test_command_traffic.TrafficDefaultTests.test_default_needs_no_router_and_opt_in_has_no_missing_dependency_fallback) ... ok
+test_invalid_host_settings_fail_without_writes (test_command_traffic.TrafficDefaultTests.test_invalid_host_settings_fail_without_writes) ... ok
+test_acceptance_requires_independent_ownership_period_privacy_and_dns (test_commerce.CommerceProofTests.test_acceptance_requires_independent_ownership_period_privacy_and_dns) ... ok
+test_authorized_paid_delivered_accepted_and_valuable_are_separate (test_commerce.CommerceProofTests.test_authorized_paid_delivered_accepted_and_valuable_are_separate) ... ok
+test_budget_reservation_rejects_duplicate_insufficient_and_mismatch (test_commerce.CommerceProofTests.test_budget_reservation_rejects_duplicate_insufficient_and_mismatch) ... ok
+test_bundle_projects_kernel_audit_without_becoming_a_second_ledger (test_commerce.CommerceProofTests.test_bundle_projects_kernel_audit_without_becoming_a_second_ledger) ... ok
+test_durable_budget_requires_stable_path_and_ceiling (test_commerce.CommerceProofTests.test_durable_budget_requires_stable_path_and_ceiling) ... ok
+test_durable_budget_reservation_is_atomic_between_workers (test_commerce.CommerceProofTests.test_durable_budget_reservation_is_atomic_between_workers) ... ok
+test_durable_budget_survives_restart_and_blocks_attempt_replay (test_commerce.CommerceProofTests.test_durable_budget_survives_restart_and_blocks_attempt_replay) ... ok
+test_durable_reconciliation_survives_restart (test_commerce.CommerceProofTests.test_durable_reconciliation_survives_restart) ... ok
+test_exact_order_hash_blocks_substitution (test_commerce.CommerceProofTests.test_exact_order_hash_blocks_substitution) ... ok
+test_exact_order_requires_approval_and_uses_one_permit (test_commerce.CommerceProofTests.test_exact_order_requires_approval_and_uses_one_permit) ... ok
+test_expiration_ownership_privacy_and_credential_fail_closed (test_commerce.CommerceProofTests.test_expiration_ownership_privacy_and_credential_fail_closed) ... ok
+test_hard_pilot_ceiling_denies_30_01 (test_commerce.CommerceProofTests.test_hard_pilot_ceiling_denies_30_01) ... ok
+test_malformed_quote_prices_and_upsells_fail_closed (test_commerce.CommerceProofTests.test_malformed_quote_prices_and_upsells_fail_closed) ... ok
+test_order_binds_complete_request_and_quote_hashes (test_commerce.CommerceProofTests.test_order_binds_complete_request_and_quote_hashes) ... ok
+test_payment_rail_rejects_provider_charge_above_exact_cap (test_commerce.CommerceProofTests.test_payment_rail_rejects_provider_charge_above_exact_cap) ... ok
+test_unapproved_domain_registrar_renewal_and_upsell_are_distinct_denials (test_commerce.CommerceProofTests.test_unapproved_domain_registrar_renewal_and_upsell_are_distinct_denials) ... ok
+test_uncertain_external_result_cannot_be_blindly_retried_after_restart (test_commerce.CommerceProofTests.test_uncertain_external_result_cannot_be_blindly_retried_after_restart) ... ok
+test_randomized_sqlite_sequence_preserves_constitutional_invariants (test_constitutional_sequences.ConstitutionalSequenceTests.test_randomized_sqlite_sequence_preserves_constitutional_invariants) ... Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60293f0>:
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/json/decoder.py", line 361, in raw_decode
+    obj, end = self.scan_once(s, idx)
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60293f0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6029300>:
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/json/decoder.py", line 361, in raw_decode
+    obj, end = self.scan_once(s, idx)
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6029300>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6029210>:
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/json/decoder.py", line 361, in raw_decode
+    obj, end = self.scan_once(s, idx)
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6029210>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60297b0>:
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/json/decoder.py", line 361, in raw_decode
+    obj, end = self.scan_once(s, idx)
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60297b0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60298a0>:
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/json/decoder.py", line 361, in raw_decode
+    obj, end = self.scan_once(s, idx)
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60298a0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6029990>:
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/json/decoder.py", line 361, in raw_decode
+    obj, end = self.scan_once(s, idx)
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6029990>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6029a80>:
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/json/decoder.py", line 361, in raw_decode
+    obj, end = self.scan_once(s, idx)
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6029a80>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60294e0>:
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/json/decoder.py", line 361, in raw_decode
+    obj, end = self.scan_once(s, idx)
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60294e0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60295d0>:
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/json/decoder.py", line 361, in raw_decode
+    obj, end = self.scan_once(s, idx)
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60295d0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60296c0>:
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/json/decoder.py", line 361, in raw_decode
+    obj, end = self.scan_once(s, idx)
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60296c0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6029b70>:
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/json/decoder.py", line 361, in raw_decode
+    obj, end = self.scan_once(s, idx)
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6029b70>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6029c60>:
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/json/decoder.py", line 361, in raw_decode
+    obj, end = self.scan_once(s, idx)
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6029c60>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6029d50>:
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/json/decoder.py", line 361, in raw_decode
+    obj, end = self.scan_once(s, idx)
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6029d50>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6029e40>:
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/json/decoder.py", line 361, in raw_decode
+    obj, end = self.scan_once(s, idx)
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6029e40>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6029f30>:
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/json/decoder.py", line 361, in raw_decode
+    obj, end = self.scan_once(s, idx)
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6029f30>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602a020>:
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/json/decoder.py", line 361, in raw_decode
+    obj, end = self.scan_once(s, idx)
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602a020>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602a110>:
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/json/decoder.py", line 361, in raw_decode
+    obj, end = self.scan_once(s, idx)
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602a110>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602a200>:
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/json/decoder.py", line 361, in raw_decode
+    obj, end = self.scan_once(s, idx)
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602a200>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602a2f0>:
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/json/decoder.py", line 361, in raw_decode
+    obj, end = self.scan_once(s, idx)
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602a2f0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602a3e0>:
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/json/decoder.py", line 361, in raw_decode
+    obj, end = self.scan_once(s, idx)
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602a3e0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602a4d0>:
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/json/decoder.py", line 361, in raw_decode
+    obj, end = self.scan_once(s, idx)
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602a4d0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602a5c0>:
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/json/decoder.py", line 361, in raw_decode
+    obj, end = self.scan_once(s, idx)
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602a5c0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602a6b0>:
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/json/decoder.py", line 361, in raw_decode
+    obj, end = self.scan_once(s, idx)
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602a6b0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602a7a0>:
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/json/decoder.py", line 361, in raw_decode
+    obj, end = self.scan_once(s, idx)
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602a7a0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602a890>:
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/json/decoder.py", line 361, in raw_decode
+    obj, end = self.scan_once(s, idx)
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602a890>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602a980>:
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/json/decoder.py", line 361, in raw_decode
+    obj, end = self.scan_once(s, idx)
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602a980>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602aa70>:
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/json/decoder.py", line 361, in raw_decode
+    obj, end = self.scan_once(s, idx)
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602aa70>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602ab60>:
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/json/decoder.py", line 361, in raw_decode
+    obj, end = self.scan_once(s, idx)
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602ab60>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602ad40>:
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/json/decoder.py", line 361, in raw_decode
+    obj, end = self.scan_once(s, idx)
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602ad40>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602ae30>:
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/json/decoder.py", line 361, in raw_decode
+    obj, end = self.scan_once(s, idx)
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602ae30>
+ok
+test_custody_clock_regression_fails_closed (test_custody.CustodyProofTests.test_custody_clock_regression_fails_closed) ... ok
+test_forked_worker_cannot_authorize_same_object_twice (test_custody.CustodyProofTests.test_forked_worker_cannot_authorize_same_object_twice) ... ok
+test_one_attempt_can_be_claimed_by_only_one_executor (test_custody.CustodyProofTests.test_one_attempt_can_be_claimed_by_only_one_executor) ... ok
+test_transmission_right_is_released_once_and_lost_response_requires_reconciliation (test_custody.CustodyProofTests.test_transmission_right_is_released_once_and_lost_response_requires_reconciliation) ... ok
+test_two_workers_racing_same_head_yield_one_authorization (test_custody.CustodyProofTests.test_two_workers_racing_same_head_yield_one_authorization) ... ok
+test_worker_cannot_claim_reconciled_success_without_observer_evidence (test_custody.CustodyProofTests.test_worker_cannot_claim_reconciled_success_without_observer_evidence) ... ok
+test_worker_rollback_does_not_restore_execution_right (test_custody.CustodyProofTests.test_worker_rollback_does_not_restore_execution_right) ... ok
+test_concurrent_reservations_cannot_oversubscribe_protected_budget (test_custody_domain.CustodyDomainIntegrationTests.test_concurrent_reservations_cannot_oversubscribe_protected_budget) ... ok
+test_exact_locked_domain_permit_and_budget_are_consumed_before_custody_attempt (test_custody_domain.CustodyDomainIntegrationTests.test_exact_locked_domain_permit_and_budget_are_consumed_before_custody_attempt) ... ok
+test_revoked_directive_is_revalidated_before_budget_attempt_and_custody_attempt (test_custody_domain.CustodyDomainIntegrationTests.test_revoked_directive_is_revalidated_before_budget_attempt_and_custody_attempt) ... ok
+test_substituted_domain_order_fails_before_budget_or_permit_consumption (test_custody_domain.CustodyDomainIntegrationTests.test_substituted_domain_order_fails_before_budget_or_permit_consumption) ... ok
+test_worker_rollback_after_restart_cannot_restore_budget_or_domain_permit (test_custody_domain.CustodyDomainIntegrationTests.test_worker_rollback_after_restart_cannot_restore_budget_or_domain_permit) ... ok
+test_abort_before_custody_commit_creates_neither_mutation_nor_obligation (test_custody_evidence.CustodyEvidenceConvergenceTests.test_abort_before_custody_commit_creates_neither_mutation_nor_obligation) ... ok
+test_committed_obligation_blocks_next_transition_until_projection (test_custody_evidence.CustodyEvidenceConvergenceTests.test_committed_obligation_blocks_next_transition_until_projection) ... ok
+test_crash_during_projection_restarts_without_duplicate_canonical_event (test_custody_evidence.CustodyEvidenceConvergenceTests.test_crash_during_projection_restarts_without_duplicate_canonical_event) ... ok
+test_duplicate_projection_is_idempotent_by_transition_hash (test_custody_evidence.CustodyEvidenceConvergenceTests.test_duplicate_projection_is_idempotent_by_transition_hash) ... ok
+test_tampered_obligation_is_denied_and_blocks_custody (test_custody_evidence.CustodyEvidenceConvergenceTests.test_tampered_obligation_is_denied_and_blocks_custody) ... ok
+test_crash_after_transmission_release_never_releases_second_network_right (test_custody_executor.CustodyExecutorTests.test_crash_after_transmission_release_never_releases_second_network_right) ... ok
+test_crash_before_transmission_can_resume_same_executor_identity_only (test_custody_executor.CustodyExecutorTests.test_crash_before_transmission_can_resume_same_executor_identity_only) ... ok
+test_lost_provider_response_is_unknown_and_cannot_retry_or_release_budget (test_custody_executor.CustodyExecutorTests.test_lost_provider_response_is_unknown_and_cannot_retry_or_release_budget) ... ok
+test_preflight_failure_releases_no_network_transmission_right (test_custody_executor.CustodyExecutorTests.test_preflight_failure_releases_no_network_transmission_right) ... ok
+test_provider_success_is_only_a_claim_and_still_requires_reconciliation (test_custody_executor.CustodyExecutorTests.test_provider_success_is_only_a_claim_and_still_requires_reconciliation) ... ok
+test_substituted_order_never_reaches_credential_adapter (test_custody_executor.CustodyExecutorTests.test_substituted_order_never_reaches_credential_adapter) ... ok
+test_exact_independent_observation_reconciles_success_and_settles_budget (test_custody_reconcile.CustodyReconciliationTests.test_exact_independent_observation_reconciles_success_and_settles_budget) ... ok
+test_explicit_provider_failure_without_observed_effect_is_failure_but_budget_remains_held (test_custody_reconcile.CustodyReconciliationTests.test_explicit_provider_failure_without_observed_effect_is_failure_but_budget_remains_held) ... ok
+test_not_found_lookup_cannot_be_inferred_as_known_failure (test_custody_reconcile.CustodyReconciliationTests.test_not_found_lookup_cannot_be_inferred_as_known_failure) ... ok
+test_observed_substitution_is_failure_and_does_not_reopen_budget (test_custody_reconcile.CustodyReconciliationTests.test_observed_substitution_is_failure_and_does_not_reopen_budget) ... ok
+test_provider_success_without_complete_external_observation_stays_unresolved_and_holds_budget (test_custody_reconcile.CustodyReconciliationTests.test_provider_success_without_complete_external_observation_stays_unresolved_and_holds_budget) ... ok
+test_unresolved_consequence_can_later_resolve_without_reopening_execution (test_custody_reconcile_later.LaterEvidenceReconciliationTests.test_unresolved_consequence_can_later_resolve_without_reopening_execution) ... ok
+test_attachment_is_hash_covered_and_preserves_audit_tip (test_decision_evidence.DecisionEvidenceTests.test_attachment_is_hash_covered_and_preserves_audit_tip) ... ok
+test_attachment_rejects_authority_substitution (test_decision_evidence.DecisionEvidenceTests.test_attachment_rejects_authority_substitution) ... ok
+test_attachment_rejects_substituted_order_boundary (test_decision_evidence.DecisionEvidenceTests.test_attachment_rejects_substituted_order_boundary) ... ok
+test_attachment_rejects_tampered_bundle (test_decision_evidence.DecisionEvidenceTests.test_attachment_rejects_tampered_bundle) ... ok
+test_boundary_hash_is_deterministic (test_decision_evidence.DecisionEvidenceTests.test_boundary_hash_is_deterministic) ... ok
+test_boundary_requires_evidence (test_decision_evidence.DecisionEvidenceTests.test_boundary_requires_evidence) ... ok
+test_cross_task_interaction_is_rejected (test_decision_evidence.DecisionEvidenceTests.test_cross_task_interaction_is_rejected) ... ok
+test_interaction_cannot_grant_authority (test_decision_evidence.DecisionEvidenceTests.test_interaction_cannot_grant_authority) ... ok
+test_projection_binds_interaction_to_boundary (test_decision_evidence.DecisionEvidenceTests.test_projection_binds_interaction_to_boundary) ... ok
+test_self_interaction_is_rejected (test_decision_evidence.DecisionEvidenceTests.test_self_interaction_is_rejected) ... ok
+test_substituted_boundary_is_rejected (test_decision_evidence.DecisionEvidenceTests.test_substituted_boundary_is_rejected) ... ok
+test_append_many_rolls_back_whole_batch_on_failure (test_delta_audit_performance.DeltaAuditPerformanceTests.test_append_many_rolls_back_whole_batch_on_failure) ... ok
+test_append_many_uses_one_durable_transaction (test_delta_audit_performance.DeltaAuditPerformanceTests.test_append_many_uses_one_durable_transaction) ... ok
+test_append_unique_uses_index_after_projection_is_established (test_delta_audit_performance.DeltaAuditPerformanceTests.test_append_unique_uses_index_after_projection_is_established) ... ok
+test_delta_root_chain_is_bound_into_canonical_audit (test_delta_audit_performance.DeltaAuditPerformanceTests.test_delta_root_chain_is_bound_into_canonical_audit) ... ok
+test_delta_tamper_fails_closed_at_restart (test_delta_audit_performance.DeltaAuditPerformanceTests.test_delta_tamper_fails_closed_at_restart) ... ok
+test_kernel_bootstrap_streams_without_materializing_audit (test_delta_audit_performance.DeltaAuditPerformanceTests.test_kernel_bootstrap_streams_without_materializing_audit) ... ok
+test_legacy_audit_schema_migrates_and_binds_new_delta (test_delta_audit_performance.DeltaAuditPerformanceTests.test_legacy_audit_schema_migrates_and_binds_new_delta) ... ok
+test_locked_target_lookup_uses_event_filtered_stream_after_full_verification (test_delta_audit_performance.DeltaAuditPerformanceTests.test_locked_target_lookup_uses_event_filtered_stream_after_full_verification) ... ok
+test_policy_hash_is_stable_cached_material (test_delta_audit_performance.DeltaAuditPerformanceTests.test_policy_hash_is_stable_cached_material) ... ok
+test_required_indexes_exist (test_delta_audit_performance.DeltaAuditPerformanceTests.test_required_indexes_exist) ... ok
+test_streaming_verification_detects_old_row_tamper (test_delta_audit_performance.DeltaAuditPerformanceTests.test_streaming_verification_detects_old_row_tamper) ... ok
+test_authority_expansion_and_invalid_claim_are_rejected (test_deployment_evidence.DeploymentEvidenceTests.test_authority_expansion_and_invalid_claim_are_rejected) ... ok
+test_missing_identity_and_test_hash_fail_closed (test_deployment_evidence.DeploymentEvidenceTests.test_missing_identity_and_test_hash_fail_closed) ... ok
+test_valid_manifest_is_accepted (test_deployment_evidence.DeploymentEvidenceTests.test_valid_manifest_is_accepted) ... ok
+test_parent_revoked_between_precheck_and_mutation_denies_child (test_directive_parent_activation_race.DirectiveParentActivationRaceTests.test_parent_revoked_between_precheck_and_mutation_denies_child) ... ok
+test_activation_requires_verified_external_authority (test_directives.DirectiveProofTests.test_activation_requires_verified_external_authority) ... ok
+test_active_directive_bound_permit_consumes_once_with_identity_evidence (test_directives.DirectiveProofTests.test_active_directive_bound_permit_consumes_once_with_identity_evidence) ... ok
+test_approval_is_bound_to_exact_directive_digest (test_directives.DirectiveProofTests.test_approval_is_bound_to_exact_directive_digest) ... ok
+test_authorized_directive_constrains_but_does_not_replace_kernel (test_directives.DirectiveProofTests.test_authorized_directive_constrains_but_does_not_replace_kernel) ... ok
+test_chat_or_retrieval_cannot_create_authority (test_directives.DirectiveProofTests.test_chat_or_retrieval_cannot_create_authority) ... ok
+test_delegated_scope_cannot_be_broadened_by_substitution (test_directives.DirectiveProofTests.test_delegated_scope_cannot_be_broadened_by_substitution) ... ok
+test_derived_directive_can_only_narrow_parent_scope (test_directives.DirectiveProofTests.test_derived_directive_can_only_narrow_parent_scope) ... ok
+test_derived_directive_requires_exact_active_parent_before_authority_use (test_directives.DirectiveProofTests.test_derived_directive_requires_exact_active_parent_before_authority_use) ... ok
+test_directive_components_reject_parallel_state_and_clock_injection (test_directives.DirectiveProofTests.test_directive_components_reject_parallel_state_and_clock_injection) ... ok
+test_model_summary_or_retrieval_score_cannot_raise_authority (test_directives.DirectiveProofTests.test_model_summary_or_retrieval_score_cannot_raise_authority) ... ok
+test_narrow_derived_directive_activates_and_records_parent_hash (test_directives.DirectiveProofTests.test_narrow_derived_directive_activates_and_records_parent_hash) ... ok
+test_parent_revocation_invalidates_child_and_preissued_child_permit (test_directives.DirectiveProofTests.test_parent_revocation_invalidates_child_and_preissued_child_permit) ... ok
+test_parent_revocation_keeps_child_permit_invalid_after_restart (test_directives.DirectiveProofTests.test_parent_revocation_keeps_child_permit_invalid_after_restart) ... ok
+test_preissued_permit_stays_invalid_after_revocation_and_restart (test_directives.DirectiveProofTests.test_preissued_permit_stays_invalid_after_revocation_and_restart) ... ok
+test_revocation_requires_new_authority_and_survives_restart (test_directives.DirectiveProofTests.test_revocation_requires_new_authority_and_survives_restart) ... ok
+test_revoked_directive_invalidates_previously_issued_permit (test_directives.DirectiveProofTests.test_revoked_directive_invalidates_previously_issued_permit) ... ok
+test_sqlite_existing_permit_directive_table_migrates_parent_hash_column (test_directives.DirectiveProofTests.test_sqlite_existing_permit_directive_table_migrates_parent_hash_column) ... ok
+test_untrusted_issuer_is_denied_even_with_valid_approval (test_directives.DirectiveProofTests.test_untrusted_issuer_is_denied_even_with_valid_approval) ... ok
+test_ambiguous_overlapping_roots_are_rejected (test_effect_reconcile.PermitBoundEffectReconciliationTests.test_ambiguous_overlapping_roots_are_rejected) ... ok
+test_canonical_evidence_surface_may_change_without_trusting_child (test_effect_reconcile.PermitBoundEffectReconciliationTests.test_canonical_evidence_surface_may_change_without_trusting_child) ... ok
+test_effect_resource_cannot_be_bound_twice (test_effect_reconcile.PermitBoundEffectReconciliationTests.test_effect_resource_cannot_be_bound_twice) ... ok
+test_envelope_hash_is_order_independent_for_surface_declaration (test_effect_reconcile.PermitBoundEffectReconciliationTests.test_envelope_hash_is_order_independent_for_surface_declaration) ... ok
+test_execution_identity_mismatch_is_mismatch_without_effect (test_effect_reconcile.PermitBoundEffectReconciliationTests.test_execution_identity_mismatch_is_mismatch_without_effect) ... ok
+test_existing_one_use_permit_is_cryptographically_bound_to_effect_envelope (test_effect_reconcile.PermitBoundEffectReconciliationTests.test_existing_one_use_permit_is_cryptographically_bound_to_effect_envelope) ... ok
+test_expired_permit_is_mismatch (test_effect_reconcile.PermitBoundEffectReconciliationTests.test_expired_permit_is_mismatch) ... ok
+test_generator_observations_do_not_create_false_duplicate_uncertainty (test_effect_reconcile.PermitBoundEffectReconciliationTests.test_generator_observations_do_not_create_false_duplicate_uncertainty) ... ok
+test_incomplete_observer_fails_closed_as_uncertain (test_effect_reconcile.PermitBoundEffectReconciliationTests.test_incomplete_observer_fails_closed_as_uncertain) ... ok
+test_missing_surface_observation_is_uncertain (test_effect_reconcile.PermitBoundEffectReconciliationTests.test_missing_surface_observation_is_uncertain) ... ok
+test_nested_writable_is_allowed_only_when_parent_protected_surface_excludes_it (test_effect_reconcile.PermitBoundEffectReconciliationTests.test_nested_writable_is_allowed_only_when_parent_protected_surface_excludes_it) ... ok
+test_observed_path_outside_envelope_is_undeclared_mismatch (test_effect_reconcile.PermitBoundEffectReconciliationTests.test_observed_path_outside_envelope_is_undeclared_mismatch) ... ok
+test_protected_worktree_write_is_mismatch_even_when_runtime_write_is_allowed (test_effect_reconcile.PermitBoundEffectReconciliationTests.test_protected_worktree_write_is_mismatch_even_when_runtime_write_is_allowed) ... ok
+test_snapshot_rejects_oversized_file_before_hashing (test_effect_reconcile.PermitBoundEffectReconciliationTests.test_snapshot_rejects_oversized_file_before_hashing) ... ok
+test_symlink_snapshot_does_not_follow_target (test_effect_reconcile.PermitBoundEffectReconciliationTests.test_symlink_snapshot_does_not_follow_target) ... ok
+test_unattested_write_to_evidence_surface_is_mismatch (test_effect_reconcile.PermitBoundEffectReconciliationTests.test_unattested_write_to_evidence_surface_is_mismatch) ... ok
+test_writes_inside_declared_runtime_surface_are_verified (test_effect_reconcile.PermitBoundEffectReconciliationTests.test_writes_inside_declared_runtime_surface_are_verified) ... ok
+test_bound_resource_carries_exact_context_hash (test_execution_context_binding.ExecutionContextBindingTests.test_bound_resource_carries_exact_context_hash) ... ok
+test_context_retargeting_changes_intent_and_invalidates_existing_permit (test_execution_context_binding.ExecutionContextBindingTests.test_context_retargeting_changes_intent_and_invalidates_existing_permit) ... ok
+test_exact_observed_context_consumes_one_use_permit (test_execution_context_binding.ExecutionContextBindingTests.test_exact_observed_context_consumes_one_use_permit) ... ok
+test_missing_observation_fails_closed_without_spending_permit (test_execution_context_binding.ExecutionContextBindingTests.test_missing_observation_fails_closed_without_spending_permit) ... ok
+test_same_owner_and_connection_do_not_expand_workspace_authority (test_execution_context_binding.ExecutionContextBindingTests.test_same_owner_and_connection_do_not_expand_workspace_authority) ... ok
+test_surface_substitution_fails_closed (test_execution_context_binding.ExecutionContextBindingTests.test_surface_substitution_fails_closed) ... ok
+test_unbound_resource_is_not_accepted_by_context_gate (test_execution_context_binding.ExecutionContextBindingTests.test_unbound_resource_is_not_accepted_by_context_gate) ... ok
+test_wrong_authority_scope_denies_before_permit_consumption (test_execution_context_binding.ExecutionContextBindingTests.test_wrong_authority_scope_denies_before_permit_consumption) ... ok
+test_clean_canonical_report_is_deterministic_and_self_verifying (test_git_clarity.GitClarityTests.test_clean_canonical_report_is_deterministic_and_self_verifying) ... ok
+test_clean_proposal_reports_ahead_commit_and_paths (test_git_clarity.GitClarityTests.test_clean_proposal_reports_ahead_commit_and_paths) ... ok
+test_cli_can_require_clean_state (test_git_clarity.GitClarityTests.test_cli_can_require_clean_state) ... ok
+test_cli_output_must_remain_outside_observed_repository (test_git_clarity.GitClarityTests.test_cli_output_must_remain_outside_observed_repository) ... ok
+test_collection_disables_fsmonitor_and_external_diff_programs (test_git_clarity.GitClarityTests.test_collection_disables_fsmonitor_and_external_diff_programs) ... ok
+test_collection_does_not_run_repository_hooks (test_git_clarity.GitClarityTests.test_collection_does_not_run_repository_hooks) ... ok
+test_credential_bearing_remote_is_rejected_without_echoing_secret (test_git_clarity.GitClarityTests.test_credential_bearing_remote_is_rejected_without_echoing_secret) ... ok
+test_detached_head_is_explicit (test_git_clarity.GitClarityTests.test_detached_head_is_explicit) ... ok
+test_dirty_paths_are_visible_but_contents_are_not_claimed_bound (test_git_clarity.GitClarityTests.test_dirty_paths_are_visible_but_contents_are_not_claimed_bound) ... ok
+test_divergence_is_not_mislabeled_as_a_proposal (test_git_clarity.GitClarityTests.test_divergence_is_not_mislabeled_as_a_proposal) ... ok
+test_git_environment_cannot_substitute_same_origin_repository (test_git_clarity.GitClarityTests.test_git_environment_cannot_substitute_same_origin_repository) ... ok
+test_missing_canonical_ref_fails_closed (test_git_clarity.GitClarityTests.test_missing_canonical_ref_fails_closed) ... ok
+test_remote_identity_substitution_fails_closed (test_git_clarity.GitClarityTests.test_remote_identity_substitution_fails_closed) ... ok
+test_report_cannot_claim_tests_or_authority (test_git_clarity.GitClarityTests.test_report_cannot_claim_tests_or_authority) ... ok
+test_tampered_report_does_not_verify (test_git_clarity.GitClarityTests.test_tampered_report_does_not_verify) ... ok
+test_exact_provider_metadata_builds_stable_repository_context (test_github_execution_context.GitHubExecutionContextTests.test_exact_provider_metadata_builds_stable_repository_context) ... ok
+test_missing_authenticated_identity_fails_closed (test_github_execution_context.GitHubExecutionContextTests.test_missing_authenticated_identity_fails_closed) ... ok
+test_observed_github_context_gates_existing_one_use_permit (test_github_execution_context.GitHubExecutionContextTests.test_observed_github_context_gates_existing_one_use_permit) ... ok
+test_provider_failure_yields_no_context (test_github_execution_context.GitHubExecutionContextTests.test_provider_failure_yields_no_context) ... ok
+test_provider_returned_owner_substitution_fails_closed (test_github_execution_context.GitHubExecutionContextTests.test_provider_returned_owner_substitution_fails_closed) ... ok
+test_provider_returned_repository_substitution_fails_closed (test_github_execution_context.GitHubExecutionContextTests.test_provider_returned_repository_substitution_fails_closed) ... ok
+test_reader_exposes_only_get_metadata_requests_for_exact_bound_repo (test_github_execution_context.GitHubExecutionContextTests.test_reader_exposes_only_get_metadata_requests_for_exact_bound_repo) ... ok
+test_repository_numeric_identity_changes_context_even_when_name_matches (test_github_execution_context.GitHubExecutionContextTests.test_repository_numeric_identity_changes_context_even_when_name_matches) ... ok
+test_capability_stripped_projection_cannot_mutate_canonical_state (test_governed_effect_boundary.GovernedEffectBoundaryTests.test_capability_stripped_projection_cannot_mutate_canonical_state)
+Ephemeral proposal transport must leave the canonical chain unchanged. ... ok
+test_frozen_projection_does_not_gain_future_canonical_state (test_governed_effect_boundary.GovernedEffectBoundaryTests.test_frozen_projection_does_not_gain_future_canonical_state)
+Later canonical writes must not appear through a retained hidden reference. ... ok
+test_no_permit_does_not_mean_no_governed_effect (test_governed_effect_boundary.GovernedEffectBoundaryTests.test_no_permit_does_not_mean_no_governed_effect)
+A canonical target lock mutates state even though no permit exists. ... ok
+test_no_write_route_does_not_mean_no_write_capability (test_governed_effect_boundary.GovernedEffectBoundaryTests.test_no_write_route_does_not_mean_no_write_capability)
+A transport object must not retain a writer even if its methods are read-only. ... ok
+test_01_valid_directive_exact_permit_and_observation_reconcile_verified_success (test_issue_153_consequence_reconciliation_v0.Issue153ConsequenceReconciliationV0.test_01_valid_directive_exact_permit_and_observation_reconcile_verified_success) ... ok
+test_02_executor_success_plus_substituted_observation_is_mismatch_and_nonreusable_memory (test_issue_153_consequence_reconciliation_v0.Issue153ConsequenceReconciliationV0.test_02_executor_success_plus_substituted_observation_is_mismatch_and_nonreusable_memory) ... ok
+test_03_executor_success_plus_incomplete_evidence_is_unknown_and_nonreusable_memory (test_issue_153_consequence_reconciliation_v0.Issue153ConsequenceReconciliationV0.test_03_executor_success_plus_incomplete_evidence_is_unknown_and_nonreusable_memory) ... ok
+test_04_mismatch_and_unknown_state_and_memory_survive_restart_without_retry_authority (test_issue_153_consequence_reconciliation_v0.Issue153ConsequenceReconciliationV0.test_04_mismatch_and_unknown_state_and_memory_survive_restart_without_retry_authority) ... ok
+test_05_replay_substitution_expiry_revocation_and_widening_do_not_create_fresh_authority (test_issue_153_consequence_reconciliation_v0.Issue153ConsequenceReconciliationV0.test_05_replay_substitution_expiry_revocation_and_widening_do_not_create_fresh_authority) ... ok
+test_06_chat_retrieval_and_prior_success_are_not_authority_inputs (test_issue_153_consequence_reconciliation_v0.Issue153ConsequenceReconciliationV0.test_06_chat_retrieval_and_prior_success_are_not_authority_inputs) ... ok
+test_07_outcome_memory_rejects_result_substitution_and_conflicting_replacement (test_issue_153_consequence_reconciliation_v0.Issue153ConsequenceReconciliationV0.test_07_outcome_memory_rejects_result_substitution_and_conflicting_replacement) ... ok
+test_08_independently_observed_provider_failure_is_failure_class_memory_not_success (test_issue_153_consequence_reconciliation_v0.Issue153ConsequenceReconciliationV0.test_08_independently_observed_provider_failure_is_failure_class_memory_not_success) ... ok
+test_09_successful_outcome_memory_cannot_authorize_an_otherwise_denied_intent (test_issue_153_consequence_reconciliation_v0.Issue153ConsequenceReconciliationV0.test_09_successful_outcome_memory_cannot_authorize_an_otherwise_denied_intent) ... ok
+test_10_outcome_memory_denied_until_exact_reconciliation_evidence_is_canonical (test_issue_153_outcome_memory_hostile_v0.Issue153OutcomeMemoryHostileV0.test_10_outcome_memory_denied_until_exact_reconciliation_evidence_is_canonical) ... ok
+test_11_concurrent_identical_recording_creates_exactly_one_canonical_memory_event (test_issue_153_outcome_memory_hostile_v0.Issue153OutcomeMemoryHostileV0.test_11_concurrent_identical_recording_creates_exactly_one_canonical_memory_event) ... ok
+test_agent_budget_is_stricter_than_global_budget (test_kernel.GovernanceKernelTests.test_agent_budget_is_stricter_than_global_budget) ... ok
+test_agent_grants_fail_closed_for_unknown_principal (test_kernel.GovernanceKernelTests.test_agent_grants_fail_closed_for_unknown_principal) ... ok
+test_agent_role_cannot_expand_its_action_or_resource (test_kernel.GovernanceKernelTests.test_agent_role_cannot_expand_its_action_or_resource) ... ok
+test_allowed_intent_gets_bound_one_use_permit (test_kernel.GovernanceKernelTests.test_allowed_intent_gets_bound_one_use_permit) ... ok
+test_approval_is_explicit (test_kernel.GovernanceKernelTests.test_approval_is_explicit) ... ok
+test_audit_chain_detects_tampering (test_kernel.GovernanceKernelTests.test_audit_chain_detects_tampering) ... ok
+test_default_profiles_do_not_create_an_approver_agent (test_kernel.GovernanceKernelTests.test_default_profiles_do_not_create_an_approver_agent) ... ok
+test_fail_closed_policy_boundaries (test_kernel.GovernanceKernelTests.test_fail_closed_policy_boundaries) ... ok
+test_github_access_is_read_only_and_role_scoped (test_kernel.GovernanceKernelTests.test_github_access_is_read_only_and_role_scoped) ... ok
+test_invalid_permit_ttl_is_rejected (test_kernel.GovernanceKernelTests.test_invalid_permit_ttl_is_rejected) ... ok
+test_malformed_or_duplicate_agent_grants_are_rejected (test_kernel.GovernanceKernelTests.test_malformed_or_duplicate_agent_grants_are_rejected) ... ok
+test_permit_cannot_be_used_for_different_intent (test_kernel.GovernanceKernelTests.test_permit_cannot_be_used_for_different_intent) ... ok
+test_plugin_profiles_are_declarations_not_connection_claims (test_kernel.GovernanceKernelTests.test_plugin_profiles_are_declarations_not_connection_claims) ... ok
+test_policy_hash_changes_when_permit_ttl_changes (test_kernel.GovernanceKernelTests.test_policy_hash_changes_when_permit_ttl_changes) ... ok
+test_unspent_permit_expires_after_policy_ttl (test_kernel.GovernanceKernelTests.test_unspent_permit_expires_after_policy_ttl) ... ok
+test_codex_exec_argv_freezes_ephemeral_readonly_update_and_hook_controls (test_local_intelligence_effect_proof.LocalIntelligenceEffectProofScriptTests.test_codex_exec_argv_freezes_ephemeral_readonly_update_and_hook_controls) ... ok
+test_envelope_plan_roundtrip_preserves_exact_hash (test_local_intelligence_effect_proof.LocalIntelligenceEffectProofScriptTests.test_envelope_plan_roundtrip_preserves_exact_hash) ... ok
+test_environment_can_replace_real_home_with_disposable_runtime_home (test_local_intelligence_effect_proof.LocalIntelligenceEffectProofScriptTests.test_environment_can_replace_real_home_with_disposable_runtime_home) ... ok
+test_environment_drops_secret_like_variables_and_pins_codex_home (test_local_intelligence_effect_proof.LocalIntelligenceEffectProofScriptTests.test_environment_drops_secret_like_variables_and_pins_codex_home) ... ok
+test_network_egress_requires_explicit_profile_opt_in (test_local_intelligence_effect_proof.LocalIntelligenceEffectProofScriptTests.test_network_egress_requires_explicit_profile_opt_in) ... ok
+test_overall_pass_requires_execution_reconciliation_replay_and_audit (test_local_intelligence_effect_proof.LocalIntelligenceEffectProofScriptTests.test_overall_pass_requires_execution_reconciliation_replay_and_audit) ... ok
+test_plan_hash_fails_if_any_frozen_field_changes (test_local_intelligence_effect_proof.LocalIntelligenceEffectProofScriptTests.test_plan_hash_fails_if_any_frozen_field_changes) ... ok
+test_profile_binding_changes_for_any_containment_identity_change (test_local_intelligence_effect_proof.LocalIntelligenceEffectProofScriptTests.test_profile_binding_changes_for_any_containment_identity_change) ... ok
+test_seatbelt_denies_global_writes_and_allows_only_runtime (test_local_intelligence_effect_proof.LocalIntelligenceEffectProofScriptTests.test_seatbelt_denies_global_writes_and_allows_only_runtime) ... ok
+test_disposable_codex_home_is_inside_runtime (test_local_intelligence_effect_proof_v2.LocalIntelligenceEffectProofV2Tests.test_disposable_codex_home_is_inside_runtime) ... ok
+test_environment_pins_child_to_disposable_home_and_drops_secrets (test_local_intelligence_effect_proof_v2.LocalIntelligenceEffectProofV2Tests.test_environment_pins_child_to_disposable_home_and_drops_secrets) ... ok
+test_file_auth_projection_requires_explicit_opt_in (test_local_intelligence_effect_proof_v2.LocalIntelligenceEffectProofV2Tests.test_file_auth_projection_requires_explicit_opt_in) ... ok
+test_fire_rejects_auth_source_change_after_prepare (test_local_intelligence_effect_proof_v2.LocalIntelligenceEffectProofV2Tests.test_fire_rejects_auth_source_change_after_prepare) ... ok
+test_fire_stages_private_auth_copy_inside_runtime (test_local_intelligence_effect_proof_v2.LocalIntelligenceEffectProofV2Tests.test_fire_stages_private_auth_copy_inside_runtime) ... ok
+test_injection_hardened_profile_denies_operator_home_and_network_by_default (test_local_intelligence_effect_proof_v2.LocalIntelligenceEffectProofV2Tests.test_injection_hardened_profile_denies_operator_home_and_network_by_default) ... ok
+test_prepare_binds_auth_hash_without_copying_secret_material (test_local_intelligence_effect_proof_v2.LocalIntelligenceEffectProofV2Tests.test_prepare_binds_auth_hash_without_copying_secret_material) ... ok
+test_profile_binding_changes_when_real_home_projection_or_auth_hash_changes (test_local_intelligence_effect_proof_v2.LocalIntelligenceEffectProofV2Tests.test_profile_binding_changes_when_real_home_projection_or_auth_hash_changes) ... ok
+test_profile_binding_changes_when_runtime_home_changes (test_local_intelligence_effect_proof_v2.LocalIntelligenceEffectProofV2Tests.test_profile_binding_changes_when_runtime_home_changes) ... ok
+test_export_rejects_parent_swapped_before_open (test_mcp_boundary.MCPBoundaryTests.test_export_rejects_parent_swapped_before_open) ... ok
+test_export_rejects_relative_or_linked_destination (test_mcp_boundary.MCPBoundaryTests.test_export_rejects_relative_or_linked_destination) ... ok
+test_export_rejects_symlinked_parent (test_mcp_boundary.MCPBoundaryTests.test_export_rejects_symlinked_parent) ... ok
+test_export_reports_clean_failure_before_atomic_replace (test_mcp_boundary.MCPBoundaryTests.test_export_reports_clean_failure_before_atomic_replace) ... ok
+test_export_reports_commit_unknown_if_directory_sync_fails (test_mcp_boundary.MCPBoundaryTests.test_export_reports_commit_unknown_if_directory_sync_fails) ... ok
+test_export_reports_commit_unknown_if_parent_swapped_after_open (test_mcp_boundary.MCPBoundaryTests.test_export_reports_commit_unknown_if_parent_swapped_after_open) ... ok
+test_exported_file_remains_frozen_after_canonical_mutation (test_mcp_boundary.MCPBoundaryTests.test_exported_file_remains_frozen_after_canonical_mutation) ... ok
+test_frozen_evidence_cannot_follow_later_canonical_mutation (test_mcp_boundary.MCPBoundaryTests.test_frozen_evidence_cannot_follow_later_canonical_mutation) ... ok
+test_invalid_payload_fails_closed_without_state_change (test_mcp_boundary.MCPBoundaryTests.test_invalid_payload_fails_closed_without_state_change) ... ok
+test_mcp_proposal_is_ephemeral_and_cannot_mutate_canonical_state (test_mcp_boundary.MCPBoundaryTests.test_mcp_proposal_is_ephemeral_and_cannot_mutate_canonical_state) ... ok
+test_projection_rejects_write_capable_dependency_or_authority_injection (test_mcp_boundary.MCPBoundaryTests.test_projection_rejects_write_capable_dependency_or_authority_injection) ... ok
+test_repeated_or_changed_mcp_proposals_remain_non_mutating (test_mcp_boundary.MCPBoundaryTests.test_repeated_or_changed_mcp_proposals_remain_non_mutating) ... ok
+test_sdk_factory_registers_only_capability_stripped_frozen_tools (test_mcp_boundary.MCPBoundaryTests.test_sdk_factory_registers_only_capability_stripped_frozen_tools) ... ok
+test_snapshot_contains_only_frozen_primitive_read_metadata (test_mcp_boundary.MCPBoundaryTests.test_snapshot_contains_only_frozen_primitive_read_metadata) ... ok
+test_trusted_export_is_exact_private_and_non_mutating (test_mcp_boundary.MCPBoundaryTests.test_trusted_export_is_exact_private_and_non_mutating) ... ok
+test_loads_exact_private_frozen_snapshot (test_mcp_plugin.MCPPluginTests.test_loads_exact_private_frozen_snapshot) ... ok
+test_main_runs_existing_mcp_server_over_stdio_only (test_mcp_plugin.MCPPluginTests.test_main_runs_existing_mcp_server_over_stdio_only) ... ok
+test_portable_plugin_manifest_and_stdio_config (test_mcp_plugin.MCPPluginTests.test_portable_plugin_manifest_and_stdio_config) ... ok
+test_rejects_extra_missing_invalid_or_duplicate_snapshot_fields (test_mcp_plugin.MCPPluginTests.test_rejects_extra_missing_invalid_or_duplicate_snapshot_fields) ... ok
+test_rejects_relative_path_and_symlinked_parent_or_file (test_mcp_plugin.MCPPluginTests.test_rejects_relative_path_and_symlinked_parent_or_file) ... ok
+test_rejects_snapshot_readable_by_group_or_world (test_mcp_plugin.MCPPluginTests.test_rejects_snapshot_readable_by_group_or_world) ... ok
+test_binding_fails_closed_without_runtime_key (test_mcp_tunnel.MCPTunnelBindingTests.test_binding_fails_closed_without_runtime_key) ... ok
+test_binding_rejects_snapshot_before_transport_launch (test_mcp_tunnel.MCPTunnelBindingTests.test_binding_rejects_snapshot_before_transport_launch) ... ok
+test_binding_uses_exact_tunnel_and_sanitized_environment (test_mcp_tunnel.MCPTunnelBindingTests.test_binding_uses_exact_tunnel_and_sanitized_environment) ... ok
+test_stdio_command_targets_only_existing_projection (test_mcp_tunnel.MCPTunnelBindingTests.test_stdio_command_targets_only_existing_projection) ... ok
+test_tunnel_id_matches_control_plane_contract_exactly (test_mcp_tunnel.MCPTunnelBindingTests.test_tunnel_id_matches_control_plane_contract_exactly) ... ok
+test_discovery_rejects_substitution_premium_type_unavailable_and_bad_money (test_namecom.NameComCoreAdapterTests.test_discovery_rejects_substitution_premium_type_unavailable_and_bad_money) ... ok
+test_discovery_uses_exact_registration_endpoint_and_decimal_cents (test_namecom.NameComCoreAdapterTests.test_discovery_uses_exact_registration_endpoint_and_decimal_cents) ... ok
+test_origin_credential_and_cap_are_exactly_pinned (test_namecom.NameComCoreAdapterTests.test_origin_credential_and_cap_are_exactly_pinned) ... ok
+test_production_fails_before_provider_when_hard_cap_is_unavailable (test_namecom.NameComCoreAdapterTests.test_production_fails_before_provider_when_hard_cap_is_unavailable) ... ok
+test_sandbox_purchase_uses_idempotency_without_purchase_price (test_namecom.NameComCoreAdapterTests.test_sandbox_purchase_uses_idempotency_without_purchase_price) ... ok
+test_sandbox_response_still_fails_closed_on_cap_privacy_and_delivery (test_namecom.NameComCoreAdapterTests.test_sandbox_response_still_fails_closed_on_cap_privacy_and_delivery) ... ok
+test_create_domain_uses_exact_core_endpoint_basic_auth_and_idempotency_key (test_namecom_core.NameComCoreTests.test_create_domain_uses_exact_core_endpoint_basic_auth_and_idempotency_key) ... ok
+test_http_error_is_not_retried_inside_adapter (test_namecom_core.NameComCoreTests.test_http_error_is_not_retried_inside_adapter) ... ok
+test_oversized_provider_response_fails_closed (test_namecom_core.NameComCoreTests.test_oversized_provider_response_fails_closed) ... ok
+test_preflight_rejects_price_drift_or_unavailable_domain_before_write (test_namecom_core.NameComCoreTests.test_preflight_rejects_price_drift_or_unavailable_domain_before_write) ... ok
+test_preflight_uses_registration_filter_and_hashes_exact_live_prices (test_namecom_core.NameComCoreTests.test_preflight_uses_registration_filter_and_hashes_exact_live_prices) ... ok
+test_provider_overcharge_is_detected_and_never_normalized_into_success (test_namecom_core.NameComCoreTests.test_provider_overcharge_is_detected_and_never_normalized_into_success) ... ok
+test_readback_endpoints_are_separate_provider_observation_calls (test_namecom_core.NameComCoreTests.test_readback_endpoints_are_separate_provider_observation_calls) ... ok
+test_sandbox_requires_test_username_and_production_requires_explicit_enable (test_namecom_core.NameComCoreTests.test_sandbox_requires_test_username_and_production_requires_explicit_enable) ... ok
+test_ambiguous_multiple_registration_orders_never_guess_attribution (test_namecom_observer.NameComObserverTests.test_ambiguous_multiple_registration_orders_never_guess_attribution) ... ok
+test_exact_order_and_get_domain_readback_can_drive_verified_reconciliation (test_namecom_observer.NameComObserverTests.test_exact_order_and_get_domain_readback_can_drive_verified_reconciliation) ... ok
+test_failed_registration_order_with_no_domain_readback_is_known_failure (test_namecom_observer.NameComObserverTests.test_failed_registration_order_with_no_domain_readback_is_known_failure) ... ok
+test_non_registration_order_for_same_domain_is_ignored (test_namecom_observer.NameComObserverTests.test_non_registration_order_for_same_domain_is_ignored) ... ok
+test_success_order_without_domain_readback_stays_unknown (test_namecom_observer.NameComObserverTests.test_success_order_without_domain_readback_stays_unknown) ... ok
+test_domain_only_discovery_builds_exact_bounded_order_without_provider_write (test_namecom_proposal.NameComProposalTests.test_domain_only_discovery_builds_exact_bounded_order_without_provider_write) ... ok
+test_premium_unavailable_and_over_budget_inventory_fail_before_order_exists (test_namecom_proposal.NameComProposalTests.test_premium_unavailable_and_over_budget_inventory_fail_before_order_exists) ... ok
+test_worker_domain_input_must_be_normalized_and_v0_builder_cannot_use_production_client (test_namecom_proposal.NameComProposalTests.test_worker_domain_input_must_be_normalized_and_v0_builder_cannot_use_production_client) ... ok
+test_empty_allowlist_rejects_every_listener (test_network_exposure.NetworkExposureTests.test_empty_allowlist_rejects_every_listener) ... ok
+test_evidence_is_machine_readable_and_classifies_exposure (test_network_exposure.NetworkExposureTests.test_evidence_is_machine_readable_and_classifies_exposure) ... ok
+test_exact_loopback_allowlist_allows_only_exact_listener (test_network_exposure.NetworkExposureTests.test_exact_loopback_allowlist_allows_only_exact_listener) ... ok
+test_invalid_allowlist_fails_closed (test_network_exposure.NetworkExposureTests.test_invalid_allowlist_fails_closed) ... ok
+test_parse_allowlist_supports_ipv4_and_ipv6 (test_network_exposure.NetworkExposureTests.test_parse_allowlist_supports_ipv4_and_ipv6) ... ok
+test_parse_linux_ss (test_network_exposure.NetworkExposureTests.test_parse_linux_ss) ... ok
+test_parse_windows_json (test_network_exposure.NetworkExposureTests.test_parse_windows_json) ... ok
+test_wildcard_binding_is_external (test_network_exposure.NetworkExposureTests.test_wildcard_binding_is_external) ... ok
+test_command_budget_runs_only_pre_authorized_fallback (test_offline_autonomy.OfflineAutonomyTests.test_command_budget_runs_only_pre_authorized_fallback) ... ok
+test_disconnection_preserves_but_does_not_extend_authority (test_offline_autonomy.OfflineAutonomyTests.test_disconnection_preserves_but_does_not_extend_authority) ... ok
+test_duplicate_command_is_not_resent (test_offline_autonomy.OfflineAutonomyTests.test_duplicate_command_is_not_resent) ... ok
+test_expired_lease_runs_fallback_not_new_command (test_offline_autonomy.OfflineAutonomyTests.test_expired_lease_runs_fallback_not_new_command) ... ok
+test_journal_tampering_fails_closed (test_offline_autonomy.OfflineAutonomyTests.test_journal_tampering_fails_closed) ... ok
+test_reconciliation_blocks_execution_until_complete (test_offline_autonomy.OfflineAutonomyTests.test_reconciliation_blocks_execution_until_complete) ... ok
+test_unknown_does_not_retry (test_offline_autonomy.OfflineAutonomyTests.test_unknown_does_not_retry) ... ok
+test_directive_path_uses_kernel_canonical_state_only (test_orchestrator.OrchestratorProofTests.test_directive_path_uses_kernel_canonical_state_only) ... ok
+test_exact_purchase_executes_once_and_substitution_fails_before_provider (test_orchestrator.OrchestratorProofTests.test_exact_purchase_executes_once_and_substitution_fails_before_provider) ... ok
+test_exact_target_authority_request_is_hash_bound_and_one_use (test_orchestrator.OrchestratorProofTests.test_exact_target_authority_request_is_hash_bound_and_one_use) ... ok
+test_orchestrator_rejects_parallel_governance_and_executor_injection (test_orchestrator.OrchestratorProofTests.test_orchestrator_rejects_parallel_governance_and_executor_injection) ... ok
+test_pending_or_denied_authority_never_reaches_permit_issuance (test_orchestrator.OrchestratorProofTests.test_pending_or_denied_authority_never_reaches_permit_issuance) ... ok
+test_target_mismatch_stops_before_authority_poll (test_orchestrator.OrchestratorProofTests.test_target_mismatch_stops_before_authority_poll) ... ok
+test_demo_exercises_must_fix_boundaries (test_orchestrator_demo.OrchestratorDemoTests.test_demo_exercises_must_fix_boundaries) ... ok
+test_approval_and_permit_replay_remain_denied_after_restart (test_persistence.RestartSafeStateTests.test_approval_and_permit_replay_remain_denied_after_restart) ... ok
+test_concurrent_identical_approval_allows_exactly_once (test_persistence.RestartSafeStateTests.test_concurrent_identical_approval_allows_exactly_once) ... ok
+test_failed_audit_write_rolls_back_approval_and_permit (test_persistence.RestartSafeStateTests.test_failed_audit_write_rolls_back_approval_and_permit) ... ok
+test_failed_consumption_audit_rolls_back_spent_permit (test_persistence.RestartSafeStateTests.test_failed_consumption_audit_rolls_back_spent_permit) ... ok
+test_legacy_persisted_permit_without_expiry_fails_closed (test_persistence.RestartSafeStateTests.test_legacy_persisted_permit_without_expiry_fails_closed) ... ok
+test_malformed_persisted_audit_raises_integrity_error_at_restart (test_persistence.RestartSafeStateTests.test_malformed_persisted_audit_raises_integrity_error_at_restart) ... ok
+test_overlapping_connections_serialize_audit_tip_selection (test_persistence.RestartSafeStateTests.test_overlapping_connections_serialize_audit_tip_selection) ... ok
+test_replay_reason_uses_one_snapshot_with_id_precedence (test_persistence.RestartSafeStateTests.test_replay_reason_uses_one_snapshot_with_id_precedence) ... ok
+test_tampered_persisted_audit_fails_closed_at_restart (test_persistence.RestartSafeStateTests.test_tampered_persisted_audit_fails_closed_at_restart) ... ok
+test_unspent_permit_expires_across_restart (test_persistence.RestartSafeStateTests.test_unspent_permit_expires_across_restart) ... ok
+test_verified_approval_and_permit_are_committed_with_one_transaction (test_persistence.RestartSafeStateTests.test_verified_approval_and_permit_are_committed_with_one_transaction) ... ok
+test_already_closed_pr_needs_no_mutation (test_pr_admission_enforcement.PullRequestAdmissionEnforcementTests.test_already_closed_pr_needs_no_mutation) ... ok
+test_already_draft_pr_needs_no_mutation (test_pr_admission_enforcement.PullRequestAdmissionEnforcementTests.test_already_draft_pr_needs_no_mutation) ... ok
+test_close_binds_exact_repository_number_and_state (test_pr_admission_enforcement.PullRequestAdmissionEnforcementTests.test_close_binds_exact_repository_number_and_state) ... ok
+test_hold_label_requires_quarantine (test_pr_admission_enforcement.PullRequestAdmissionEnforcementTests.test_hold_label_requires_quarantine) ... ok
+test_legacy_held_non_draft_pr_requires_quarantine (test_pr_admission_enforcement.PullRequestAdmissionEnforcementTests.test_legacy_held_non_draft_pr_requires_quarantine) ... ok
+test_machine_held_non_draft_pr_requires_quarantine (test_pr_admission_enforcement.PullRequestAdmissionEnforcementTests.test_machine_held_non_draft_pr_requires_quarantine) ... ok
+test_missing_number_fails_closed_when_mutation_is_needed (test_pr_admission_enforcement.PullRequestAdmissionEnforcementTests.test_missing_number_fails_closed_when_mutation_is_needed) ... ok
+test_missing_repository_fails_closed_when_mutation_is_needed (test_pr_admission_enforcement.PullRequestAdmissionEnforcementTests.test_missing_repository_fails_closed_when_mutation_is_needed) ... ok
+test_non_pr_event_is_noop (test_pr_admission_enforcement.PullRequestAdmissionEnforcementTests.test_non_pr_event_is_noop) ... ok
+test_open_pr_is_not_mutated (test_pr_admission_enforcement.PullRequestAdmissionEnforcementTests.test_open_pr_is_not_mutated) ... ok
+test_rest_error_fails_closed (test_pr_admission_enforcement.PullRequestAdmissionEnforcementTests.test_rest_error_fails_closed) ... ok
+test_unverified_closed_state_fails_closed (test_pr_admission_enforcement.PullRequestAdmissionEnforcementTests.test_unverified_closed_state_fails_closed) ... ok
+test_github_draft_fails_closed (test_pr_admission_hold.PullRequestAdmissionHoldTests.test_github_draft_fails_closed) ... ok
+test_hold_title_and_label_fail_closed (test_pr_admission_hold.PullRequestAdmissionHoldTests.test_hold_title_and_label_fail_closed) ... ok
+test_legacy_draft_hold_fails_closed (test_pr_admission_hold.PullRequestAdmissionHoldTests.test_legacy_draft_hold_fails_closed) ... ok
+test_legacy_process_hold_fails_closed (test_pr_admission_hold.PullRequestAdmissionHoldTests.test_legacy_process_hold_fails_closed) ... ok
+test_machine_hold_marker_fails_closed (test_pr_admission_hold.PullRequestAdmissionHoldTests.test_machine_hold_marker_fails_closed) ... ok
+test_narrative_historical_mention_does_not_create_hold (test_pr_admission_hold.PullRequestAdmissionHoldTests.test_narrative_historical_mention_does_not_create_hold) ... ok
+test_non_pr_event_is_noop (test_pr_admission_hold.PullRequestAdmissionHoldTests.test_non_pr_event_is_noop) ... ok
+test_normal_ready_pr_is_open (test_pr_admission_hold.PullRequestAdmissionHoldTests.test_normal_ready_pr_is_open) ... ok
+test_exact_live_directive_remains_positive_control_and_permit_is_one_use (test_projection_non_elevation.ProjectionNonElevationTests.test_exact_live_directive_remains_positive_control_and_permit_is_one_use) ... ok
+test_high_relevance_lossy_summary_cannot_raise_scope_or_budget (test_projection_non_elevation.ProjectionNonElevationTests.test_high_relevance_lossy_summary_cannot_raise_scope_or_budget) ... ok
+test_projection_claim_cannot_activate_an_unactivated_directive (test_projection_non_elevation.ProjectionNonElevationTests.test_projection_claim_cannot_activate_an_unactivated_directive) ... ok
+test_stale_pre_revocation_projection_cannot_restore_authority_after_restart (test_projection_non_elevation.ProjectionNonElevationTests.test_stale_pre_revocation_projection_cannot_restore_authority_after_restart) ... ok
+test_expired_ratification_is_insufficient_evidence (test_ratification.NonSovereignRatificationTests.test_expired_ratification_is_insufficient_evidence) ... ok
+test_governance_identity_cannot_self_ratify_even_with_valid_signature (test_ratification.NonSovereignRatificationTests.test_governance_identity_cannot_self_ratify_even_with_valid_signature) ... ok
+test_independent_trusted_ratifier_can_ratify_exact_verified_reconciliation (test_ratification.NonSovereignRatificationTests.test_independent_trusted_ratifier_can_ratify_exact_verified_reconciliation) ... ok
+test_invalid_ratifier_signature_cannot_create_finality (test_ratification.NonSovereignRatificationTests.test_invalid_ratifier_signature_cannot_create_finality) ... ok
+test_non_verified_reconciliation_cannot_be_repaired_by_ratification (test_ratification.NonSovereignRatificationTests.test_non_verified_reconciliation_cannot_be_repaired_by_ratification) ... ok
+test_ratifier_cannot_substitute_constitutional_proof (test_ratification.NonSovereignRatificationTests.test_ratifier_cannot_substitute_constitutional_proof) ... ok
+test_ratifier_cannot_substitute_effect_envelope (test_ratification.NonSovereignRatificationTests.test_ratifier_cannot_substitute_effect_envelope) ... ok
+test_ratifier_cannot_substitute_reconciliation (test_ratification.NonSovereignRatificationTests.test_ratifier_cannot_substitute_reconciliation) ... ok
+test_ratifier_rejection_is_terminal_for_this_attestation (test_ratification.NonSovereignRatificationTests.test_ratifier_rejection_is_terminal_for_this_attestation) ... ok
+test_trust_configuration_rejects_same_key_as_governor_and_ratifier (test_ratification.NonSovereignRatificationTests.test_trust_configuration_rejects_same_key_as_governor_and_ratifier) ... ok
+test_uncertain_reconciliation_cannot_be_repaired_by_ratification (test_ratification.NonSovereignRatificationTests.test_uncertain_reconciliation_cannot_be_repaired_by_ratification) ... ok
+test_untrusted_ratifier_cannot_create_finality (test_ratification.NonSovereignRatificationTests.test_untrusted_ratifier_cannot_create_finality) ... ok
+test_verified_reconciliation_is_not_final_without_independent_ratification (test_ratification.NonSovereignRatificationTests.test_verified_reconciliation_is_not_final_without_independent_ratification) ... ok
+test_verifier_unavailability_never_becomes_success (test_ratification.NonSovereignRatificationTests.test_verifier_unavailability_never_becomes_success) ... ok
+test_accepts_small_bounded_json (test_resource_limits.ResourceLimitTests.test_accepts_small_bounded_json) ... ok
+test_rejects_byte_depth_item_and_string_exhaustion (test_resource_limits.ResourceLimitTests.test_rejects_byte_depth_item_and_string_exhaustion) ... ok
+test_admission_requires_geofence_sensor_resources_and_fresh_sequence (test_shared_safety.SharedSafetyTests.test_admission_requires_geofence_sensor_resources_and_fresh_sequence) ... ok
+test_emergency_stop_requires_local_attested_reconciliation_reset (test_shared_safety.SharedSafetyTests.test_emergency_stop_requires_local_attested_reconciliation_reset) ... ok
+test_non_finite_resource_values_fail_closed (test_shared_safety.SharedSafetyTests.test_non_finite_resource_values_fail_closed) ... ok
+test_command_sequence_requires_order_phase_window_and_freshness (test_spacecraft_operations.SpacecraftOperationsTests.test_command_sequence_requires_order_phase_window_and_freshness) ... ok
+test_mission_clock_rejects_uncertainty_and_rollback (test_spacecraft_operations.SpacecraftOperationsTests.test_mission_clock_rejects_uncertainty_and_rollback) ... ok
+test_non_finite_spacecraft_measurements_fail_closed (test_spacecraft_operations.SpacecraftOperationsTests.test_non_finite_spacecraft_measurements_fail_closed) ... ok
+test_safety_gate_vetoes_faults_resources_and_sensor_disagreement (test_spacecraft_operations.SpacecraftOperationsTests.test_safety_gate_vetoes_faults_resources_and_sensor_disagreement) ... ok
+test_approval_for_different_intent_cannot_authorize_locked_target (test_target_authority.TargetAuthorityTests.test_approval_for_different_intent_cannot_authorize_locked_target) ... ok
+test_exact_locked_target_can_use_existing_approval_path (test_target_authority.TargetAuthorityTests.test_exact_locked_target_can_use_existing_approval_path) ... ok
+test_target_hash_mismatch_stops_before_approval_is_consumed (test_target_authority.TargetAuthorityTests.test_target_hash_mismatch_stops_before_approval_is_consumed) ... ok
+test_verified_approval_replay_remains_denied_with_canonical_reason (test_target_authority.TargetAuthorityTests.test_verified_approval_replay_remains_denied_with_canonical_reason) ... ok
+test_artifact_mutation_during_observation_fails_closed (test_target_reconcile.TargetReconciliationTests.test_artifact_mutation_during_observation_fails_closed) ... ok
+test_completion_of_one_version_does_not_complete_another (test_target_reconcile.TargetReconciliationTests.test_completion_of_one_version_does_not_complete_another) ... ok
+test_completion_requires_exact_target_hash (test_target_reconcile.TargetReconciliationTests.test_completion_requires_exact_target_hash) ... ok
+test_locked_target_remains_unresolved_without_completion_evidence (test_target_reconcile.TargetReconciliationTests.test_locked_target_remains_unresolved_without_completion_evidence) ... ok
+test_memory_or_chat_claim_does_not_complete_target (test_target_reconcile.TargetReconciliationTests.test_memory_or_chat_claim_does_not_complete_target) ... ok
+test_missing_or_empty_artifact_cannot_complete_target (test_target_reconcile.TargetReconciliationTests.test_missing_or_empty_artifact_cannot_complete_target) ... ok
+test_nonempty_artifact_records_exact_completion_without_authority_effect (test_target_reconcile.TargetReconciliationTests.test_nonempty_artifact_records_exact_completion_without_authority_effect) ... ok
+test_same_artifact_completion_is_idempotent_but_replacement_is_denied (test_target_reconcile.TargetReconciliationTests.test_same_artifact_completion_is_idempotent_but_replacement_is_denied) ... ok
+test_unresolved_and_completed_state_survive_sqlite_restart (test_target_reconcile.TargetReconciliationTests.test_unresolved_and_completed_state_survive_sqlite_restart) ... ok
+test_exact_target_resolves_but_hash_mismatch_fails_closed (test_targets.TargetLockTests.test_exact_target_resolves_but_hash_mismatch_fails_closed) ... ok
+test_fire_path_cannot_bypass_policy (test_targets.TargetLockTests.test_fire_path_cannot_bypass_policy) ... ok
+test_fire_path_delegates_to_kernel_policy_and_one_use_permit (test_targets.TargetLockTests.test_fire_path_delegates_to_kernel_policy_and_one_use_permit) ... ok
+test_lock_records_exact_target_without_granting_authority (test_targets.TargetLockTests.test_lock_records_exact_target_without_granting_authority) ... ok
+test_locked_target_survives_sqlite_restart (test_targets.TargetLockTests.test_locked_target_survives_sqlite_restart) ... ok
+test_mismatched_target_never_reaches_authority_evaluation (test_targets.TargetLockTests.test_mismatched_target_never_reaches_authority_evaluation) ... ok
+test_same_target_retry_is_idempotent_when_clock_advances (test_targets.TargetLockTests.test_same_target_retry_is_idempotent_when_clock_advances) ... ok
+test_sqlite_external_audit_tamper_forces_full_revalidation_and_fails_closed (test_targets.TargetLockTests.test_sqlite_external_audit_tamper_forces_full_revalidation_and_fails_closed) ... ok
+test_sqlite_restart_revalidates_tampered_persisted_audit (test_targets.TargetLockTests.test_sqlite_restart_revalidates_tampered_persisted_audit) ... ok
+test_sqlite_target_lookup_reuses_verified_audit_until_external_change (test_targets.TargetLockTests.test_sqlite_target_lookup_reuses_verified_audit_until_external_change) ... ok
+test_target_version_is_immutable (test_targets.TargetLockTests.test_target_version_is_immutable) ... ok
+test_activation_permit_cannot_be_retargeted (test_telegram_capability_activation_prep.TelegramCapabilityActivationPrepTests.test_activation_permit_cannot_be_retargeted) ... ok
+test_activation_permit_cannot_be_retargeted_to_another_bot (test_telegram_capability_activation_prep.TelegramCapabilityActivationPrepTests.test_activation_permit_cannot_be_retargeted_to_another_bot) ... ok
+test_available_capability_without_activation_approval_creates_zero_provider_calls (test_telegram_capability_activation_prep.TelegramCapabilityActivationPrepTests.test_available_capability_without_activation_approval_creates_zero_provider_calls) ... ok
+test_exact_activation_and_message_permits_allow_one_provider_call (test_telegram_capability_activation_prep.TelegramCapabilityActivationPrepTests.test_exact_activation_and_message_permits_allow_one_provider_call) ... ok
+test_exact_activation_does_not_authorize_message_send (test_telegram_capability_activation_prep.TelegramCapabilityActivationPrepTests.test_exact_activation_does_not_authorize_message_send) ... ok
+test_message_authorization_without_activation_cannot_reach_provider (test_telegram_capability_activation_prep.TelegramCapabilityActivationPrepTests.test_message_authorization_without_activation_cannot_reach_provider) ... ok
+test_message_permit_cannot_be_retargeted (test_telegram_capability_activation_prep.TelegramCapabilityActivationPrepTests.test_message_permit_cannot_be_retargeted) ... ok
+test_message_permit_cannot_be_retargeted_to_another_bot (test_telegram_capability_activation_prep.TelegramCapabilityActivationPrepTests.test_message_permit_cannot_be_retargeted_to_another_bot) ... ok
+test_read_permission_cannot_release_telegram_send_capability (test_telegram_capability_activation_prep.TelegramCapabilityActivationPrepTests.test_read_permission_cannot_release_telegram_send_capability) ... ok
+test_transport_identity_mismatch_is_rejected_before_permit_consumption (test_telegram_capability_activation_prep.TelegramCapabilityActivationPrepTests.test_transport_identity_mismatch_is_rejected_before_permit_consumption) ... ok
+setUpClass (test_temporal_transfer_proof_zero.TemporalTransferProofZeroTests) ... skipped 'temporal-transfer proof source history is not present in this repository: 0eb1266fecf586c79457e0fcaf412bc6345545a2, 4ee6af94ea8c55d2393351ffcb17f3dcdc792d08, 81338eed28ec32fe214c7eee086a82840ca0923f'
+test_ambient_ca_configuration_is_rejected_without_explicit_policy (test_transport_security.TransportSecurityTests.test_ambient_ca_configuration_is_rejected_without_explicit_policy) ... ok
+test_ca_bundle_requires_an_absolute_existing_file (test_transport_security.TransportSecurityTests.test_ca_bundle_requires_an_absolute_existing_file) ... ok
+test_sanitized_environment_removes_ambient_proxy_and_ca_controls (test_transport_security.TransportSecurityTests.test_sanitized_environment_removes_ambient_proxy_and_ca_controls) ... ok
+test_tunnel_environment_cannot_reintroduce_proxy_or_ca_overrides (test_transport_security.TransportSecurityTests.test_tunnel_environment_cannot_reintroduce_proxy_or_ca_overrides) ... ok
+test_malicious_text_and_malformed_or_oversized_qr_never_become_commands (test_vision_boundary.VisionBoundaryTests.test_malicious_text_and_malformed_or_oversized_qr_never_become_commands) ... ok
+test_matching_existing_permit_is_required_and_expiry_is_enforced (test_vision_boundary.VisionBoundaryTests.test_matching_existing_permit_is_required_and_expiry_is_enforced) ... ok
+test_qr_is_only_a_proposal_and_cannot_override_a_mismatched_permit (test_vision_boundary.VisionBoundaryTests.test_qr_is_only_a_proposal_and_cannot_override_a_mismatched_permit) ... ok
+test_visual_content_cannot_supply_signature_or_extra_authority_fields (test_vision_boundary.VisionBoundaryTests.test_visual_content_cannot_supply_signature_or_extra_authority_fields) ... ok
+
+----------------------------------------------------------------------
+Ran 429 tests in 11.702s
+
+OK (skipped=12)
+{
+  "audit_records": 22,
+  "audit_tip": "d23caf09c71bcca6733933caa2ee8e6984bb3f3fdcf6311f06075431ea429c2a",
+  "audit_valid": true,
+  "authority_polls_after_tamper": 0,
+  "claim_boundary": "test-only authority semantics; no deployed independent authority, protected storage, external containment, or production execution",
+  "exact_target_authorized": "allow",
+  "first_permit_consume": true,
+  "replay_permit_consume": false,
+  "revoked_preissued_directive_permit": false,
+  "schema": "pulpo.orchestrator-demo.result.v0",
+  "target_mismatch_denied": "target_hash_mismatch"
+}
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb66e0220>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb66e0220>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602ad40>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602ad40>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602ab60>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602ab60>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602a980>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602a980>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602a890>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602a890>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602ae30>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602ae30>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602b010>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602b010>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602b1f0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602b1f0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602a7a0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602a7a0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602a5c0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602a5c0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602a4d0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602a4d0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602a3e0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602a3e0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602a6b0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602a6b0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602a2f0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602a2f0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602aa70>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602aa70>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602a110>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602a110>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602a020>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602a020>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6029f30>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6029f30>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602a200>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602a200>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6029c60>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6029c60>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6029b70>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6029b70>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60296c0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60296c0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6029e40>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6029e40>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6029a80>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6029a80>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6029990>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6029990>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60298a0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60298a0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6029210>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6029210>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6029300>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6029300>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60293f0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60293f0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6029030>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6029030>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602ac50>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602ac50>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60294e0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60294e0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60295d0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60295d0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602b100>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602b100>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602af20>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602af20>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602b2e0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602b2e0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602b4c0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602b4c0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602b5b0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602b5b0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602b6a0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602b6a0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602b790>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602b790>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602b880>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602b880>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602ba60>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602ba60>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602bb50>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602bb50>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602bc40>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602bc40>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602bd30>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602bd30>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602be20>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602be20>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d0040>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d0040>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb602bf10>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb602bf10>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d0220>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d0220>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d0130>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d0130>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d0310>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d0310>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d04f0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d04f0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d05e0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d05e0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d06d0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d06d0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d07c0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d07c0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d0a90>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d0a90>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d08b0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d08b0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d0b80>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d0b80>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d0c70>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d0c70>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d0e50>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d0e50>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d0f40>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d0f40>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d1030>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d1030>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d1120>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d1120>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d1210>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d1210>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d1300>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d1300>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d13f0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d13f0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d15d0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d15d0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d16c0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d16c0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d17b0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d17b0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d18a0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d18a0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d1a80>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d1a80>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d1b70>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d1b70>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d1c60>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d1c60>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d1990>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d1990>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d1d50>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d1d50>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d1e40>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d1e40>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d2110>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d2110>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d2200>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d2200>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d22f0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d22f0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d2020>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d2020>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d23e0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d23e0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d24d0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d24d0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d25c0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d25c0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d26b0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d26b0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d27a0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d27a0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d2890>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d2890>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d2980>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d2980>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d2a70>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d2a70>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d2b60>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d2b60>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d2d40>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d2d40>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d2e30>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d2e30>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d2f20>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d2f20>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d3100>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d3100>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d31f0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d31f0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d2c50>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d2c50>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d32e0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d32e0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d33d0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d33d0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d34c0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d34c0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d36a0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d36a0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d3010>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d3010>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d3790>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d3790>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d3880>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d3880>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d3970>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d3970>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d3a60>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d3a60>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d35b0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d35b0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d3c40>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d3c40>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d3d30>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d3d30>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d3e20>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d3e20>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d3f10>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d3f10>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6068040>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6068040>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6068130>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6068130>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6068220>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6068220>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60d3b50>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60d3b50>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6068400>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6068400>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60684f0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60684f0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60685e0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60685e0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60686d0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60686d0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60687c0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60687c0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60688b0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60688b0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60689a0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60689a0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6068d60>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6068d60>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6068e50>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6068e50>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6068f40>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6068f40>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6069030>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6069030>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6069120>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6069120>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6069210>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6069210>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6069300>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6069300>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60693f0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60693f0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60694e0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60694e0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60695d0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60695d0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60696c0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60696c0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6068b80>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6068b80>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60698a0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60698a0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6069990>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6069990>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6069a80>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6069a80>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6069b70>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6069b70>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6069c60>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6069c60>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6069d50>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6069d50>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6069e40>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6069e40>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6069f30>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6069f30>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb606a020>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb606a020>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60697b0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60697b0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb606a200>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb606a200>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb606a2f0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb606a2f0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb606a3e0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb606a3e0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb606a4d0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb606a4d0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb606a5c0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb606a5c0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb606a6b0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb606a6b0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb606a7a0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb606a7a0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb606a110>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb606a110>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb606a980>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb606a980>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb606aa70>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb606aa70>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb606ab60>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb606ab60>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb606ae30>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb606ae30>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb606b010>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb606b010>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb606b100>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb606b100>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb606b1f0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb606b1f0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb606b2e0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb606b2e0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb606b3d0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb606b3d0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb606b4c0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb606b4c0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb606b6a0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb606b6a0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb606b790>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb606b790>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb606b880>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb606b880>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb606b970>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb606b970>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb606ba60>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb606ba60>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb606bc40>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb606bc40>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb606bd30>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb606bd30>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb606ad40>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb606ad40>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb606ac50>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb606ac50>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb606b5b0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb606b5b0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb606bb50>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb606bb50>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb606af20>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb606af20>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb606be20>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb606be20>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb606bf10>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb606bf10>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6098130>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6098130>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6098040>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6098040>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6098220>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6098220>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6098310>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6098310>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb606a890>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb606a890>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60984f0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60984f0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60985e0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60985e0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60986d0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60986d0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60987c0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60987c0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60988b0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60988b0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60989a0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60989a0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6098a90>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6098a90>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6098400>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6098400>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6098c70>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6098c70>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6098d60>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6098d60>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6098e50>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6098e50>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6098f40>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6098f40>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6099030>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6099030>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6099120>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6099120>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6099210>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6099210>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6099300>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6099300>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6098b80>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6098b80>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60994e0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60994e0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60995d0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60995d0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60996c0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60996c0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60997b0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60997b0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60998a0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60998a0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6099990>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6099990>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6099a80>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6099a80>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6099c60>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6099c60>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6099d50>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6099d50>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb60993f0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb60993f0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6099e40>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6099e40>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb6099f30>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb6099f30>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb609a020>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb609a020>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb609a110>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb609a110>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb609a2f0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb609a2f0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb609a200>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb609a200>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb609ad40>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb609ad40>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb609b100>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb609b100>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb609b1f0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb609b1f0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb609b2e0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb609b2e0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb609b3d0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb609b3d0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb609b4c0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb609b4c0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb609b5b0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb609b5b0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb609b6a0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb609b6a0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb609b790>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb609b790>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb609ba60>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb609ba60>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb609b970>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb609b970>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb609bc40>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb609bc40>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb609bb50>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb609bb50>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb609bd30>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb609bd30>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb609be20>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb609be20>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb609bf10>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb609bf10>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb4b30130>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb4b30130>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb4b30040>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb4b30040>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb4b30310>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb4b30310>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb4b30400>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb4b30400>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb4b304f0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb4b304f0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb4b30220>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb4b30220>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb4b306d0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb4b306d0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb4b307c0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb4b307c0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb4b308b0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb4b308b0>
+Exception ignored while finalizing database connection <sqlite3.Connection object at 0x784eb4b309a0>:
+ResourceWarning: unclosed database in <sqlite3.Connection object at 0x784eb4b309a0>

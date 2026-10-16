@@ -1,0 +1,46 @@
+name: Disposable simulation proof
+on:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      gazebo:
+        description: Build and run isolated ROS 2 Jazzy / Gazebo Harmonic fixture
+        type: boolean
+        default: false
+permissions:
+  contents: read
+jobs:
+  deterministic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -W error -m unittest tests.test_simulation_tester -v
+      - run: python scripts/test_simulation.py --output simulation-results/deterministic.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: deterministic-simulation-evidence
+          path: simulation-results/
+  gazebo:
+    if: github.event_name == 'workflow_dispatch' && inputs.gazebo
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -f experiments/ros2-gazebo/Dockerfile -t pulpo-disposable-sim .
+      - run: |
+          mkdir -p simulation-results
+          docker image inspect pulpo-disposable-sim > simulation-results/image.json
+          docker run --rm --network none --cap-drop ALL --security-opt no-new-privileges \
+            -e GZ_PARTITION=pulpo-${{ github.run_id }} \
+            -v "$PWD:/fixture:ro" -v "$PWD/simulation-results:/results" \
+            pulpo-disposable-sim --output /results/gazebo.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gazebo-simulation-evidence
+          path: simulation-results/

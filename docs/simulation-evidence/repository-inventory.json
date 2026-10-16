@@ -1,0 +1,249 @@
+{
+  "captured_date": "2026-10-15",
+  "repositories": {
+    "Pulpo-Autonomous": {
+      "default_ref": "refs/remotes/origin/main",
+      "remote_branches": [
+        {
+          "ref": "origin",
+          "sha": "de2f9e9c9e2a9256d07aaef056519e2733db8324"
+        },
+        {
+          "ref": "origin/docs/host-bound-vs-pulpo-bound",
+          "sha": "2e3090cb5f49734f487470d5b1e5713221b7ee92"
+        },
+        {
+          "ref": "origin/docs/readme-v0.2.0",
+          "sha": "7509ef887f22afc8c4ac506fb50b0eafe232857a"
+        },
+        {
+          "ref": "origin/docs/readme-v0.2.0-current",
+          "sha": "7bce9e0fe5ab7f64e28e050bd775fc3a3ebc18cd"
+        },
+        {
+          "ref": "origin/experimental/ptc-autonomous",
+          "sha": "7b3c26aa759e5176f2c2a3df4ee2c3b2757a7dfa"
+        },
+        {
+          "ref": "origin/feature/command-traffic-router",
+          "sha": "b33addc29c7300a129c671a62400a3db86b77386"
+        },
+        {
+          "ref": "origin/feature/gpu-audit-benchmark",
+          "sha": "d07baa4b95f53b1bcc4ff8b320abe0315061483d"
+        },
+        {
+          "ref": "origin/fix/ci-setuptools-audit",
+          "sha": "81ad29a0d9e03d05269c7e64d7be9a55c51fd690"
+        },
+        {
+          "ref": "origin/fix/ci-test-harness",
+          "sha": "8b13e420a07bdb5d60e5fd22828b8d2b743d91e1"
+        },
+        {
+          "ref": "origin/harden/session-permit-expiry",
+          "sha": "b8b927d206bc029703b8f706eb0c6859e2a6fe81"
+        },
+        {
+          "ref": "origin/integration/recent-pulpo-sync-20260920",
+          "sha": "8edf0345384a7ebd91054bceb801980a51ebc560"
+        },
+        {
+          "ref": "origin/main",
+          "sha": "de2f9e9c9e2a9256d07aaef056519e2733db8324"
+        },
+        {
+          "ref": "origin/perf/delta-audit-optimization",
+          "sha": "fd29ba70b3275ec913f724f99547486734000c71"
+        },
+        {
+          "ref": "origin/release/v0.3.0",
+          "sha": "388e4b68cb319d67df14a0d425865da2a0bf2b53"
+        },
+        {
+          "ref": "origin/security/probing-hardening-20260919",
+          "sha": "3dbb67b4fb966b53a0877500d644801a44c8a3ad"
+        },
+        {
+          "ref": "origin/security/prompt-injection-containment",
+          "sha": "56ad86ab59a6fe0ed7c3c20ffadc790ebcc676aa"
+        },
+        {
+          "ref": "origin/security/resource-exhaustion-limits",
+          "sha": "a879377cde1873fa839242ea8450bd5c4648fd6d"
+        },
+        {
+          "ref": "origin/security/zero-inbound-listeners",
+          "sha": "4122c73587239b862b20ff6b53ba5de214c128e5"
+        },
+        {
+          "ref": "origin/test/fix-autonomous-plugin-manifest-contract",
+          "sha": "26e69cea226c758075c3d3840a3aae4449e264e5"
+        }
+      ],
+      "recent_default_commits": [
+        "de2f9e9c9e2a9256d07aaef056519e2733db8324 Release v0.3.0: bounded routing and trustworthy JSON",
+        "6518481a1dfbb767eb6f2dca057a05d37dee4122 Add opt-in bounded Autonomous command traffic intake (#19)",
+        "2a6cf807a1a7f2f5d988c098582c4841f7be01fa Security: harden HTTP probing admission (#9)",
+        "5b9d02ea5573e298aebb187f29b798138ac4f0f8 docs: state host bound vs Pulpo bound (#17)",
+        "9a354938d5a59e30d638ca0ab078c26dcdaf8e39 feat: add optional GPU audit-hash benchmark (#16)",
+        "d659fc9526cd203641342424aad2a7397661504f security: harden public repository defaults (#15)",
+        "0c5dffdbc4526efe6400fbcbc73867d3261b9341 Merge pull request #14 from spikediegel-prog/docs/readme-v0.2.0-current",
+        "7bce9e0fe5ab7f64e28e050bd775fc3a3ebc18cd docs: update README for v0.2.0",
+        "2e5321f27fc14b66b1a4801e08b96791c57e41a4 Merge pull request #13 from spikediegel-prog/fix/constitutional-mutation-anchors-v020",
+        "231445337f9746d4c0586a711f4312778559ab04 test: refresh constitutional mutation anchors",
+        "3d19259a4db74d1a0c54eba17737bd80c139ebe6 Merge pull request #11 from spikediegel-prog/integration/recent-pulpo-sync-20260920",
+        "8edf0345384a7ebd91054bceb801980a51ebc560 Fix state.py trailing whitespace",
+        "ecb0ea914373f44278f21b1bd1971d0f0ff7c1cb Sync Pulpo governance audit and permit hardening",
+        "bea48ec3fdb406716c259bcf923f56c19d68f471 Merge pull request #10 from spikediegel-prog/perf/delta-audit-optimization",
+        "fd29ba70b3275ec913f724f99547486734000c71 test: cover Autonomous delta audit performance invariants"
+      ]
+    },
+    "Pulpo-Preview": {
+      "default_ref": "refs/remotes/origin/main",
+      "remote_branches": [
+        {
+          "ref": "origin",
+          "sha": "12d07e37a34c979fc054872299191bb26c8ad387"
+        },
+        {
+          "ref": "origin/docs/mixed-workload-design-20261014",
+          "sha": "08a688e1fcec2202b2d7e834f8caa70433c4c165"
+        },
+        {
+          "ref": "origin/experiment/restart-audit-checkpoint",
+          "sha": "0bd2b96f1f525ff3c820c15c06e3092887343efe"
+        },
+        {
+          "ref": "origin/experimental/evidence-io-streaming-20261005",
+          "sha": "2fb11f9cd0c591935a1e3f53d0c001643b6b657b"
+        },
+        {
+          "ref": "origin/experimental/evidence-tuning-tool",
+          "sha": "49edc55500466ed5920e19fa930b762a4627f46a"
+        },
+        {
+          "ref": "origin/experimental/ptc-prototype",
+          "sha": "40fa56d2497b653fcdb1a6fdbfcbc3b509f4a9c2"
+        },
+        {
+          "ref": "origin/feature/local-idle-routing",
+          "sha": "af5ce1a730c0a07a8331fbb9214290ae2b9a5561"
+        },
+        {
+          "ref": "origin/fix/windows-wsl-portability",
+          "sha": "3972c1e49310451d81fd9639ecc181f07d5cd495"
+        },
+        {
+          "ref": "origin/ledger-options",
+          "sha": "46291cac90d8ccc23b3f852758790b09604fadda"
+        },
+        {
+          "ref": "origin/main",
+          "sha": "12d07e37a34c979fc054872299191bb26c8ad387"
+        },
+        {
+          "ref": "origin/perf/preview-minimal-router",
+          "sha": "824020d36562befdcf12753a0ef74ae06f49a8ef"
+        },
+        {
+          "ref": "origin/perf/reuse-canonical-json-preview-20261009",
+          "sha": "bb16c8ad24b0aa615eb80c30e61ab4be712c4de6"
+        },
+        {
+          "ref": "origin/preview",
+          "sha": "e29e46c494d4f00a00bc2b4206b2d64974ee74c6"
+        },
+        {
+          "ref": "origin/preview-pr-219",
+          "sha": "eb4e3c7b4136827d5616b5e2aaa199565f4c39e9"
+        },
+        {
+          "ref": "origin/preview-pr-230",
+          "sha": "cd5392c070848988e1c29365eecd704b5a8d27f5"
+        },
+        {
+          "ref": "origin/preview-pr-235",
+          "sha": "4c5305de5bc7e6fdbe20ee39dc2c3a10345eb528"
+        },
+        {
+          "ref": "origin/preview-pr-236",
+          "sha": "24a1d16a925b86376ff03f0dcf75b3b9b46a1ac6"
+        },
+        {
+          "ref": "origin/preview-pr-237",
+          "sha": "0edb88cf6eb8368462d5cbfa5c96da31a7c1b60e"
+        },
+        {
+          "ref": "origin/preview-pr-238",
+          "sha": "b7b3eac5447b46b9614b799d4cb76d8c6e2415eb"
+        },
+        {
+          "ref": "origin/preview-pr-239",
+          "sha": "cd79f4b1370d87d678bdc9eccb834d69f4755978"
+        },
+        {
+          "ref": "origin/preview-pr-249",
+          "sha": "74dc36d0076591c66a4913b339927e71461b94e3"
+        },
+        {
+          "ref": "origin/preview-pr-250",
+          "sha": "962033d51c7d2756471aa004bfc0554021d74fa5"
+        },
+        {
+          "ref": "origin/preview-pr-258",
+          "sha": "5c258b332c414cfa22af10cf6f959e57aabaaf17"
+        },
+        {
+          "ref": "origin/preview-pr-267",
+          "sha": "ebc72e02d35b97428754e61edf4cc534b6cf9e89"
+        },
+        {
+          "ref": "origin/preview-pr-275",
+          "sha": "9902d17c7c39b9a30b20b1fc6fb73e96eefe73d5"
+        },
+        {
+          "ref": "origin/preview-pr-276",
+          "sha": "298e9b24d885a442dc4e0b95336b38bda74a0ea2"
+        },
+        {
+          "ref": "origin/preview-pr-277",
+          "sha": "21742d3d2f9340074533b36d97844b17effa1830"
+        },
+        {
+          "ref": "origin/preview-pr-289",
+          "sha": "312e73c0515f45ee070bf13046270d60bfffe5b6"
+        },
+        {
+          "ref": "origin/preview-pr-293",
+          "sha": "73ec97b68a3228c52ecba717d867a1d99340ab15"
+        },
+        {
+          "ref": "origin/preview-pr-294",
+          "sha": "ea73035f44ac07c313a2330b74d653efb3aef02d"
+        },
+        {
+          "ref": "origin/preview-pr-295",
+          "sha": "d95a2ef3180a2d5186ddeebce108ae6b49ea7274"
+        }
+      ],
+      "recent_default_commits": [
+        "12d07e37a34c979fc054872299191bb26c8ad387 Merge pull request #11 from spikediegel-prog/docs/mixed-workload-design-20261014",
+        "08a688e1fcec2202b2d7e834f8caa70433c4c165 Document mixed workload performance boundaries and reproducible fixtures",
+        "d935987f016cfc1038b624a7b4cb6a03ad9f8baa Merge pull request #10 from spikediegel-prog/fix/windows-wsl-portability",
+        "3972c1e49310451d81fd9639ecc181f07d5cd495 Fix Windows and WSL portability without weakening snapshot boundaries",
+        "25cd45c06b9063e150708bece472b098e6a6c74a Merge pull request #9 from spikediegel-prog/feature/local-idle-routing",
+        "af5ce1a730c0a07a8331fbb9214290ae2b9a5561 Protect foreground queues and release owned resources deterministically",
+        "d8a55769b64d15363a6c7cc5980b544599ca3969 Merge pull request #8 from spikediegel-prog/perf/preview-minimal-router",
+        "824020d36562befdcf12753a0ef74ae06f49a8ef Refine minimal SQL/API router bounds and optional queue expiry",
+        "90bd826225eb798cbae6c5fd3e221df8ea3a93ab Merge pull request #6 from spikediegel-prog/perf/reuse-canonical-json-preview-20261009",
+        "bb16c8ad24b0aa615eb80c30e61ab4be712c4de6 Reuse canonical JSON encoders without changing audit bytes",
+        "a8c77566277e1834cb8a57cd088f48dc3bcf8a4f Merge pull request #5 from spikediegel-prog/experimental/evidence-io-streaming-20261005",
+        "2fb11f9cd0c591935a1e3f53d0c001643b6b657b Reduce reconciliation audit scan allocations and record recovery evidence",
+        "ee88a8ea5aa5496c06afaa82ec31db30c2e4e1fc Merge pull request #4 from spikediegel-prog/experimental/ptc-prototype",
+        "40fa56d2497b653fcdb1a6fdbfcbc3b509f4a9c2 Add bounded PTC lanes with canonical dispatch checks",
+        "115478fd468543ab74c6b7e96c98188b667d777d Merge pull request #3 from spikediegel-prog/experimental/evidence-tuning-tool"
+      ]
+    }
+  }
+}

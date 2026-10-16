@@ -8,6 +8,16 @@ Exact fetched remote branch tips for both repositories are in
 available work, not authority to merge it. No open Autonomous PR existed when
 this work began.
 
+All fetched branch tips were inventoried; this is not a full audit of every
+historical Preview PR branch. Autonomous's `experimental/ptc-autonomous` adds
+three commits and 222 lines across traffic/orchestrator/exports relative to its
+merge base; those unmerged dispatch primitives are excluded. The command-traffic
+branch has its own commit identity while main already includes the feature via
+PR #19. The `harden/session-permit-expiry` branch's remaining merge-base delta
+is CI setuptools configuration, not an additional motion-expiry implementation.
+The release branch adds release documentation/version changes. The tested
+implementation therefore starts from current main, not one of these branches.
+
 | Preview source | Applicability and decision |
 | --- | --- |
 | `08a688e1fcec2202b2d7e834f8caa70433c4c165`, `experiments/mixed-workload-20261014/` | Adapt explicit source/evidence/scope reporting and separation of test fixture from runtime. SQL/API worker scheduling is unrelated to robotics control and is not ported. |

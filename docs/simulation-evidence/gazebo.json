@@ -1,0 +1,3119 @@
+{
+  "schema": "pulpo.simulation-test.v1",
+  "backend": "gazebo",
+  "commit": "9e8a73cdfef1475ccb88459ce4b4a3a5b17df22c",
+  "dirty": true,
+  "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "results": [
+    {
+      "scenario": "permitted",
+      "classification": "Verified",
+      "passed": true,
+      "decision": "allow",
+      "reason": "canonical_permit_consumed",
+      "permit_consumed": true,
+      "before_x": -2.2448300787899434e-20,
+      "after_x": 0.10399999999678916,
+      "reconciliation": "observed_motion",
+      "expected": "observed_motion",
+      "attempt_ns": 640199392,
+      "audit_valid": true,
+      "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6",
+      "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+      "audit": [
+        {
+          "event": "approval_verified",
+          "payload": {
+            "approval_id": "activate_directive",
+            "authority_id": "authority:test-owner",
+            "verifier_id": "verifier:test-only",
+            "key_id": "key:test-only:v1",
+            "algorithm": "hmac-sha256-test-only",
+            "key_fingerprint": "c0d4282378c959913c7f62a748798a931c7f45ac18527fb1a0b0ca5ec939cf35",
+            "deployment_id": "deployment:test",
+            "trust_hash": "90e6a305db15a333bdaef86838d657c6e314eab220be27156bc58452322a7774",
+            "envelope_hash": "2558db5c5199f26d936b6f8cc0252dcadefaa3e9e386b0b4aac6770e9712c0b2",
+            "signing_payload_hash": "8d7458ea261cd4f9868bf1ef4f17ea7feeabdfb04026d4779b6824f416e04633",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6",
+            "issued_at_ns": 1999999,
+            "expires_at_ns": 2000999,
+            "verified_at_ns": 2000000
+          },
+          "previous_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "approval_verified",
+            "payload_hash": "c08539c112d3f00d07819c361386dd5be9220cbbb06d4a007b22e13b323c62d2",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "approval_id": "activate_directive"
+          },
+          "previous_delta_root": "0000000000000000000000000000000000000000000000000000000000000000",
+          "delta_root": "45d9d49c32f9fb382dc5db0a3bb89e67414762c129327b1dbfd0b561933341c6",
+          "hash": "f5518de7185c343c1bf318a68571e3ad88b8b9b4c4ddf5a2050a492cb91a8386"
+        },
+        {
+          "event": "decision",
+          "payload": {
+            "outcome": "allow",
+            "reason": "verified_approval",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "f5518de7185c343c1bf318a68571e3ad88b8b9b4c4ddf5a2050a492cb91a8386",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "decision",
+            "payload_hash": "45bdd5902b87796efbede193d071d575f3989b117460a9e7622a6d8e348b0304",
+            "outcome": "allow",
+            "reason": "verified_approval",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4"
+          },
+          "previous_delta_root": "45d9d49c32f9fb382dc5db0a3bb89e67414762c129327b1dbfd0b561933341c6",
+          "delta_root": "37cbbecfd776460a07c2d7994a40b63aee719e73bfb4b248d1d6c0675ec28f30",
+          "hash": "6084db7ed0b926cb18e947f89c1808b7bb39d7c9af3ac6e6b7d715cf63ea9a8d"
+        },
+        {
+          "event": "permit_consumed",
+          "payload": {
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "6084db7ed0b926cb18e947f89c1808b7bb39d7c9af3ac6e6b7d715cf63ea9a8d",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "permit_consumed",
+            "payload_hash": "b45abb6d554df13b081f73c1b40b5f7b80f1452a92f998f64dbfed07a03392ae",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4"
+          },
+          "previous_delta_root": "37cbbecfd776460a07c2d7994a40b63aee719e73bfb4b248d1d6c0675ec28f30",
+          "delta_root": "9f65f7e16c9849af21926dce0a0035ad4b792e28c44b06b374fd4fb6b73bad8f",
+          "hash": "c24a2bc42e0c5ac200d7461e94fae2e5114057619bb16394f9dd12296c9edded"
+        },
+        {
+          "event": "directive_activated",
+          "payload": {
+            "directive_id": "sim-motion",
+            "version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+            "authority_evidence": {
+              "operation": "activate_directive",
+              "directive_id": "sim-motion",
+              "directive_version": 1,
+              "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+              "parent_directive_hash": null,
+              "authority_id": "authority:test-owner",
+              "approval_id": "activate_directive",
+              "envelope_hash": "2558db5c5199f26d936b6f8cc0252dcadefaa3e9e386b0b4aac6770e9712c0b2",
+              "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+              "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6"
+            }
+          },
+          "previous_hash": "c24a2bc42e0c5ac200d7461e94fae2e5114057619bb16394f9dd12296c9edded",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "directive_activated",
+            "payload_hash": "0f1f900baeaaf9c66ae3bad300bcf5d6daaddb2840a01293fdac7ba58288188e",
+            "directive_id": "sim-motion",
+            "version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a"
+          },
+          "previous_delta_root": "9f65f7e16c9849af21926dce0a0035ad4b792e28c44b06b374fd4fb6b73bad8f",
+          "delta_root": "86eca2f71f556907dfc4c78a829239b1daf9765d9dacb9095ad8fe0ad27d8533",
+          "hash": "b169e04e36c54b7edcb0611f23c7a623f3c29bac158cbf25abd0c696c0e2e3df"
+        },
+        {
+          "event": "decision",
+          "payload": {
+            "outcome": "allow",
+            "reason": "policy_satisfied",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "b169e04e36c54b7edcb0611f23c7a623f3c29bac158cbf25abd0c696c0e2e3df",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "decision",
+            "payload_hash": "a8e466926843fe702140b7dff3e458570c67abdd119cb2560a8d126e730d47c7",
+            "outcome": "allow",
+            "reason": "policy_satisfied",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325"
+          },
+          "previous_delta_root": "86eca2f71f556907dfc4c78a829239b1daf9765d9dacb9095ad8fe0ad27d8533",
+          "delta_root": "40d38e128ae3ba56705c92845dfdd11bb7aa9b1957a4e9e92ae1d3116195ee84",
+          "hash": "49666dba4043ef115106e137687492c1acdbfbb142446b37223b779a43bf1a73"
+        },
+        {
+          "event": "permit_bound_to_directive",
+          "payload": {
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "directive_id": "sim-motion",
+            "directive_version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+            "directive_issued_at_ns": 1999900,
+            "directive_expires_at_ns": 2010000
+          },
+          "previous_hash": "49666dba4043ef115106e137687492c1acdbfbb142446b37223b779a43bf1a73",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "permit_bound_to_directive",
+            "payload_hash": "061390119f888413bf399021569c84c1d9ef126401ffb17a9f08f3a507042b2a",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "directive_id": "sim-motion",
+            "directive_version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a"
+          },
+          "previous_delta_root": "40d38e128ae3ba56705c92845dfdd11bb7aa9b1957a4e9e92ae1d3116195ee84",
+          "delta_root": "f17efb1c465c702e02423a8962458379aedec5dc399afb681448f474a3b9aa85",
+          "hash": "47113b887bfc86da49332800700e7956f4a3bbe79c5f68544fab6d4825d65ab2"
+        },
+        {
+          "event": "permit_consumed",
+          "payload": {
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "permit_expires_at_ns": 2000100,
+            "directive_id": "sim-motion",
+            "directive_version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+            "directive_issued_at_ns": 1999900,
+            "directive_expires_at_ns": 2010000,
+            "directive_status": "active"
+          },
+          "previous_hash": "47113b887bfc86da49332800700e7956f4a3bbe79c5f68544fab6d4825d65ab2",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "permit_consumed",
+            "payload_hash": "c491b7dbcff7dea986a7a4b551acdf6d2876b7861c69ffcb2f501ad3ed2ad28f",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "directive_id": "sim-motion",
+            "directive_version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a"
+          },
+          "previous_delta_root": "f17efb1c465c702e02423a8962458379aedec5dc399afb681448f474a3b9aa85",
+          "delta_root": "59bf250a476995bd2e85d29ff15364405b6f7d1851d6de1faa85a2a24148e549",
+          "hash": "5424936d45e5209be77b1d5a3c543f1ebc766816831d0686c90c34bf2beaf87f"
+        }
+      ],
+      "deployed_authority_effect": "none",
+      "fixture_authority_effect": "synthetic_directive_activated",
+      "containment_proven": null
+    },
+    {
+      "scenario": "denied",
+      "classification": "Verified",
+      "passed": true,
+      "decision": "deny",
+      "reason": "directive_action_not_allowed",
+      "permit_consumed": false,
+      "before_x": 0.10399999999708873,
+      "after_x": 0.10399999999236254,
+      "reconciliation": "no_observed_effect",
+      "expected": "no_observed_effect",
+      "attempt_ns": 3090,
+      "audit_valid": true,
+      "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6",
+      "intent_hash": "d7dccbc1102dd49b21d725c4a8027822968deebb512f75d25cc54105a6bf4554",
+      "audit": [
+        {
+          "event": "approval_verified",
+          "payload": {
+            "approval_id": "activate_directive",
+            "authority_id": "authority:test-owner",
+            "verifier_id": "verifier:test-only",
+            "key_id": "key:test-only:v1",
+            "algorithm": "hmac-sha256-test-only",
+            "key_fingerprint": "c0d4282378c959913c7f62a748798a931c7f45ac18527fb1a0b0ca5ec939cf35",
+            "deployment_id": "deployment:test",
+            "trust_hash": "90e6a305db15a333bdaef86838d657c6e314eab220be27156bc58452322a7774",
+            "envelope_hash": "2558db5c5199f26d936b6f8cc0252dcadefaa3e9e386b0b4aac6770e9712c0b2",
+            "signing_payload_hash": "8d7458ea261cd4f9868bf1ef4f17ea7feeabdfb04026d4779b6824f416e04633",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6",
+            "issued_at_ns": 1999999,
+            "expires_at_ns": 2000999,
+            "verified_at_ns": 2000000
+          },
+          "previous_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "approval_verified",
+            "payload_hash": "c08539c112d3f00d07819c361386dd5be9220cbbb06d4a007b22e13b323c62d2",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "approval_id": "activate_directive"
+          },
+          "previous_delta_root": "0000000000000000000000000000000000000000000000000000000000000000",
+          "delta_root": "45d9d49c32f9fb382dc5db0a3bb89e67414762c129327b1dbfd0b561933341c6",
+          "hash": "f5518de7185c343c1bf318a68571e3ad88b8b9b4c4ddf5a2050a492cb91a8386"
+        },
+        {
+          "event": "decision",
+          "payload": {
+            "outcome": "allow",
+            "reason": "verified_approval",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "f5518de7185c343c1bf318a68571e3ad88b8b9b4c4ddf5a2050a492cb91a8386",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "decision",
+            "payload_hash": "45bdd5902b87796efbede193d071d575f3989b117460a9e7622a6d8e348b0304",
+            "outcome": "allow",
+            "reason": "verified_approval",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4"
+          },
+          "previous_delta_root": "45d9d49c32f9fb382dc5db0a3bb89e67414762c129327b1dbfd0b561933341c6",
+          "delta_root": "37cbbecfd776460a07c2d7994a40b63aee719e73bfb4b248d1d6c0675ec28f30",
+          "hash": "6084db7ed0b926cb18e947f89c1808b7bb39d7c9af3ac6e6b7d715cf63ea9a8d"
+        },
+        {
+          "event": "permit_consumed",
+          "payload": {
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "6084db7ed0b926cb18e947f89c1808b7bb39d7c9af3ac6e6b7d715cf63ea9a8d",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "permit_consumed",
+            "payload_hash": "b45abb6d554df13b081f73c1b40b5f7b80f1452a92f998f64dbfed07a03392ae",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4"
+          },
+          "previous_delta_root": "37cbbecfd776460a07c2d7994a40b63aee719e73bfb4b248d1d6c0675ec28f30",
+          "delta_root": "9f65f7e16c9849af21926dce0a0035ad4b792e28c44b06b374fd4fb6b73bad8f",
+          "hash": "c24a2bc42e0c5ac200d7461e94fae2e5114057619bb16394f9dd12296c9edded"
+        },
+        {
+          "event": "directive_activated",
+          "payload": {
+            "directive_id": "sim-motion",
+            "version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+            "authority_evidence": {
+              "operation": "activate_directive",
+              "directive_id": "sim-motion",
+              "directive_version": 1,
+              "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+              "parent_directive_hash": null,
+              "authority_id": "authority:test-owner",
+              "approval_id": "activate_directive",
+              "envelope_hash": "2558db5c5199f26d936b6f8cc0252dcadefaa3e9e386b0b4aac6770e9712c0b2",
+              "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+              "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6"
+            }
+          },
+          "previous_hash": "c24a2bc42e0c5ac200d7461e94fae2e5114057619bb16394f9dd12296c9edded",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "directive_activated",
+            "payload_hash": "0f1f900baeaaf9c66ae3bad300bcf5d6daaddb2840a01293fdac7ba58288188e",
+            "directive_id": "sim-motion",
+            "version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a"
+          },
+          "previous_delta_root": "9f65f7e16c9849af21926dce0a0035ad4b792e28c44b06b374fd4fb6b73bad8f",
+          "delta_root": "86eca2f71f556907dfc4c78a829239b1daf9765d9dacb9095ad8fe0ad27d8533",
+          "hash": "b169e04e36c54b7edcb0611f23c7a623f3c29bac158cbf25abd0c696c0e2e3df"
+        }
+      ],
+      "deployed_authority_effect": "none",
+      "fixture_authority_effect": "synthetic_directive_activated",
+      "containment_proven": null
+    },
+    {
+      "scenario": "replay",
+      "classification": "Verified",
+      "passed": true,
+      "decision": "allow",
+      "reason": "canonical_permit_rejected",
+      "permit_consumed": false,
+      "before_x": 0.21199999998274077,
+      "after_x": 0.21199999998234287,
+      "reconciliation": "no_observed_effect",
+      "expected": "no_observed_effect",
+      "attempt_ns": 128681,
+      "audit_valid": true,
+      "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6",
+      "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+      "audit": [
+        {
+          "event": "approval_verified",
+          "payload": {
+            "approval_id": "activate_directive",
+            "authority_id": "authority:test-owner",
+            "verifier_id": "verifier:test-only",
+            "key_id": "key:test-only:v1",
+            "algorithm": "hmac-sha256-test-only",
+            "key_fingerprint": "c0d4282378c959913c7f62a748798a931c7f45ac18527fb1a0b0ca5ec939cf35",
+            "deployment_id": "deployment:test",
+            "trust_hash": "90e6a305db15a333bdaef86838d657c6e314eab220be27156bc58452322a7774",
+            "envelope_hash": "2558db5c5199f26d936b6f8cc0252dcadefaa3e9e386b0b4aac6770e9712c0b2",
+            "signing_payload_hash": "8d7458ea261cd4f9868bf1ef4f17ea7feeabdfb04026d4779b6824f416e04633",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6",
+            "issued_at_ns": 1999999,
+            "expires_at_ns": 2000999,
+            "verified_at_ns": 2000000
+          },
+          "previous_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "approval_verified",
+            "payload_hash": "c08539c112d3f00d07819c361386dd5be9220cbbb06d4a007b22e13b323c62d2",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "approval_id": "activate_directive"
+          },
+          "previous_delta_root": "0000000000000000000000000000000000000000000000000000000000000000",
+          "delta_root": "45d9d49c32f9fb382dc5db0a3bb89e67414762c129327b1dbfd0b561933341c6",
+          "hash": "f5518de7185c343c1bf318a68571e3ad88b8b9b4c4ddf5a2050a492cb91a8386"
+        },
+        {
+          "event": "decision",
+          "payload": {
+            "outcome": "allow",
+            "reason": "verified_approval",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "f5518de7185c343c1bf318a68571e3ad88b8b9b4c4ddf5a2050a492cb91a8386",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "decision",
+            "payload_hash": "45bdd5902b87796efbede193d071d575f3989b117460a9e7622a6d8e348b0304",
+            "outcome": "allow",
+            "reason": "verified_approval",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4"
+          },
+          "previous_delta_root": "45d9d49c32f9fb382dc5db0a3bb89e67414762c129327b1dbfd0b561933341c6",
+          "delta_root": "37cbbecfd776460a07c2d7994a40b63aee719e73bfb4b248d1d6c0675ec28f30",
+          "hash": "6084db7ed0b926cb18e947f89c1808b7bb39d7c9af3ac6e6b7d715cf63ea9a8d"
+        },
+        {
+          "event": "permit_consumed",
+          "payload": {
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "6084db7ed0b926cb18e947f89c1808b7bb39d7c9af3ac6e6b7d715cf63ea9a8d",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "permit_consumed",
+            "payload_hash": "b45abb6d554df13b081f73c1b40b5f7b80f1452a92f998f64dbfed07a03392ae",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4"
+          },
+          "previous_delta_root": "37cbbecfd776460a07c2d7994a40b63aee719e73bfb4b248d1d6c0675ec28f30",
+          "delta_root": "9f65f7e16c9849af21926dce0a0035ad4b792e28c44b06b374fd4fb6b73bad8f",
+          "hash": "c24a2bc42e0c5ac200d7461e94fae2e5114057619bb16394f9dd12296c9edded"
+        },
+        {
+          "event": "directive_activated",
+          "payload": {
+            "directive_id": "sim-motion",
+            "version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+            "authority_evidence": {
+              "operation": "activate_directive",
+              "directive_id": "sim-motion",
+              "directive_version": 1,
+              "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+              "parent_directive_hash": null,
+              "authority_id": "authority:test-owner",
+              "approval_id": "activate_directive",
+              "envelope_hash": "2558db5c5199f26d936b6f8cc0252dcadefaa3e9e386b0b4aac6770e9712c0b2",
+              "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+              "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6"
+            }
+          },
+          "previous_hash": "c24a2bc42e0c5ac200d7461e94fae2e5114057619bb16394f9dd12296c9edded",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "directive_activated",
+            "payload_hash": "0f1f900baeaaf9c66ae3bad300bcf5d6daaddb2840a01293fdac7ba58288188e",
+            "directive_id": "sim-motion",
+            "version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a"
+          },
+          "previous_delta_root": "9f65f7e16c9849af21926dce0a0035ad4b792e28c44b06b374fd4fb6b73bad8f",
+          "delta_root": "86eca2f71f556907dfc4c78a829239b1daf9765d9dacb9095ad8fe0ad27d8533",
+          "hash": "b169e04e36c54b7edcb0611f23c7a623f3c29bac158cbf25abd0c696c0e2e3df"
+        },
+        {
+          "event": "decision",
+          "payload": {
+            "outcome": "allow",
+            "reason": "policy_satisfied",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "b169e04e36c54b7edcb0611f23c7a623f3c29bac158cbf25abd0c696c0e2e3df",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "decision",
+            "payload_hash": "a8e466926843fe702140b7dff3e458570c67abdd119cb2560a8d126e730d47c7",
+            "outcome": "allow",
+            "reason": "policy_satisfied",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325"
+          },
+          "previous_delta_root": "86eca2f71f556907dfc4c78a829239b1daf9765d9dacb9095ad8fe0ad27d8533",
+          "delta_root": "40d38e128ae3ba56705c92845dfdd11bb7aa9b1957a4e9e92ae1d3116195ee84",
+          "hash": "49666dba4043ef115106e137687492c1acdbfbb142446b37223b779a43bf1a73"
+        },
+        {
+          "event": "permit_bound_to_directive",
+          "payload": {
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "directive_id": "sim-motion",
+            "directive_version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+            "directive_issued_at_ns": 1999900,
+            "directive_expires_at_ns": 2010000
+          },
+          "previous_hash": "49666dba4043ef115106e137687492c1acdbfbb142446b37223b779a43bf1a73",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "permit_bound_to_directive",
+            "payload_hash": "061390119f888413bf399021569c84c1d9ef126401ffb17a9f08f3a507042b2a",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "directive_id": "sim-motion",
+            "directive_version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a"
+          },
+          "previous_delta_root": "40d38e128ae3ba56705c92845dfdd11bb7aa9b1957a4e9e92ae1d3116195ee84",
+          "delta_root": "f17efb1c465c702e02423a8962458379aedec5dc399afb681448f474a3b9aa85",
+          "hash": "47113b887bfc86da49332800700e7956f4a3bbe79c5f68544fab6d4825d65ab2"
+        },
+        {
+          "event": "permit_consumed",
+          "payload": {
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "permit_expires_at_ns": 2000100,
+            "directive_id": "sim-motion",
+            "directive_version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+            "directive_issued_at_ns": 1999900,
+            "directive_expires_at_ns": 2010000,
+            "directive_status": "active"
+          },
+          "previous_hash": "47113b887bfc86da49332800700e7956f4a3bbe79c5f68544fab6d4825d65ab2",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "permit_consumed",
+            "payload_hash": "c491b7dbcff7dea986a7a4b551acdf6d2876b7861c69ffcb2f501ad3ed2ad28f",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "directive_id": "sim-motion",
+            "directive_version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a"
+          },
+          "previous_delta_root": "f17efb1c465c702e02423a8962458379aedec5dc399afb681448f474a3b9aa85",
+          "delta_root": "59bf250a476995bd2e85d29ff15364405b6f7d1851d6de1faa85a2a24148e549",
+          "hash": "5424936d45e5209be77b1d5a3c543f1ebc766816831d0686c90c34bf2beaf87f"
+        },
+        {
+          "event": "permit_rejected",
+          "payload": {
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "permit_expires_at_ns": 2000100,
+            "directive_id": "sim-motion",
+            "directive_version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+            "directive_issued_at_ns": 1999900,
+            "directive_expires_at_ns": 2010000,
+            "directive_status": "active"
+          },
+          "previous_hash": "5424936d45e5209be77b1d5a3c543f1ebc766816831d0686c90c34bf2beaf87f",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "permit_rejected",
+            "payload_hash": "c491b7dbcff7dea986a7a4b551acdf6d2876b7861c69ffcb2f501ad3ed2ad28f",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "directive_id": "sim-motion",
+            "directive_version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a"
+          },
+          "previous_delta_root": "59bf250a476995bd2e85d29ff15364405b6f7d1851d6de1faa85a2a24148e549",
+          "delta_root": "e9b2f542596ce226ee50d9e6b40b7449968b8450d889df21daa5281038989c07",
+          "hash": "7a3f648798f505114b498c3c8833b7880e75a60e49df6ecc43b2b7d5f27f7d89"
+        }
+      ],
+      "deployed_authority_effect": "none",
+      "fixture_authority_effect": "synthetic_directive_activated",
+      "containment_proven": null
+    },
+    {
+      "scenario": "expiry",
+      "classification": "Verified",
+      "passed": true,
+      "decision": "allow",
+      "reason": "canonical_permit_rejected",
+      "permit_consumed": false,
+      "before_x": 0.21199999998234287,
+      "after_x": 0.21199999998234287,
+      "reconciliation": "no_observed_effect",
+      "expected": "no_observed_effect",
+      "attempt_ns": 123011,
+      "audit_valid": true,
+      "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6",
+      "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+      "audit": [
+        {
+          "event": "approval_verified",
+          "payload": {
+            "approval_id": "activate_directive",
+            "authority_id": "authority:test-owner",
+            "verifier_id": "verifier:test-only",
+            "key_id": "key:test-only:v1",
+            "algorithm": "hmac-sha256-test-only",
+            "key_fingerprint": "c0d4282378c959913c7f62a748798a931c7f45ac18527fb1a0b0ca5ec939cf35",
+            "deployment_id": "deployment:test",
+            "trust_hash": "90e6a305db15a333bdaef86838d657c6e314eab220be27156bc58452322a7774",
+            "envelope_hash": "2558db5c5199f26d936b6f8cc0252dcadefaa3e9e386b0b4aac6770e9712c0b2",
+            "signing_payload_hash": "8d7458ea261cd4f9868bf1ef4f17ea7feeabdfb04026d4779b6824f416e04633",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6",
+            "issued_at_ns": 1999999,
+            "expires_at_ns": 2000999,
+            "verified_at_ns": 2000000
+          },
+          "previous_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "approval_verified",
+            "payload_hash": "c08539c112d3f00d07819c361386dd5be9220cbbb06d4a007b22e13b323c62d2",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "approval_id": "activate_directive"
+          },
+          "previous_delta_root": "0000000000000000000000000000000000000000000000000000000000000000",
+          "delta_root": "45d9d49c32f9fb382dc5db0a3bb89e67414762c129327b1dbfd0b561933341c6",
+          "hash": "f5518de7185c343c1bf318a68571e3ad88b8b9b4c4ddf5a2050a492cb91a8386"
+        },
+        {
+          "event": "decision",
+          "payload": {
+            "outcome": "allow",
+            "reason": "verified_approval",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "f5518de7185c343c1bf318a68571e3ad88b8b9b4c4ddf5a2050a492cb91a8386",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "decision",
+            "payload_hash": "45bdd5902b87796efbede193d071d575f3989b117460a9e7622a6d8e348b0304",
+            "outcome": "allow",
+            "reason": "verified_approval",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4"
+          },
+          "previous_delta_root": "45d9d49c32f9fb382dc5db0a3bb89e67414762c129327b1dbfd0b561933341c6",
+          "delta_root": "37cbbecfd776460a07c2d7994a40b63aee719e73bfb4b248d1d6c0675ec28f30",
+          "hash": "6084db7ed0b926cb18e947f89c1808b7bb39d7c9af3ac6e6b7d715cf63ea9a8d"
+        },
+        {
+          "event": "permit_consumed",
+          "payload": {
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "6084db7ed0b926cb18e947f89c1808b7bb39d7c9af3ac6e6b7d715cf63ea9a8d",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "permit_consumed",
+            "payload_hash": "b45abb6d554df13b081f73c1b40b5f7b80f1452a92f998f64dbfed07a03392ae",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4"
+          },
+          "previous_delta_root": "37cbbecfd776460a07c2d7994a40b63aee719e73bfb4b248d1d6c0675ec28f30",
+          "delta_root": "9f65f7e16c9849af21926dce0a0035ad4b792e28c44b06b374fd4fb6b73bad8f",
+          "hash": "c24a2bc42e0c5ac200d7461e94fae2e5114057619bb16394f9dd12296c9edded"
+        },
+        {
+          "event": "directive_activated",
+          "payload": {
+            "directive_id": "sim-motion",
+            "version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+            "authority_evidence": {
+              "operation": "activate_directive",
+              "directive_id": "sim-motion",
+              "directive_version": 1,
+              "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+              "parent_directive_hash": null,
+              "authority_id": "authority:test-owner",
+              "approval_id": "activate_directive",
+              "envelope_hash": "2558db5c5199f26d936b6f8cc0252dcadefaa3e9e386b0b4aac6770e9712c0b2",
+              "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+              "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6"
+            }
+          },
+          "previous_hash": "c24a2bc42e0c5ac200d7461e94fae2e5114057619bb16394f9dd12296c9edded",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "directive_activated",
+            "payload_hash": "0f1f900baeaaf9c66ae3bad300bcf5d6daaddb2840a01293fdac7ba58288188e",
+            "directive_id": "sim-motion",
+            "version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a"
+          },
+          "previous_delta_root": "9f65f7e16c9849af21926dce0a0035ad4b792e28c44b06b374fd4fb6b73bad8f",
+          "delta_root": "86eca2f71f556907dfc4c78a829239b1daf9765d9dacb9095ad8fe0ad27d8533",
+          "hash": "b169e04e36c54b7edcb0611f23c7a623f3c29bac158cbf25abd0c696c0e2e3df"
+        },
+        {
+          "event": "decision",
+          "payload": {
+            "outcome": "allow",
+            "reason": "policy_satisfied",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "b169e04e36c54b7edcb0611f23c7a623f3c29bac158cbf25abd0c696c0e2e3df",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "decision",
+            "payload_hash": "a8e466926843fe702140b7dff3e458570c67abdd119cb2560a8d126e730d47c7",
+            "outcome": "allow",
+            "reason": "policy_satisfied",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325"
+          },
+          "previous_delta_root": "86eca2f71f556907dfc4c78a829239b1daf9765d9dacb9095ad8fe0ad27d8533",
+          "delta_root": "40d38e128ae3ba56705c92845dfdd11bb7aa9b1957a4e9e92ae1d3116195ee84",
+          "hash": "49666dba4043ef115106e137687492c1acdbfbb142446b37223b779a43bf1a73"
+        },
+        {
+          "event": "permit_bound_to_directive",
+          "payload": {
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "directive_id": "sim-motion",
+            "directive_version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+            "directive_issued_at_ns": 1999900,
+            "directive_expires_at_ns": 2010000
+          },
+          "previous_hash": "49666dba4043ef115106e137687492c1acdbfbb142446b37223b779a43bf1a73",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "permit_bound_to_directive",
+            "payload_hash": "061390119f888413bf399021569c84c1d9ef126401ffb17a9f08f3a507042b2a",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "directive_id": "sim-motion",
+            "directive_version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a"
+          },
+          "previous_delta_root": "40d38e128ae3ba56705c92845dfdd11bb7aa9b1957a4e9e92ae1d3116195ee84",
+          "delta_root": "f17efb1c465c702e02423a8962458379aedec5dc399afb681448f474a3b9aa85",
+          "hash": "47113b887bfc86da49332800700e7956f4a3bbe79c5f68544fab6d4825d65ab2"
+        },
+        {
+          "event": "permit_rejected",
+          "payload": {
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "permit_expires_at_ns": 2000100,
+            "directive_id": "sim-motion",
+            "directive_version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+            "directive_issued_at_ns": 1999900,
+            "directive_expires_at_ns": 2010000,
+            "directive_status": "active"
+          },
+          "previous_hash": "47113b887bfc86da49332800700e7956f4a3bbe79c5f68544fab6d4825d65ab2",
+          "timestamp_ns": 2000100,
+          "delta": {
+            "event": "permit_rejected",
+            "payload_hash": "c491b7dbcff7dea986a7a4b551acdf6d2876b7861c69ffcb2f501ad3ed2ad28f",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "directive_id": "sim-motion",
+            "directive_version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a"
+          },
+          "previous_delta_root": "f17efb1c465c702e02423a8962458379aedec5dc399afb681448f474a3b9aa85",
+          "delta_root": "d2ff8e6901bfc0219c3ba6c14ba4b5b2aac6ca33317763415a7646531f52294d",
+          "hash": "b686e7ad495d2c7ef9c13827fee61650da86a646ef011d900686f3dc3d06c4ef"
+        }
+      ],
+      "deployed_authority_effect": "none",
+      "fixture_authority_effect": "synthetic_directive_activated",
+      "containment_proven": null
+    },
+    {
+      "scenario": "revocation",
+      "classification": "Verified",
+      "passed": true,
+      "decision": "allow",
+      "reason": "canonical_permit_rejected",
+      "permit_consumed": false,
+      "before_x": 0.21199999998234287,
+      "after_x": 0.21199999998234287,
+      "reconciliation": "no_observed_effect",
+      "expected": "no_observed_effect",
+      "attempt_ns": 224533,
+      "audit_valid": true,
+      "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6",
+      "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+      "audit": [
+        {
+          "event": "approval_verified",
+          "payload": {
+            "approval_id": "activate_directive",
+            "authority_id": "authority:test-owner",
+            "verifier_id": "verifier:test-only",
+            "key_id": "key:test-only:v1",
+            "algorithm": "hmac-sha256-test-only",
+            "key_fingerprint": "c0d4282378c959913c7f62a748798a931c7f45ac18527fb1a0b0ca5ec939cf35",
+            "deployment_id": "deployment:test",
+            "trust_hash": "90e6a305db15a333bdaef86838d657c6e314eab220be27156bc58452322a7774",
+            "envelope_hash": "2558db5c5199f26d936b6f8cc0252dcadefaa3e9e386b0b4aac6770e9712c0b2",
+            "signing_payload_hash": "8d7458ea261cd4f9868bf1ef4f17ea7feeabdfb04026d4779b6824f416e04633",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6",
+            "issued_at_ns": 1999999,
+            "expires_at_ns": 2000999,
+            "verified_at_ns": 2000000
+          },
+          "previous_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "approval_verified",
+            "payload_hash": "c08539c112d3f00d07819c361386dd5be9220cbbb06d4a007b22e13b323c62d2",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "approval_id": "activate_directive"
+          },
+          "previous_delta_root": "0000000000000000000000000000000000000000000000000000000000000000",
+          "delta_root": "45d9d49c32f9fb382dc5db0a3bb89e67414762c129327b1dbfd0b561933341c6",
+          "hash": "f5518de7185c343c1bf318a68571e3ad88b8b9b4c4ddf5a2050a492cb91a8386"
+        },
+        {
+          "event": "decision",
+          "payload": {
+            "outcome": "allow",
+            "reason": "verified_approval",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "f5518de7185c343c1bf318a68571e3ad88b8b9b4c4ddf5a2050a492cb91a8386",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "decision",
+            "payload_hash": "45bdd5902b87796efbede193d071d575f3989b117460a9e7622a6d8e348b0304",
+            "outcome": "allow",
+            "reason": "verified_approval",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4"
+          },
+          "previous_delta_root": "45d9d49c32f9fb382dc5db0a3bb89e67414762c129327b1dbfd0b561933341c6",
+          "delta_root": "37cbbecfd776460a07c2d7994a40b63aee719e73bfb4b248d1d6c0675ec28f30",
+          "hash": "6084db7ed0b926cb18e947f89c1808b7bb39d7c9af3ac6e6b7d715cf63ea9a8d"
+        },
+        {
+          "event": "permit_consumed",
+          "payload": {
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "6084db7ed0b926cb18e947f89c1808b7bb39d7c9af3ac6e6b7d715cf63ea9a8d",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "permit_consumed",
+            "payload_hash": "b45abb6d554df13b081f73c1b40b5f7b80f1452a92f998f64dbfed07a03392ae",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4"
+          },
+          "previous_delta_root": "37cbbecfd776460a07c2d7994a40b63aee719e73bfb4b248d1d6c0675ec28f30",
+          "delta_root": "9f65f7e16c9849af21926dce0a0035ad4b792e28c44b06b374fd4fb6b73bad8f",
+          "hash": "c24a2bc42e0c5ac200d7461e94fae2e5114057619bb16394f9dd12296c9edded"
+        },
+        {
+          "event": "directive_activated",
+          "payload": {
+            "directive_id": "sim-motion",
+            "version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+            "authority_evidence": {
+              "operation": "activate_directive",
+              "directive_id": "sim-motion",
+              "directive_version": 1,
+              "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+              "parent_directive_hash": null,
+              "authority_id": "authority:test-owner",
+              "approval_id": "activate_directive",
+              "envelope_hash": "2558db5c5199f26d936b6f8cc0252dcadefaa3e9e386b0b4aac6770e9712c0b2",
+              "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+              "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6"
+            }
+          },
+          "previous_hash": "c24a2bc42e0c5ac200d7461e94fae2e5114057619bb16394f9dd12296c9edded",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "directive_activated",
+            "payload_hash": "0f1f900baeaaf9c66ae3bad300bcf5d6daaddb2840a01293fdac7ba58288188e",
+            "directive_id": "sim-motion",
+            "version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a"
+          },
+          "previous_delta_root": "9f65f7e16c9849af21926dce0a0035ad4b792e28c44b06b374fd4fb6b73bad8f",
+          "delta_root": "86eca2f71f556907dfc4c78a829239b1daf9765d9dacb9095ad8fe0ad27d8533",
+          "hash": "b169e04e36c54b7edcb0611f23c7a623f3c29bac158cbf25abd0c696c0e2e3df"
+        },
+        {
+          "event": "decision",
+          "payload": {
+            "outcome": "allow",
+            "reason": "policy_satisfied",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "b169e04e36c54b7edcb0611f23c7a623f3c29bac158cbf25abd0c696c0e2e3df",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "decision",
+            "payload_hash": "a8e466926843fe702140b7dff3e458570c67abdd119cb2560a8d126e730d47c7",
+            "outcome": "allow",
+            "reason": "policy_satisfied",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325"
+          },
+          "previous_delta_root": "86eca2f71f556907dfc4c78a829239b1daf9765d9dacb9095ad8fe0ad27d8533",
+          "delta_root": "40d38e128ae3ba56705c92845dfdd11bb7aa9b1957a4e9e92ae1d3116195ee84",
+          "hash": "49666dba4043ef115106e137687492c1acdbfbb142446b37223b779a43bf1a73"
+        },
+        {
+          "event": "permit_bound_to_directive",
+          "payload": {
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "directive_id": "sim-motion",
+            "directive_version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+            "directive_issued_at_ns": 1999900,
+            "directive_expires_at_ns": 2010000
+          },
+          "previous_hash": "49666dba4043ef115106e137687492c1acdbfbb142446b37223b779a43bf1a73",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "permit_bound_to_directive",
+            "payload_hash": "061390119f888413bf399021569c84c1d9ef126401ffb17a9f08f3a507042b2a",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "directive_id": "sim-motion",
+            "directive_version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a"
+          },
+          "previous_delta_root": "40d38e128ae3ba56705c92845dfdd11bb7aa9b1957a4e9e92ae1d3116195ee84",
+          "delta_root": "f17efb1c465c702e02423a8962458379aedec5dc399afb681448f474a3b9aa85",
+          "hash": "47113b887bfc86da49332800700e7956f4a3bbe79c5f68544fab6d4825d65ab2"
+        },
+        {
+          "event": "approval_verified",
+          "payload": {
+            "approval_id": "revoke_directive",
+            "authority_id": "authority:test-owner",
+            "verifier_id": "verifier:test-only",
+            "key_id": "key:test-only:v1",
+            "algorithm": "hmac-sha256-test-only",
+            "key_fingerprint": "c0d4282378c959913c7f62a748798a931c7f45ac18527fb1a0b0ca5ec939cf35",
+            "deployment_id": "deployment:test",
+            "trust_hash": "90e6a305db15a333bdaef86838d657c6e314eab220be27156bc58452322a7774",
+            "envelope_hash": "99b6a34c71d82041dd4bd8514501e35e2267ea2ac82d8b6ef6e673b9e338d8a0",
+            "signing_payload_hash": "58d639e00bc3b9aaaa3db1c04b658e46122e227c773fa89373ea7c4406c52d2c",
+            "intent_hash": "e988e84d31f6c28dbbae9f49e7bf8d24c6b32bdaee8c813b0ccca68f014d571b",
+            "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6",
+            "issued_at_ns": 1999999,
+            "expires_at_ns": 2000999,
+            "verified_at_ns": 2000000
+          },
+          "previous_hash": "47113b887bfc86da49332800700e7956f4a3bbe79c5f68544fab6d4825d65ab2",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "approval_verified",
+            "payload_hash": "f7b6aad19eb111ca109fdd117767b0dddca1620ccb1fd058ec3e78d8e8ff0fb6",
+            "intent_hash": "e988e84d31f6c28dbbae9f49e7bf8d24c6b32bdaee8c813b0ccca68f014d571b",
+            "approval_id": "revoke_directive"
+          },
+          "previous_delta_root": "f17efb1c465c702e02423a8962458379aedec5dc399afb681448f474a3b9aa85",
+          "delta_root": "16d6a4098d5f9cde02574c35d50dde6949378f4b9829b30af5d81cfa35c8b6cf",
+          "hash": "1e0f461e9118364e80189d9c4435619e566d828a690f0471be0d14499f9398e1"
+        },
+        {
+          "event": "decision",
+          "payload": {
+            "outcome": "allow",
+            "reason": "verified_approval",
+            "intent_hash": "e988e84d31f6c28dbbae9f49e7bf8d24c6b32bdaee8c813b0ccca68f014d571b",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "1e0f461e9118364e80189d9c4435619e566d828a690f0471be0d14499f9398e1",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "decision",
+            "payload_hash": "de93986509efeaf46945f1f178462f07224c65048d2868a8756c0297a9cad007",
+            "outcome": "allow",
+            "reason": "verified_approval",
+            "intent_hash": "e988e84d31f6c28dbbae9f49e7bf8d24c6b32bdaee8c813b0ccca68f014d571b"
+          },
+          "previous_delta_root": "16d6a4098d5f9cde02574c35d50dde6949378f4b9829b30af5d81cfa35c8b6cf",
+          "delta_root": "2b0009cc5a70535c5a730f7dd73881decc7db18b1b539df35769e3b252cf066a",
+          "hash": "7a25ed8f4524746aedda522e6ff955c1e24dfe87378ddffd87a0ff1a7117e9d0"
+        },
+        {
+          "event": "permit_consumed",
+          "payload": {
+            "intent_hash": "e988e84d31f6c28dbbae9f49e7bf8d24c6b32bdaee8c813b0ccca68f014d571b",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "7a25ed8f4524746aedda522e6ff955c1e24dfe87378ddffd87a0ff1a7117e9d0",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "permit_consumed",
+            "payload_hash": "2d0444026a6298515f27921f1a4f4b4cb7581efd22cb782cd0ccb6808854269a",
+            "intent_hash": "e988e84d31f6c28dbbae9f49e7bf8d24c6b32bdaee8c813b0ccca68f014d571b"
+          },
+          "previous_delta_root": "2b0009cc5a70535c5a730f7dd73881decc7db18b1b539df35769e3b252cf066a",
+          "delta_root": "b6d4e90063a6267f020f205acf06d532472c71bdd69a549c582fcad8392dc262",
+          "hash": "7cfc4568a9ab40ad936ba92d244f90f48a28c5834e6f688e80a683067337276b"
+        },
+        {
+          "event": "directive_revoked",
+          "payload": {
+            "directive_id": "sim-motion",
+            "version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+            "authority_evidence": {
+              "operation": "revoke_directive",
+              "directive_id": "sim-motion",
+              "directive_version": 1,
+              "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+              "parent_directive_hash": null,
+              "authority_id": "authority:test-owner",
+              "approval_id": "revoke_directive",
+              "envelope_hash": "99b6a34c71d82041dd4bd8514501e35e2267ea2ac82d8b6ef6e673b9e338d8a0",
+              "intent_hash": "e988e84d31f6c28dbbae9f49e7bf8d24c6b32bdaee8c813b0ccca68f014d571b",
+              "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6"
+            }
+          },
+          "previous_hash": "7cfc4568a9ab40ad936ba92d244f90f48a28c5834e6f688e80a683067337276b",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "directive_revoked",
+            "payload_hash": "13802b2bd0a866cf3fa2abf783caa806eab77b3add0fa6033fc1c0acb71f210d",
+            "directive_id": "sim-motion",
+            "version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a"
+          },
+          "previous_delta_root": "b6d4e90063a6267f020f205acf06d532472c71bdd69a549c582fcad8392dc262",
+          "delta_root": "4f3e88597495874bd8b6ae28d2713d873967e6eb7bff606c973263bd8f1b8cc5",
+          "hash": "6034b85305b995a0e424aa90b43f162343ec516862cbd91057b9f891c1c2d949"
+        },
+        {
+          "event": "permit_rejected",
+          "payload": {
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "permit_expires_at_ns": 2000100,
+            "directive_id": "sim-motion",
+            "directive_version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+            "directive_issued_at_ns": 1999900,
+            "directive_expires_at_ns": 2010000,
+            "directive_status": "directive_revoked"
+          },
+          "previous_hash": "6034b85305b995a0e424aa90b43f162343ec516862cbd91057b9f891c1c2d949",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "permit_rejected",
+            "payload_hash": "150ceac7d4aad960633a1dd5ec6dc37ac9e17add13252cf3c0877a9e905d5952",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "directive_id": "sim-motion",
+            "directive_version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a"
+          },
+          "previous_delta_root": "4f3e88597495874bd8b6ae28d2713d873967e6eb7bff606c973263bd8f1b8cc5",
+          "delta_root": "a0dab492012d62ed91094558ac37bbba0e29bd161f13b00731c2a5e087379c53",
+          "hash": "053c52ec0102ec461d1e02c36e6107786cffa94d09426d7321d748ab07ded604"
+        }
+      ],
+      "deployed_authority_effect": "none",
+      "fixture_authority_effect": "synthetic_directive_activated_then_revoked",
+      "containment_proven": null
+    },
+    {
+      "scenario": "substitution",
+      "classification": "Verified",
+      "passed": true,
+      "decision": "allow",
+      "reason": "motion_binding_mismatch",
+      "permit_consumed": false,
+      "before_x": 0.21199999998234287,
+      "after_x": 0.21199999998234287,
+      "reconciliation": "no_observed_effect",
+      "expected": "no_observed_effect",
+      "attempt_ns": 17368,
+      "audit_valid": true,
+      "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6",
+      "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+      "audit": [
+        {
+          "event": "approval_verified",
+          "payload": {
+            "approval_id": "activate_directive",
+            "authority_id": "authority:test-owner",
+            "verifier_id": "verifier:test-only",
+            "key_id": "key:test-only:v1",
+            "algorithm": "hmac-sha256-test-only",
+            "key_fingerprint": "c0d4282378c959913c7f62a748798a931c7f45ac18527fb1a0b0ca5ec939cf35",
+            "deployment_id": "deployment:test",
+            "trust_hash": "90e6a305db15a333bdaef86838d657c6e314eab220be27156bc58452322a7774",
+            "envelope_hash": "2558db5c5199f26d936b6f8cc0252dcadefaa3e9e386b0b4aac6770e9712c0b2",
+            "signing_payload_hash": "8d7458ea261cd4f9868bf1ef4f17ea7feeabdfb04026d4779b6824f416e04633",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6",
+            "issued_at_ns": 1999999,
+            "expires_at_ns": 2000999,
+            "verified_at_ns": 2000000
+          },
+          "previous_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "approval_verified",
+            "payload_hash": "c08539c112d3f00d07819c361386dd5be9220cbbb06d4a007b22e13b323c62d2",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "approval_id": "activate_directive"
+          },
+          "previous_delta_root": "0000000000000000000000000000000000000000000000000000000000000000",
+          "delta_root": "45d9d49c32f9fb382dc5db0a3bb89e67414762c129327b1dbfd0b561933341c6",
+          "hash": "f5518de7185c343c1bf318a68571e3ad88b8b9b4c4ddf5a2050a492cb91a8386"
+        },
+        {
+          "event": "decision",
+          "payload": {
+            "outcome": "allow",
+            "reason": "verified_approval",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "f5518de7185c343c1bf318a68571e3ad88b8b9b4c4ddf5a2050a492cb91a8386",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "decision",
+            "payload_hash": "45bdd5902b87796efbede193d071d575f3989b117460a9e7622a6d8e348b0304",
+            "outcome": "allow",
+            "reason": "verified_approval",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4"
+          },
+          "previous_delta_root": "45d9d49c32f9fb382dc5db0a3bb89e67414762c129327b1dbfd0b561933341c6",
+          "delta_root": "37cbbecfd776460a07c2d7994a40b63aee719e73bfb4b248d1d6c0675ec28f30",
+          "hash": "6084db7ed0b926cb18e947f89c1808b7bb39d7c9af3ac6e6b7d715cf63ea9a8d"
+        },
+        {
+          "event": "permit_consumed",
+          "payload": {
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "6084db7ed0b926cb18e947f89c1808b7bb39d7c9af3ac6e6b7d715cf63ea9a8d",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "permit_consumed",
+            "payload_hash": "b45abb6d554df13b081f73c1b40b5f7b80f1452a92f998f64dbfed07a03392ae",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4"
+          },
+          "previous_delta_root": "37cbbecfd776460a07c2d7994a40b63aee719e73bfb4b248d1d6c0675ec28f30",
+          "delta_root": "9f65f7e16c9849af21926dce0a0035ad4b792e28c44b06b374fd4fb6b73bad8f",
+          "hash": "c24a2bc42e0c5ac200d7461e94fae2e5114057619bb16394f9dd12296c9edded"
+        },
+        {
+          "event": "directive_activated",
+          "payload": {
+            "directive_id": "sim-motion",
+            "version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+            "authority_evidence": {
+              "operation": "activate_directive",
+              "directive_id": "sim-motion",
+              "directive_version": 1,
+              "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+              "parent_directive_hash": null,
+              "authority_id": "authority:test-owner",
+              "approval_id": "activate_directive",
+              "envelope_hash": "2558db5c5199f26d936b6f8cc0252dcadefaa3e9e386b0b4aac6770e9712c0b2",
+              "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+              "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6"
+            }
+          },
+          "previous_hash": "c24a2bc42e0c5ac200d7461e94fae2e5114057619bb16394f9dd12296c9edded",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "directive_activated",
+            "payload_hash": "0f1f900baeaaf9c66ae3bad300bcf5d6daaddb2840a01293fdac7ba58288188e",
+            "directive_id": "sim-motion",
+            "version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a"
+          },
+          "previous_delta_root": "9f65f7e16c9849af21926dce0a0035ad4b792e28c44b06b374fd4fb6b73bad8f",
+          "delta_root": "86eca2f71f556907dfc4c78a829239b1daf9765d9dacb9095ad8fe0ad27d8533",
+          "hash": "b169e04e36c54b7edcb0611f23c7a623f3c29bac158cbf25abd0c696c0e2e3df"
+        },
+        {
+          "event": "decision",
+          "payload": {
+            "outcome": "allow",
+            "reason": "policy_satisfied",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "b169e04e36c54b7edcb0611f23c7a623f3c29bac158cbf25abd0c696c0e2e3df",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "decision",
+            "payload_hash": "a8e466926843fe702140b7dff3e458570c67abdd119cb2560a8d126e730d47c7",
+            "outcome": "allow",
+            "reason": "policy_satisfied",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325"
+          },
+          "previous_delta_root": "86eca2f71f556907dfc4c78a829239b1daf9765d9dacb9095ad8fe0ad27d8533",
+          "delta_root": "40d38e128ae3ba56705c92845dfdd11bb7aa9b1957a4e9e92ae1d3116195ee84",
+          "hash": "49666dba4043ef115106e137687492c1acdbfbb142446b37223b779a43bf1a73"
+        },
+        {
+          "event": "permit_bound_to_directive",
+          "payload": {
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "directive_id": "sim-motion",
+            "directive_version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+            "directive_issued_at_ns": 1999900,
+            "directive_expires_at_ns": 2010000
+          },
+          "previous_hash": "49666dba4043ef115106e137687492c1acdbfbb142446b37223b779a43bf1a73",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "permit_bound_to_directive",
+            "payload_hash": "061390119f888413bf399021569c84c1d9ef126401ffb17a9f08f3a507042b2a",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "directive_id": "sim-motion",
+            "directive_version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a"
+          },
+          "previous_delta_root": "40d38e128ae3ba56705c92845dfdd11bb7aa9b1957a4e9e92ae1d3116195ee84",
+          "delta_root": "f17efb1c465c702e02423a8962458379aedec5dc399afb681448f474a3b9aa85",
+          "hash": "47113b887bfc86da49332800700e7956f4a3bbe79c5f68544fab6d4825d65ab2"
+        }
+      ],
+      "deployed_authority_effect": "none",
+      "fixture_authority_effect": "synthetic_directive_activated",
+      "containment_proven": null
+    },
+    {
+      "scenario": "human_presence",
+      "classification": "Verified",
+      "passed": true,
+      "decision": "allow",
+      "reason": "human_presence_veto",
+      "permit_consumed": false,
+      "before_x": 0.21199999998234287,
+      "after_x": 0.21199999998234287,
+      "reconciliation": "no_observed_effect",
+      "expected": "no_observed_effect",
+      "attempt_ns": 46417,
+      "audit_valid": true,
+      "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6",
+      "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+      "audit": [
+        {
+          "event": "approval_verified",
+          "payload": {
+            "approval_id": "activate_directive",
+            "authority_id": "authority:test-owner",
+            "verifier_id": "verifier:test-only",
+            "key_id": "key:test-only:v1",
+            "algorithm": "hmac-sha256-test-only",
+            "key_fingerprint": "c0d4282378c959913c7f62a748798a931c7f45ac18527fb1a0b0ca5ec939cf35",
+            "deployment_id": "deployment:test",
+            "trust_hash": "90e6a305db15a333bdaef86838d657c6e314eab220be27156bc58452322a7774",
+            "envelope_hash": "2558db5c5199f26d936b6f8cc0252dcadefaa3e9e386b0b4aac6770e9712c0b2",
+            "signing_payload_hash": "8d7458ea261cd4f9868bf1ef4f17ea7feeabdfb04026d4779b6824f416e04633",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6",
+            "issued_at_ns": 1999999,
+            "expires_at_ns": 2000999,
+            "verified_at_ns": 2000000
+          },
+          "previous_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "approval_verified",
+            "payload_hash": "c08539c112d3f00d07819c361386dd5be9220cbbb06d4a007b22e13b323c62d2",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "approval_id": "activate_directive"
+          },
+          "previous_delta_root": "0000000000000000000000000000000000000000000000000000000000000000",
+          "delta_root": "45d9d49c32f9fb382dc5db0a3bb89e67414762c129327b1dbfd0b561933341c6",
+          "hash": "f5518de7185c343c1bf318a68571e3ad88b8b9b4c4ddf5a2050a492cb91a8386"
+        },
+        {
+          "event": "decision",
+          "payload": {
+            "outcome": "allow",
+            "reason": "verified_approval",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "f5518de7185c343c1bf318a68571e3ad88b8b9b4c4ddf5a2050a492cb91a8386",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "decision",
+            "payload_hash": "45bdd5902b87796efbede193d071d575f3989b117460a9e7622a6d8e348b0304",
+            "outcome": "allow",
+            "reason": "verified_approval",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4"
+          },
+          "previous_delta_root": "45d9d49c32f9fb382dc5db0a3bb89e67414762c129327b1dbfd0b561933341c6",
+          "delta_root": "37cbbecfd776460a07c2d7994a40b63aee719e73bfb4b248d1d6c0675ec28f30",
+          "hash": "6084db7ed0b926cb18e947f89c1808b7bb39d7c9af3ac6e6b7d715cf63ea9a8d"
+        },
+        {
+          "event": "permit_consumed",
+          "payload": {
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "6084db7ed0b926cb18e947f89c1808b7bb39d7c9af3ac6e6b7d715cf63ea9a8d",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "permit_consumed",
+            "payload_hash": "b45abb6d554df13b081f73c1b40b5f7b80f1452a92f998f64dbfed07a03392ae",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4"
+          },
+          "previous_delta_root": "37cbbecfd776460a07c2d7994a40b63aee719e73bfb4b248d1d6c0675ec28f30",
+          "delta_root": "9f65f7e16c9849af21926dce0a0035ad4b792e28c44b06b374fd4fb6b73bad8f",
+          "hash": "c24a2bc42e0c5ac200d7461e94fae2e5114057619bb16394f9dd12296c9edded"
+        },
+        {
+          "event": "directive_activated",
+          "payload": {
+            "directive_id": "sim-motion",
+            "version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+            "authority_evidence": {
+              "operation": "activate_directive",
+              "directive_id": "sim-motion",
+              "directive_version": 1,
+              "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+              "parent_directive_hash": null,
+              "authority_id": "authority:test-owner",
+              "approval_id": "activate_directive",
+              "envelope_hash": "2558db5c5199f26d936b6f8cc0252dcadefaa3e9e386b0b4aac6770e9712c0b2",
+              "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+              "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6"
+            }
+          },
+          "previous_hash": "c24a2bc42e0c5ac200d7461e94fae2e5114057619bb16394f9dd12296c9edded",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "directive_activated",
+            "payload_hash": "0f1f900baeaaf9c66ae3bad300bcf5d6daaddb2840a01293fdac7ba58288188e",
+            "directive_id": "sim-motion",
+            "version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a"
+          },
+          "previous_delta_root": "9f65f7e16c9849af21926dce0a0035ad4b792e28c44b06b374fd4fb6b73bad8f",
+          "delta_root": "86eca2f71f556907dfc4c78a829239b1daf9765d9dacb9095ad8fe0ad27d8533",
+          "hash": "b169e04e36c54b7edcb0611f23c7a623f3c29bac158cbf25abd0c696c0e2e3df"
+        },
+        {
+          "event": "decision",
+          "payload": {
+            "outcome": "allow",
+            "reason": "policy_satisfied",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "b169e04e36c54b7edcb0611f23c7a623f3c29bac158cbf25abd0c696c0e2e3df",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "decision",
+            "payload_hash": "a8e466926843fe702140b7dff3e458570c67abdd119cb2560a8d126e730d47c7",
+            "outcome": "allow",
+            "reason": "policy_satisfied",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325"
+          },
+          "previous_delta_root": "86eca2f71f556907dfc4c78a829239b1daf9765d9dacb9095ad8fe0ad27d8533",
+          "delta_root": "40d38e128ae3ba56705c92845dfdd11bb7aa9b1957a4e9e92ae1d3116195ee84",
+          "hash": "49666dba4043ef115106e137687492c1acdbfbb142446b37223b779a43bf1a73"
+        },
+        {
+          "event": "permit_bound_to_directive",
+          "payload": {
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "directive_id": "sim-motion",
+            "directive_version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+            "directive_issued_at_ns": 1999900,
+            "directive_expires_at_ns": 2010000
+          },
+          "previous_hash": "49666dba4043ef115106e137687492c1acdbfbb142446b37223b779a43bf1a73",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "permit_bound_to_directive",
+            "payload_hash": "061390119f888413bf399021569c84c1d9ef126401ffb17a9f08f3a507042b2a",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "directive_id": "sim-motion",
+            "directive_version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a"
+          },
+          "previous_delta_root": "40d38e128ae3ba56705c92845dfdd11bb7aa9b1957a4e9e92ae1d3116195ee84",
+          "delta_root": "f17efb1c465c702e02423a8962458379aedec5dc399afb681448f474a3b9aa85",
+          "hash": "47113b887bfc86da49332800700e7956f4a3bbe79c5f68544fab6d4825d65ab2"
+        }
+      ],
+      "deployed_authority_effect": "none",
+      "fixture_authority_effect": "synthetic_directive_activated",
+      "containment_proven": null
+    },
+    {
+      "scenario": "stale_sensor",
+      "classification": "Verified",
+      "passed": true,
+      "decision": "allow",
+      "reason": "sensor_health_veto",
+      "permit_consumed": false,
+      "before_x": 0.21199999998234287,
+      "after_x": 0.21199999998234287,
+      "reconciliation": "no_observed_effect",
+      "expected": "no_observed_effect",
+      "attempt_ns": 45097,
+      "audit_valid": true,
+      "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6",
+      "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+      "audit": [
+        {
+          "event": "approval_verified",
+          "payload": {
+            "approval_id": "activate_directive",
+            "authority_id": "authority:test-owner",
+            "verifier_id": "verifier:test-only",
+            "key_id": "key:test-only:v1",
+            "algorithm": "hmac-sha256-test-only",
+            "key_fingerprint": "c0d4282378c959913c7f62a748798a931c7f45ac18527fb1a0b0ca5ec939cf35",
+            "deployment_id": "deployment:test",
+            "trust_hash": "90e6a305db15a333bdaef86838d657c6e314eab220be27156bc58452322a7774",
+            "envelope_hash": "2558db5c5199f26d936b6f8cc0252dcadefaa3e9e386b0b4aac6770e9712c0b2",
+            "signing_payload_hash": "8d7458ea261cd4f9868bf1ef4f17ea7feeabdfb04026d4779b6824f416e04633",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6",
+            "issued_at_ns": 1999999,
+            "expires_at_ns": 2000999,
+            "verified_at_ns": 2000000
+          },
+          "previous_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "approval_verified",
+            "payload_hash": "c08539c112d3f00d07819c361386dd5be9220cbbb06d4a007b22e13b323c62d2",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "approval_id": "activate_directive"
+          },
+          "previous_delta_root": "0000000000000000000000000000000000000000000000000000000000000000",
+          "delta_root": "45d9d49c32f9fb382dc5db0a3bb89e67414762c129327b1dbfd0b561933341c6",
+          "hash": "f5518de7185c343c1bf318a68571e3ad88b8b9b4c4ddf5a2050a492cb91a8386"
+        },
+        {
+          "event": "decision",
+          "payload": {
+            "outcome": "allow",
+            "reason": "verified_approval",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "f5518de7185c343c1bf318a68571e3ad88b8b9b4c4ddf5a2050a492cb91a8386",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "decision",
+            "payload_hash": "45bdd5902b87796efbede193d071d575f3989b117460a9e7622a6d8e348b0304",
+            "outcome": "allow",
+            "reason": "verified_approval",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4"
+          },
+          "previous_delta_root": "45d9d49c32f9fb382dc5db0a3bb89e67414762c129327b1dbfd0b561933341c6",
+          "delta_root": "37cbbecfd776460a07c2d7994a40b63aee719e73bfb4b248d1d6c0675ec28f30",
+          "hash": "6084db7ed0b926cb18e947f89c1808b7bb39d7c9af3ac6e6b7d715cf63ea9a8d"
+        },
+        {
+          "event": "permit_consumed",
+          "payload": {
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "6084db7ed0b926cb18e947f89c1808b7bb39d7c9af3ac6e6b7d715cf63ea9a8d",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "permit_consumed",
+            "payload_hash": "b45abb6d554df13b081f73c1b40b5f7b80f1452a92f998f64dbfed07a03392ae",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4"
+          },
+          "previous_delta_root": "37cbbecfd776460a07c2d7994a40b63aee719e73bfb4b248d1d6c0675ec28f30",
+          "delta_root": "9f65f7e16c9849af21926dce0a0035ad4b792e28c44b06b374fd4fb6b73bad8f",
+          "hash": "c24a2bc42e0c5ac200d7461e94fae2e5114057619bb16394f9dd12296c9edded"
+        },
+        {
+          "event": "directive_activated",
+          "payload": {
+            "directive_id": "sim-motion",
+            "version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+            "authority_evidence": {
+              "operation": "activate_directive",
+              "directive_id": "sim-motion",
+              "directive_version": 1,
+              "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+              "parent_directive_hash": null,
+              "authority_id": "authority:test-owner",
+              "approval_id": "activate_directive",
+              "envelope_hash": "2558db5c5199f26d936b6f8cc0252dcadefaa3e9e386b0b4aac6770e9712c0b2",
+              "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+              "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6"
+            }
+          },
+          "previous_hash": "c24a2bc42e0c5ac200d7461e94fae2e5114057619bb16394f9dd12296c9edded",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "directive_activated",
+            "payload_hash": "0f1f900baeaaf9c66ae3bad300bcf5d6daaddb2840a01293fdac7ba58288188e",
+            "directive_id": "sim-motion",
+            "version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a"
+          },
+          "previous_delta_root": "9f65f7e16c9849af21926dce0a0035ad4b792e28c44b06b374fd4fb6b73bad8f",
+          "delta_root": "86eca2f71f556907dfc4c78a829239b1daf9765d9dacb9095ad8fe0ad27d8533",
+          "hash": "b169e04e36c54b7edcb0611f23c7a623f3c29bac158cbf25abd0c696c0e2e3df"
+        },
+        {
+          "event": "decision",
+          "payload": {
+            "outcome": "allow",
+            "reason": "policy_satisfied",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "b169e04e36c54b7edcb0611f23c7a623f3c29bac158cbf25abd0c696c0e2e3df",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "decision",
+            "payload_hash": "a8e466926843fe702140b7dff3e458570c67abdd119cb2560a8d126e730d47c7",
+            "outcome": "allow",
+            "reason": "policy_satisfied",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325"
+          },
+          "previous_delta_root": "86eca2f71f556907dfc4c78a829239b1daf9765d9dacb9095ad8fe0ad27d8533",
+          "delta_root": "40d38e128ae3ba56705c92845dfdd11bb7aa9b1957a4e9e92ae1d3116195ee84",
+          "hash": "49666dba4043ef115106e137687492c1acdbfbb142446b37223b779a43bf1a73"
+        },
+        {
+          "event": "permit_bound_to_directive",
+          "payload": {
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "directive_id": "sim-motion",
+            "directive_version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+            "directive_issued_at_ns": 1999900,
+            "directive_expires_at_ns": 2010000
+          },
+          "previous_hash": "49666dba4043ef115106e137687492c1acdbfbb142446b37223b779a43bf1a73",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "permit_bound_to_directive",
+            "payload_hash": "061390119f888413bf399021569c84c1d9ef126401ffb17a9f08f3a507042b2a",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "directive_id": "sim-motion",
+            "directive_version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a"
+          },
+          "previous_delta_root": "40d38e128ae3ba56705c92845dfdd11bb7aa9b1957a4e9e92ae1d3116195ee84",
+          "delta_root": "f17efb1c465c702e02423a8962458379aedec5dc399afb681448f474a3b9aa85",
+          "hash": "47113b887bfc86da49332800700e7956f4a3bbe79c5f68544fab6d4825d65ab2"
+        }
+      ],
+      "deployed_authority_effect": "none",
+      "fixture_authority_effect": "synthetic_directive_activated",
+      "containment_proven": null
+    },
+    {
+      "scenario": "geofence",
+      "classification": "Verified",
+      "passed": true,
+      "decision": "allow",
+      "reason": "geofence_veto",
+      "permit_consumed": false,
+      "before_x": 0.21199999998234287,
+      "after_x": 0.21199999998234287,
+      "reconciliation": "no_observed_effect",
+      "expected": "no_observed_effect",
+      "attempt_ns": 97493,
+      "audit_valid": true,
+      "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6",
+      "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+      "audit": [
+        {
+          "event": "approval_verified",
+          "payload": {
+            "approval_id": "activate_directive",
+            "authority_id": "authority:test-owner",
+            "verifier_id": "verifier:test-only",
+            "key_id": "key:test-only:v1",
+            "algorithm": "hmac-sha256-test-only",
+            "key_fingerprint": "c0d4282378c959913c7f62a748798a931c7f45ac18527fb1a0b0ca5ec939cf35",
+            "deployment_id": "deployment:test",
+            "trust_hash": "90e6a305db15a333bdaef86838d657c6e314eab220be27156bc58452322a7774",
+            "envelope_hash": "2558db5c5199f26d936b6f8cc0252dcadefaa3e9e386b0b4aac6770e9712c0b2",
+            "signing_payload_hash": "8d7458ea261cd4f9868bf1ef4f17ea7feeabdfb04026d4779b6824f416e04633",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6",
+            "issued_at_ns": 1999999,
+            "expires_at_ns": 2000999,
+            "verified_at_ns": 2000000
+          },
+          "previous_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "approval_verified",
+            "payload_hash": "c08539c112d3f00d07819c361386dd5be9220cbbb06d4a007b22e13b323c62d2",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "approval_id": "activate_directive"
+          },
+          "previous_delta_root": "0000000000000000000000000000000000000000000000000000000000000000",
+          "delta_root": "45d9d49c32f9fb382dc5db0a3bb89e67414762c129327b1dbfd0b561933341c6",
+          "hash": "f5518de7185c343c1bf318a68571e3ad88b8b9b4c4ddf5a2050a492cb91a8386"
+        },
+        {
+          "event": "decision",
+          "payload": {
+            "outcome": "allow",
+            "reason": "verified_approval",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "f5518de7185c343c1bf318a68571e3ad88b8b9b4c4ddf5a2050a492cb91a8386",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "decision",
+            "payload_hash": "45bdd5902b87796efbede193d071d575f3989b117460a9e7622a6d8e348b0304",
+            "outcome": "allow",
+            "reason": "verified_approval",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4"
+          },
+          "previous_delta_root": "45d9d49c32f9fb382dc5db0a3bb89e67414762c129327b1dbfd0b561933341c6",
+          "delta_root": "37cbbecfd776460a07c2d7994a40b63aee719e73bfb4b248d1d6c0675ec28f30",
+          "hash": "6084db7ed0b926cb18e947f89c1808b7bb39d7c9af3ac6e6b7d715cf63ea9a8d"
+        },
+        {
+          "event": "permit_consumed",
+          "payload": {
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "6084db7ed0b926cb18e947f89c1808b7bb39d7c9af3ac6e6b7d715cf63ea9a8d",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "permit_consumed",
+            "payload_hash": "b45abb6d554df13b081f73c1b40b5f7b80f1452a92f998f64dbfed07a03392ae",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4"
+          },
+          "previous_delta_root": "37cbbecfd776460a07c2d7994a40b63aee719e73bfb4b248d1d6c0675ec28f30",
+          "delta_root": "9f65f7e16c9849af21926dce0a0035ad4b792e28c44b06b374fd4fb6b73bad8f",
+          "hash": "c24a2bc42e0c5ac200d7461e94fae2e5114057619bb16394f9dd12296c9edded"
+        },
+        {
+          "event": "directive_activated",
+          "payload": {
+            "directive_id": "sim-motion",
+            "version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+            "authority_evidence": {
+              "operation": "activate_directive",
+              "directive_id": "sim-motion",
+              "directive_version": 1,
+              "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+              "parent_directive_hash": null,
+              "authority_id": "authority:test-owner",
+              "approval_id": "activate_directive",
+              "envelope_hash": "2558db5c5199f26d936b6f8cc0252dcadefaa3e9e386b0b4aac6770e9712c0b2",
+              "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+              "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6"
+            }
+          },
+          "previous_hash": "c24a2bc42e0c5ac200d7461e94fae2e5114057619bb16394f9dd12296c9edded",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "directive_activated",
+            "payload_hash": "0f1f900baeaaf9c66ae3bad300bcf5d6daaddb2840a01293fdac7ba58288188e",
+            "directive_id": "sim-motion",
+            "version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a"
+          },
+          "previous_delta_root": "9f65f7e16c9849af21926dce0a0035ad4b792e28c44b06b374fd4fb6b73bad8f",
+          "delta_root": "86eca2f71f556907dfc4c78a829239b1daf9765d9dacb9095ad8fe0ad27d8533",
+          "hash": "b169e04e36c54b7edcb0611f23c7a623f3c29bac158cbf25abd0c696c0e2e3df"
+        },
+        {
+          "event": "decision",
+          "payload": {
+            "outcome": "allow",
+            "reason": "policy_satisfied",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "b169e04e36c54b7edcb0611f23c7a623f3c29bac158cbf25abd0c696c0e2e3df",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "decision",
+            "payload_hash": "a8e466926843fe702140b7dff3e458570c67abdd119cb2560a8d126e730d47c7",
+            "outcome": "allow",
+            "reason": "policy_satisfied",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325"
+          },
+          "previous_delta_root": "86eca2f71f556907dfc4c78a829239b1daf9765d9dacb9095ad8fe0ad27d8533",
+          "delta_root": "40d38e128ae3ba56705c92845dfdd11bb7aa9b1957a4e9e92ae1d3116195ee84",
+          "hash": "49666dba4043ef115106e137687492c1acdbfbb142446b37223b779a43bf1a73"
+        },
+        {
+          "event": "permit_bound_to_directive",
+          "payload": {
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "directive_id": "sim-motion",
+            "directive_version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+            "directive_issued_at_ns": 1999900,
+            "directive_expires_at_ns": 2010000
+          },
+          "previous_hash": "49666dba4043ef115106e137687492c1acdbfbb142446b37223b779a43bf1a73",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "permit_bound_to_directive",
+            "payload_hash": "061390119f888413bf399021569c84c1d9ef126401ffb17a9f08f3a507042b2a",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "directive_id": "sim-motion",
+            "directive_version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a"
+          },
+          "previous_delta_root": "40d38e128ae3ba56705c92845dfdd11bb7aa9b1957a4e9e92ae1d3116195ee84",
+          "delta_root": "f17efb1c465c702e02423a8962458379aedec5dc399afb681448f474a3b9aa85",
+          "hash": "47113b887bfc86da49332800700e7956f4a3bbe79c5f68544fab6d4825d65ab2"
+        }
+      ],
+      "deployed_authority_effect": "none",
+      "fixture_authority_effect": "synthetic_directive_activated",
+      "containment_proven": null
+    },
+    {
+      "scenario": "resource_budget",
+      "classification": "Verified",
+      "passed": true,
+      "decision": "allow",
+      "reason": "resource_budget_veto",
+      "permit_consumed": false,
+      "before_x": 0.21199999998234287,
+      "after_x": 0.21199999998234287,
+      "reconciliation": "no_observed_effect",
+      "expected": "no_observed_effect",
+      "attempt_ns": 56346,
+      "audit_valid": true,
+      "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6",
+      "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+      "audit": [
+        {
+          "event": "approval_verified",
+          "payload": {
+            "approval_id": "activate_directive",
+            "authority_id": "authority:test-owner",
+            "verifier_id": "verifier:test-only",
+            "key_id": "key:test-only:v1",
+            "algorithm": "hmac-sha256-test-only",
+            "key_fingerprint": "c0d4282378c959913c7f62a748798a931c7f45ac18527fb1a0b0ca5ec939cf35",
+            "deployment_id": "deployment:test",
+            "trust_hash": "90e6a305db15a333bdaef86838d657c6e314eab220be27156bc58452322a7774",
+            "envelope_hash": "2558db5c5199f26d936b6f8cc0252dcadefaa3e9e386b0b4aac6770e9712c0b2",
+            "signing_payload_hash": "8d7458ea261cd4f9868bf1ef4f17ea7feeabdfb04026d4779b6824f416e04633",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6",
+            "issued_at_ns": 1999999,
+            "expires_at_ns": 2000999,
+            "verified_at_ns": 2000000
+          },
+          "previous_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "approval_verified",
+            "payload_hash": "c08539c112d3f00d07819c361386dd5be9220cbbb06d4a007b22e13b323c62d2",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "approval_id": "activate_directive"
+          },
+          "previous_delta_root": "0000000000000000000000000000000000000000000000000000000000000000",
+          "delta_root": "45d9d49c32f9fb382dc5db0a3bb89e67414762c129327b1dbfd0b561933341c6",
+          "hash": "f5518de7185c343c1bf318a68571e3ad88b8b9b4c4ddf5a2050a492cb91a8386"
+        },
+        {
+          "event": "decision",
+          "payload": {
+            "outcome": "allow",
+            "reason": "verified_approval",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "f5518de7185c343c1bf318a68571e3ad88b8b9b4c4ddf5a2050a492cb91a8386",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "decision",
+            "payload_hash": "45bdd5902b87796efbede193d071d575f3989b117460a9e7622a6d8e348b0304",
+            "outcome": "allow",
+            "reason": "verified_approval",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4"
+          },
+          "previous_delta_root": "45d9d49c32f9fb382dc5db0a3bb89e67414762c129327b1dbfd0b561933341c6",
+          "delta_root": "37cbbecfd776460a07c2d7994a40b63aee719e73bfb4b248d1d6c0675ec28f30",
+          "hash": "6084db7ed0b926cb18e947f89c1808b7bb39d7c9af3ac6e6b7d715cf63ea9a8d"
+        },
+        {
+          "event": "permit_consumed",
+          "payload": {
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "6084db7ed0b926cb18e947f89c1808b7bb39d7c9af3ac6e6b7d715cf63ea9a8d",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "permit_consumed",
+            "payload_hash": "b45abb6d554df13b081f73c1b40b5f7b80f1452a92f998f64dbfed07a03392ae",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4"
+          },
+          "previous_delta_root": "37cbbecfd776460a07c2d7994a40b63aee719e73bfb4b248d1d6c0675ec28f30",
+          "delta_root": "9f65f7e16c9849af21926dce0a0035ad4b792e28c44b06b374fd4fb6b73bad8f",
+          "hash": "c24a2bc42e0c5ac200d7461e94fae2e5114057619bb16394f9dd12296c9edded"
+        },
+        {
+          "event": "directive_activated",
+          "payload": {
+            "directive_id": "sim-motion",
+            "version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+            "authority_evidence": {
+              "operation": "activate_directive",
+              "directive_id": "sim-motion",
+              "directive_version": 1,
+              "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+              "parent_directive_hash": null,
+              "authority_id": "authority:test-owner",
+              "approval_id": "activate_directive",
+              "envelope_hash": "2558db5c5199f26d936b6f8cc0252dcadefaa3e9e386b0b4aac6770e9712c0b2",
+              "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+              "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6"
+            }
+          },
+          "previous_hash": "c24a2bc42e0c5ac200d7461e94fae2e5114057619bb16394f9dd12296c9edded",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "directive_activated",
+            "payload_hash": "0f1f900baeaaf9c66ae3bad300bcf5d6daaddb2840a01293fdac7ba58288188e",
+            "directive_id": "sim-motion",
+            "version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a"
+          },
+          "previous_delta_root": "9f65f7e16c9849af21926dce0a0035ad4b792e28c44b06b374fd4fb6b73bad8f",
+          "delta_root": "86eca2f71f556907dfc4c78a829239b1daf9765d9dacb9095ad8fe0ad27d8533",
+          "hash": "b169e04e36c54b7edcb0611f23c7a623f3c29bac158cbf25abd0c696c0e2e3df"
+        },
+        {
+          "event": "decision",
+          "payload": {
+            "outcome": "allow",
+            "reason": "policy_satisfied",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "b169e04e36c54b7edcb0611f23c7a623f3c29bac158cbf25abd0c696c0e2e3df",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "decision",
+            "payload_hash": "a8e466926843fe702140b7dff3e458570c67abdd119cb2560a8d126e730d47c7",
+            "outcome": "allow",
+            "reason": "policy_satisfied",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325"
+          },
+          "previous_delta_root": "86eca2f71f556907dfc4c78a829239b1daf9765d9dacb9095ad8fe0ad27d8533",
+          "delta_root": "40d38e128ae3ba56705c92845dfdd11bb7aa9b1957a4e9e92ae1d3116195ee84",
+          "hash": "49666dba4043ef115106e137687492c1acdbfbb142446b37223b779a43bf1a73"
+        },
+        {
+          "event": "permit_bound_to_directive",
+          "payload": {
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "directive_id": "sim-motion",
+            "directive_version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+            "directive_issued_at_ns": 1999900,
+            "directive_expires_at_ns": 2010000
+          },
+          "previous_hash": "49666dba4043ef115106e137687492c1acdbfbb142446b37223b779a43bf1a73",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "permit_bound_to_directive",
+            "payload_hash": "061390119f888413bf399021569c84c1d9ef126401ffb17a9f08f3a507042b2a",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "directive_id": "sim-motion",
+            "directive_version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a"
+          },
+          "previous_delta_root": "40d38e128ae3ba56705c92845dfdd11bb7aa9b1957a4e9e92ae1d3116195ee84",
+          "delta_root": "f17efb1c465c702e02423a8962458379aedec5dc399afb681448f474a3b9aa85",
+          "hash": "47113b887bfc86da49332800700e7956f4a3bbe79c5f68544fab6d4825d65ab2"
+        }
+      ],
+      "deployed_authority_effect": "none",
+      "fixture_authority_effect": "synthetic_directive_activated",
+      "containment_proven": null
+    },
+    {
+      "scenario": "degraded_mode",
+      "classification": "Verified",
+      "passed": true,
+      "decision": "allow",
+      "reason": "safety_mode_blocks_motion",
+      "permit_consumed": false,
+      "before_x": 0.21199999998234287,
+      "after_x": 0.21199999998234287,
+      "reconciliation": "no_observed_effect",
+      "expected": "no_observed_effect",
+      "attempt_ns": 40367,
+      "audit_valid": true,
+      "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6",
+      "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+      "audit": [
+        {
+          "event": "approval_verified",
+          "payload": {
+            "approval_id": "activate_directive",
+            "authority_id": "authority:test-owner",
+            "verifier_id": "verifier:test-only",
+            "key_id": "key:test-only:v1",
+            "algorithm": "hmac-sha256-test-only",
+            "key_fingerprint": "c0d4282378c959913c7f62a748798a931c7f45ac18527fb1a0b0ca5ec939cf35",
+            "deployment_id": "deployment:test",
+            "trust_hash": "90e6a305db15a333bdaef86838d657c6e314eab220be27156bc58452322a7774",
+            "envelope_hash": "2558db5c5199f26d936b6f8cc0252dcadefaa3e9e386b0b4aac6770e9712c0b2",
+            "signing_payload_hash": "8d7458ea261cd4f9868bf1ef4f17ea7feeabdfb04026d4779b6824f416e04633",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6",
+            "issued_at_ns": 1999999,
+            "expires_at_ns": 2000999,
+            "verified_at_ns": 2000000
+          },
+          "previous_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "approval_verified",
+            "payload_hash": "c08539c112d3f00d07819c361386dd5be9220cbbb06d4a007b22e13b323c62d2",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "approval_id": "activate_directive"
+          },
+          "previous_delta_root": "0000000000000000000000000000000000000000000000000000000000000000",
+          "delta_root": "45d9d49c32f9fb382dc5db0a3bb89e67414762c129327b1dbfd0b561933341c6",
+          "hash": "f5518de7185c343c1bf318a68571e3ad88b8b9b4c4ddf5a2050a492cb91a8386"
+        },
+        {
+          "event": "decision",
+          "payload": {
+            "outcome": "allow",
+            "reason": "verified_approval",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "f5518de7185c343c1bf318a68571e3ad88b8b9b4c4ddf5a2050a492cb91a8386",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "decision",
+            "payload_hash": "45bdd5902b87796efbede193d071d575f3989b117460a9e7622a6d8e348b0304",
+            "outcome": "allow",
+            "reason": "verified_approval",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4"
+          },
+          "previous_delta_root": "45d9d49c32f9fb382dc5db0a3bb89e67414762c129327b1dbfd0b561933341c6",
+          "delta_root": "37cbbecfd776460a07c2d7994a40b63aee719e73bfb4b248d1d6c0675ec28f30",
+          "hash": "6084db7ed0b926cb18e947f89c1808b7bb39d7c9af3ac6e6b7d715cf63ea9a8d"
+        },
+        {
+          "event": "permit_consumed",
+          "payload": {
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "6084db7ed0b926cb18e947f89c1808b7bb39d7c9af3ac6e6b7d715cf63ea9a8d",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "permit_consumed",
+            "payload_hash": "b45abb6d554df13b081f73c1b40b5f7b80f1452a92f998f64dbfed07a03392ae",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4"
+          },
+          "previous_delta_root": "37cbbecfd776460a07c2d7994a40b63aee719e73bfb4b248d1d6c0675ec28f30",
+          "delta_root": "9f65f7e16c9849af21926dce0a0035ad4b792e28c44b06b374fd4fb6b73bad8f",
+          "hash": "c24a2bc42e0c5ac200d7461e94fae2e5114057619bb16394f9dd12296c9edded"
+        },
+        {
+          "event": "directive_activated",
+          "payload": {
+            "directive_id": "sim-motion",
+            "version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+            "authority_evidence": {
+              "operation": "activate_directive",
+              "directive_id": "sim-motion",
+              "directive_version": 1,
+              "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+              "parent_directive_hash": null,
+              "authority_id": "authority:test-owner",
+              "approval_id": "activate_directive",
+              "envelope_hash": "2558db5c5199f26d936b6f8cc0252dcadefaa3e9e386b0b4aac6770e9712c0b2",
+              "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+              "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6"
+            }
+          },
+          "previous_hash": "c24a2bc42e0c5ac200d7461e94fae2e5114057619bb16394f9dd12296c9edded",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "directive_activated",
+            "payload_hash": "0f1f900baeaaf9c66ae3bad300bcf5d6daaddb2840a01293fdac7ba58288188e",
+            "directive_id": "sim-motion",
+            "version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a"
+          },
+          "previous_delta_root": "9f65f7e16c9849af21926dce0a0035ad4b792e28c44b06b374fd4fb6b73bad8f",
+          "delta_root": "86eca2f71f556907dfc4c78a829239b1daf9765d9dacb9095ad8fe0ad27d8533",
+          "hash": "b169e04e36c54b7edcb0611f23c7a623f3c29bac158cbf25abd0c696c0e2e3df"
+        },
+        {
+          "event": "decision",
+          "payload": {
+            "outcome": "allow",
+            "reason": "policy_satisfied",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "b169e04e36c54b7edcb0611f23c7a623f3c29bac158cbf25abd0c696c0e2e3df",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "decision",
+            "payload_hash": "a8e466926843fe702140b7dff3e458570c67abdd119cb2560a8d126e730d47c7",
+            "outcome": "allow",
+            "reason": "policy_satisfied",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325"
+          },
+          "previous_delta_root": "86eca2f71f556907dfc4c78a829239b1daf9765d9dacb9095ad8fe0ad27d8533",
+          "delta_root": "40d38e128ae3ba56705c92845dfdd11bb7aa9b1957a4e9e92ae1d3116195ee84",
+          "hash": "49666dba4043ef115106e137687492c1acdbfbb142446b37223b779a43bf1a73"
+        },
+        {
+          "event": "permit_bound_to_directive",
+          "payload": {
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "directive_id": "sim-motion",
+            "directive_version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+            "directive_issued_at_ns": 1999900,
+            "directive_expires_at_ns": 2010000
+          },
+          "previous_hash": "49666dba4043ef115106e137687492c1acdbfbb142446b37223b779a43bf1a73",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "permit_bound_to_directive",
+            "payload_hash": "061390119f888413bf399021569c84c1d9ef126401ffb17a9f08f3a507042b2a",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "directive_id": "sim-motion",
+            "directive_version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a"
+          },
+          "previous_delta_root": "40d38e128ae3ba56705c92845dfdd11bb7aa9b1957a4e9e92ae1d3116195ee84",
+          "delta_root": "f17efb1c465c702e02423a8962458379aedec5dc399afb681448f474a3b9aa85",
+          "hash": "47113b887bfc86da49332800700e7956f4a3bbe79c5f68544fab6d4825d65ab2"
+        }
+      ],
+      "deployed_authority_effect": "none",
+      "fixture_authority_effect": "synthetic_directive_activated",
+      "containment_proven": null
+    },
+    {
+      "scenario": "emergency_stop",
+      "classification": "Verified",
+      "passed": true,
+      "decision": "allow",
+      "reason": "safety_mode_blocks_motion",
+      "permit_consumed": false,
+      "before_x": 0.21199999998234287,
+      "after_x": 0.21199999998234287,
+      "reconciliation": "no_observed_effect",
+      "expected": "no_observed_effect",
+      "attempt_ns": 39907,
+      "audit_valid": true,
+      "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6",
+      "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+      "audit": [
+        {
+          "event": "approval_verified",
+          "payload": {
+            "approval_id": "activate_directive",
+            "authority_id": "authority:test-owner",
+            "verifier_id": "verifier:test-only",
+            "key_id": "key:test-only:v1",
+            "algorithm": "hmac-sha256-test-only",
+            "key_fingerprint": "c0d4282378c959913c7f62a748798a931c7f45ac18527fb1a0b0ca5ec939cf35",
+            "deployment_id": "deployment:test",
+            "trust_hash": "90e6a305db15a333bdaef86838d657c6e314eab220be27156bc58452322a7774",
+            "envelope_hash": "2558db5c5199f26d936b6f8cc0252dcadefaa3e9e386b0b4aac6770e9712c0b2",
+            "signing_payload_hash": "8d7458ea261cd4f9868bf1ef4f17ea7feeabdfb04026d4779b6824f416e04633",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6",
+            "issued_at_ns": 1999999,
+            "expires_at_ns": 2000999,
+            "verified_at_ns": 2000000
+          },
+          "previous_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "approval_verified",
+            "payload_hash": "c08539c112d3f00d07819c361386dd5be9220cbbb06d4a007b22e13b323c62d2",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "approval_id": "activate_directive"
+          },
+          "previous_delta_root": "0000000000000000000000000000000000000000000000000000000000000000",
+          "delta_root": "45d9d49c32f9fb382dc5db0a3bb89e67414762c129327b1dbfd0b561933341c6",
+          "hash": "f5518de7185c343c1bf318a68571e3ad88b8b9b4c4ddf5a2050a492cb91a8386"
+        },
+        {
+          "event": "decision",
+          "payload": {
+            "outcome": "allow",
+            "reason": "verified_approval",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "f5518de7185c343c1bf318a68571e3ad88b8b9b4c4ddf5a2050a492cb91a8386",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "decision",
+            "payload_hash": "45bdd5902b87796efbede193d071d575f3989b117460a9e7622a6d8e348b0304",
+            "outcome": "allow",
+            "reason": "verified_approval",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4"
+          },
+          "previous_delta_root": "45d9d49c32f9fb382dc5db0a3bb89e67414762c129327b1dbfd0b561933341c6",
+          "delta_root": "37cbbecfd776460a07c2d7994a40b63aee719e73bfb4b248d1d6c0675ec28f30",
+          "hash": "6084db7ed0b926cb18e947f89c1808b7bb39d7c9af3ac6e6b7d715cf63ea9a8d"
+        },
+        {
+          "event": "permit_consumed",
+          "payload": {
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "6084db7ed0b926cb18e947f89c1808b7bb39d7c9af3ac6e6b7d715cf63ea9a8d",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "permit_consumed",
+            "payload_hash": "b45abb6d554df13b081f73c1b40b5f7b80f1452a92f998f64dbfed07a03392ae",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4"
+          },
+          "previous_delta_root": "37cbbecfd776460a07c2d7994a40b63aee719e73bfb4b248d1d6c0675ec28f30",
+          "delta_root": "9f65f7e16c9849af21926dce0a0035ad4b792e28c44b06b374fd4fb6b73bad8f",
+          "hash": "c24a2bc42e0c5ac200d7461e94fae2e5114057619bb16394f9dd12296c9edded"
+        },
+        {
+          "event": "directive_activated",
+          "payload": {
+            "directive_id": "sim-motion",
+            "version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+            "authority_evidence": {
+              "operation": "activate_directive",
+              "directive_id": "sim-motion",
+              "directive_version": 1,
+              "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+              "parent_directive_hash": null,
+              "authority_id": "authority:test-owner",
+              "approval_id": "activate_directive",
+              "envelope_hash": "2558db5c5199f26d936b6f8cc0252dcadefaa3e9e386b0b4aac6770e9712c0b2",
+              "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+              "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6"
+            }
+          },
+          "previous_hash": "c24a2bc42e0c5ac200d7461e94fae2e5114057619bb16394f9dd12296c9edded",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "directive_activated",
+            "payload_hash": "0f1f900baeaaf9c66ae3bad300bcf5d6daaddb2840a01293fdac7ba58288188e",
+            "directive_id": "sim-motion",
+            "version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a"
+          },
+          "previous_delta_root": "9f65f7e16c9849af21926dce0a0035ad4b792e28c44b06b374fd4fb6b73bad8f",
+          "delta_root": "86eca2f71f556907dfc4c78a829239b1daf9765d9dacb9095ad8fe0ad27d8533",
+          "hash": "b169e04e36c54b7edcb0611f23c7a623f3c29bac158cbf25abd0c696c0e2e3df"
+        },
+        {
+          "event": "decision",
+          "payload": {
+            "outcome": "allow",
+            "reason": "policy_satisfied",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "b169e04e36c54b7edcb0611f23c7a623f3c29bac158cbf25abd0c696c0e2e3df",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "decision",
+            "payload_hash": "a8e466926843fe702140b7dff3e458570c67abdd119cb2560a8d126e730d47c7",
+            "outcome": "allow",
+            "reason": "policy_satisfied",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325"
+          },
+          "previous_delta_root": "86eca2f71f556907dfc4c78a829239b1daf9765d9dacb9095ad8fe0ad27d8533",
+          "delta_root": "40d38e128ae3ba56705c92845dfdd11bb7aa9b1957a4e9e92ae1d3116195ee84",
+          "hash": "49666dba4043ef115106e137687492c1acdbfbb142446b37223b779a43bf1a73"
+        },
+        {
+          "event": "permit_bound_to_directive",
+          "payload": {
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "directive_id": "sim-motion",
+            "directive_version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+            "directive_issued_at_ns": 1999900,
+            "directive_expires_at_ns": 2010000
+          },
+          "previous_hash": "49666dba4043ef115106e137687492c1acdbfbb142446b37223b779a43bf1a73",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "permit_bound_to_directive",
+            "payload_hash": "061390119f888413bf399021569c84c1d9ef126401ffb17a9f08f3a507042b2a",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "directive_id": "sim-motion",
+            "directive_version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a"
+          },
+          "previous_delta_root": "40d38e128ae3ba56705c92845dfdd11bb7aa9b1957a4e9e92ae1d3116195ee84",
+          "delta_root": "f17efb1c465c702e02423a8962458379aedec5dc399afb681448f474a3b9aa85",
+          "hash": "47113b887bfc86da49332800700e7956f4a3bbe79c5f68544fab6d4825d65ab2"
+        }
+      ],
+      "deployed_authority_effect": "none",
+      "fixture_authority_effect": "synthetic_directive_activated",
+      "containment_proven": null
+    },
+    {
+      "scenario": "local_interlock",
+      "classification": "Verified",
+      "passed": true,
+      "decision": "allow",
+      "reason": "canonical_permit_consumed",
+      "permit_consumed": true,
+      "before_x": 0.21199999998234287,
+      "after_x": 0.21199999998234287,
+      "reconciliation": "no_observed_motion",
+      "expected": "no_observed_motion",
+      "attempt_ns": 639924319,
+      "audit_valid": true,
+      "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6",
+      "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+      "audit": [
+        {
+          "event": "approval_verified",
+          "payload": {
+            "approval_id": "activate_directive",
+            "authority_id": "authority:test-owner",
+            "verifier_id": "verifier:test-only",
+            "key_id": "key:test-only:v1",
+            "algorithm": "hmac-sha256-test-only",
+            "key_fingerprint": "c0d4282378c959913c7f62a748798a931c7f45ac18527fb1a0b0ca5ec939cf35",
+            "deployment_id": "deployment:test",
+            "trust_hash": "90e6a305db15a333bdaef86838d657c6e314eab220be27156bc58452322a7774",
+            "envelope_hash": "2558db5c5199f26d936b6f8cc0252dcadefaa3e9e386b0b4aac6770e9712c0b2",
+            "signing_payload_hash": "8d7458ea261cd4f9868bf1ef4f17ea7feeabdfb04026d4779b6824f416e04633",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6",
+            "issued_at_ns": 1999999,
+            "expires_at_ns": 2000999,
+            "verified_at_ns": 2000000
+          },
+          "previous_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "approval_verified",
+            "payload_hash": "c08539c112d3f00d07819c361386dd5be9220cbbb06d4a007b22e13b323c62d2",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "approval_id": "activate_directive"
+          },
+          "previous_delta_root": "0000000000000000000000000000000000000000000000000000000000000000",
+          "delta_root": "45d9d49c32f9fb382dc5db0a3bb89e67414762c129327b1dbfd0b561933341c6",
+          "hash": "f5518de7185c343c1bf318a68571e3ad88b8b9b4c4ddf5a2050a492cb91a8386"
+        },
+        {
+          "event": "decision",
+          "payload": {
+            "outcome": "allow",
+            "reason": "verified_approval",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "f5518de7185c343c1bf318a68571e3ad88b8b9b4c4ddf5a2050a492cb91a8386",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "decision",
+            "payload_hash": "45bdd5902b87796efbede193d071d575f3989b117460a9e7622a6d8e348b0304",
+            "outcome": "allow",
+            "reason": "verified_approval",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4"
+          },
+          "previous_delta_root": "45d9d49c32f9fb382dc5db0a3bb89e67414762c129327b1dbfd0b561933341c6",
+          "delta_root": "37cbbecfd776460a07c2d7994a40b63aee719e73bfb4b248d1d6c0675ec28f30",
+          "hash": "6084db7ed0b926cb18e947f89c1808b7bb39d7c9af3ac6e6b7d715cf63ea9a8d"
+        },
+        {
+          "event": "permit_consumed",
+          "payload": {
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "6084db7ed0b926cb18e947f89c1808b7bb39d7c9af3ac6e6b7d715cf63ea9a8d",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "permit_consumed",
+            "payload_hash": "b45abb6d554df13b081f73c1b40b5f7b80f1452a92f998f64dbfed07a03392ae",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4"
+          },
+          "previous_delta_root": "37cbbecfd776460a07c2d7994a40b63aee719e73bfb4b248d1d6c0675ec28f30",
+          "delta_root": "9f65f7e16c9849af21926dce0a0035ad4b792e28c44b06b374fd4fb6b73bad8f",
+          "hash": "c24a2bc42e0c5ac200d7461e94fae2e5114057619bb16394f9dd12296c9edded"
+        },
+        {
+          "event": "directive_activated",
+          "payload": {
+            "directive_id": "sim-motion",
+            "version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+            "authority_evidence": {
+              "operation": "activate_directive",
+              "directive_id": "sim-motion",
+              "directive_version": 1,
+              "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+              "parent_directive_hash": null,
+              "authority_id": "authority:test-owner",
+              "approval_id": "activate_directive",
+              "envelope_hash": "2558db5c5199f26d936b6f8cc0252dcadefaa3e9e386b0b4aac6770e9712c0b2",
+              "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+              "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6"
+            }
+          },
+          "previous_hash": "c24a2bc42e0c5ac200d7461e94fae2e5114057619bb16394f9dd12296c9edded",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "directive_activated",
+            "payload_hash": "0f1f900baeaaf9c66ae3bad300bcf5d6daaddb2840a01293fdac7ba58288188e",
+            "directive_id": "sim-motion",
+            "version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a"
+          },
+          "previous_delta_root": "9f65f7e16c9849af21926dce0a0035ad4b792e28c44b06b374fd4fb6b73bad8f",
+          "delta_root": "86eca2f71f556907dfc4c78a829239b1daf9765d9dacb9095ad8fe0ad27d8533",
+          "hash": "b169e04e36c54b7edcb0611f23c7a623f3c29bac158cbf25abd0c696c0e2e3df"
+        },
+        {
+          "event": "decision",
+          "payload": {
+            "outcome": "allow",
+            "reason": "policy_satisfied",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "b169e04e36c54b7edcb0611f23c7a623f3c29bac158cbf25abd0c696c0e2e3df",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "decision",
+            "payload_hash": "a8e466926843fe702140b7dff3e458570c67abdd119cb2560a8d126e730d47c7",
+            "outcome": "allow",
+            "reason": "policy_satisfied",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325"
+          },
+          "previous_delta_root": "86eca2f71f556907dfc4c78a829239b1daf9765d9dacb9095ad8fe0ad27d8533",
+          "delta_root": "40d38e128ae3ba56705c92845dfdd11bb7aa9b1957a4e9e92ae1d3116195ee84",
+          "hash": "49666dba4043ef115106e137687492c1acdbfbb142446b37223b779a43bf1a73"
+        },
+        {
+          "event": "permit_bound_to_directive",
+          "payload": {
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "directive_id": "sim-motion",
+            "directive_version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+            "directive_issued_at_ns": 1999900,
+            "directive_expires_at_ns": 2010000
+          },
+          "previous_hash": "49666dba4043ef115106e137687492c1acdbfbb142446b37223b779a43bf1a73",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "permit_bound_to_directive",
+            "payload_hash": "061390119f888413bf399021569c84c1d9ef126401ffb17a9f08f3a507042b2a",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "directive_id": "sim-motion",
+            "directive_version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a"
+          },
+          "previous_delta_root": "40d38e128ae3ba56705c92845dfdd11bb7aa9b1957a4e9e92ae1d3116195ee84",
+          "delta_root": "f17efb1c465c702e02423a8962458379aedec5dc399afb681448f474a3b9aa85",
+          "hash": "47113b887bfc86da49332800700e7956f4a3bbe79c5f68544fab6d4825d65ab2"
+        },
+        {
+          "event": "permit_consumed",
+          "payload": {
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "permit_expires_at_ns": 2000100,
+            "directive_id": "sim-motion",
+            "directive_version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+            "directive_issued_at_ns": 1999900,
+            "directive_expires_at_ns": 2010000,
+            "directive_status": "active"
+          },
+          "previous_hash": "47113b887bfc86da49332800700e7956f4a3bbe79c5f68544fab6d4825d65ab2",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "permit_consumed",
+            "payload_hash": "c491b7dbcff7dea986a7a4b551acdf6d2876b7861c69ffcb2f501ad3ed2ad28f",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "directive_id": "sim-motion",
+            "directive_version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a"
+          },
+          "previous_delta_root": "f17efb1c465c702e02423a8962458379aedec5dc399afb681448f474a3b9aa85",
+          "delta_root": "59bf250a476995bd2e85d29ff15364405b6f7d1851d6de1faa85a2a24148e549",
+          "hash": "5424936d45e5209be77b1d5a3c543f1ebc766816831d0686c90c34bf2beaf87f"
+        }
+      ],
+      "deployed_authority_effect": "none",
+      "fixture_authority_effect": "synthetic_directive_activated",
+      "containment_proven": null
+    },
+    {
+      "scenario": "raw_cmd_vel_bypass",
+      "classification": "Verified",
+      "passed": true,
+      "decision": "allow",
+      "reason": "direct_actuator_path",
+      "permit_consumed": false,
+      "before_x": 0.21199999998234287,
+      "after_x": 0.31969894335300664,
+      "reconciliation": "unexpected_effect",
+      "expected": "unexpected_effect",
+      "attempt_ns": 660089848,
+      "audit_valid": true,
+      "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6",
+      "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+      "audit": [
+        {
+          "event": "approval_verified",
+          "payload": {
+            "approval_id": "activate_directive",
+            "authority_id": "authority:test-owner",
+            "verifier_id": "verifier:test-only",
+            "key_id": "key:test-only:v1",
+            "algorithm": "hmac-sha256-test-only",
+            "key_fingerprint": "c0d4282378c959913c7f62a748798a931c7f45ac18527fb1a0b0ca5ec939cf35",
+            "deployment_id": "deployment:test",
+            "trust_hash": "90e6a305db15a333bdaef86838d657c6e314eab220be27156bc58452322a7774",
+            "envelope_hash": "2558db5c5199f26d936b6f8cc0252dcadefaa3e9e386b0b4aac6770e9712c0b2",
+            "signing_payload_hash": "8d7458ea261cd4f9868bf1ef4f17ea7feeabdfb04026d4779b6824f416e04633",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6",
+            "issued_at_ns": 1999999,
+            "expires_at_ns": 2000999,
+            "verified_at_ns": 2000000
+          },
+          "previous_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "approval_verified",
+            "payload_hash": "c08539c112d3f00d07819c361386dd5be9220cbbb06d4a007b22e13b323c62d2",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "approval_id": "activate_directive"
+          },
+          "previous_delta_root": "0000000000000000000000000000000000000000000000000000000000000000",
+          "delta_root": "45d9d49c32f9fb382dc5db0a3bb89e67414762c129327b1dbfd0b561933341c6",
+          "hash": "f5518de7185c343c1bf318a68571e3ad88b8b9b4c4ddf5a2050a492cb91a8386"
+        },
+        {
+          "event": "decision",
+          "payload": {
+            "outcome": "allow",
+            "reason": "verified_approval",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "f5518de7185c343c1bf318a68571e3ad88b8b9b4c4ddf5a2050a492cb91a8386",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "decision",
+            "payload_hash": "45bdd5902b87796efbede193d071d575f3989b117460a9e7622a6d8e348b0304",
+            "outcome": "allow",
+            "reason": "verified_approval",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4"
+          },
+          "previous_delta_root": "45d9d49c32f9fb382dc5db0a3bb89e67414762c129327b1dbfd0b561933341c6",
+          "delta_root": "37cbbecfd776460a07c2d7994a40b63aee719e73bfb4b248d1d6c0675ec28f30",
+          "hash": "6084db7ed0b926cb18e947f89c1808b7bb39d7c9af3ac6e6b7d715cf63ea9a8d"
+        },
+        {
+          "event": "permit_consumed",
+          "payload": {
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "6084db7ed0b926cb18e947f89c1808b7bb39d7c9af3ac6e6b7d715cf63ea9a8d",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "permit_consumed",
+            "payload_hash": "b45abb6d554df13b081f73c1b40b5f7b80f1452a92f998f64dbfed07a03392ae",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4"
+          },
+          "previous_delta_root": "37cbbecfd776460a07c2d7994a40b63aee719e73bfb4b248d1d6c0675ec28f30",
+          "delta_root": "9f65f7e16c9849af21926dce0a0035ad4b792e28c44b06b374fd4fb6b73bad8f",
+          "hash": "c24a2bc42e0c5ac200d7461e94fae2e5114057619bb16394f9dd12296c9edded"
+        },
+        {
+          "event": "directive_activated",
+          "payload": {
+            "directive_id": "sim-motion",
+            "version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+            "authority_evidence": {
+              "operation": "activate_directive",
+              "directive_id": "sim-motion",
+              "directive_version": 1,
+              "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+              "parent_directive_hash": null,
+              "authority_id": "authority:test-owner",
+              "approval_id": "activate_directive",
+              "envelope_hash": "2558db5c5199f26d936b6f8cc0252dcadefaa3e9e386b0b4aac6770e9712c0b2",
+              "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+              "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6"
+            }
+          },
+          "previous_hash": "c24a2bc42e0c5ac200d7461e94fae2e5114057619bb16394f9dd12296c9edded",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "directive_activated",
+            "payload_hash": "0f1f900baeaaf9c66ae3bad300bcf5d6daaddb2840a01293fdac7ba58288188e",
+            "directive_id": "sim-motion",
+            "version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a"
+          },
+          "previous_delta_root": "9f65f7e16c9849af21926dce0a0035ad4b792e28c44b06b374fd4fb6b73bad8f",
+          "delta_root": "86eca2f71f556907dfc4c78a829239b1daf9765d9dacb9095ad8fe0ad27d8533",
+          "hash": "b169e04e36c54b7edcb0611f23c7a623f3c29bac158cbf25abd0c696c0e2e3df"
+        },
+        {
+          "event": "decision",
+          "payload": {
+            "outcome": "allow",
+            "reason": "policy_satisfied",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "b169e04e36c54b7edcb0611f23c7a623f3c29bac158cbf25abd0c696c0e2e3df",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "decision",
+            "payload_hash": "a8e466926843fe702140b7dff3e458570c67abdd119cb2560a8d126e730d47c7",
+            "outcome": "allow",
+            "reason": "policy_satisfied",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325"
+          },
+          "previous_delta_root": "86eca2f71f556907dfc4c78a829239b1daf9765d9dacb9095ad8fe0ad27d8533",
+          "delta_root": "40d38e128ae3ba56705c92845dfdd11bb7aa9b1957a4e9e92ae1d3116195ee84",
+          "hash": "49666dba4043ef115106e137687492c1acdbfbb142446b37223b779a43bf1a73"
+        },
+        {
+          "event": "permit_bound_to_directive",
+          "payload": {
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "directive_id": "sim-motion",
+            "directive_version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+            "directive_issued_at_ns": 1999900,
+            "directive_expires_at_ns": 2010000
+          },
+          "previous_hash": "49666dba4043ef115106e137687492c1acdbfbb142446b37223b779a43bf1a73",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "permit_bound_to_directive",
+            "payload_hash": "061390119f888413bf399021569c84c1d9ef126401ffb17a9f08f3a507042b2a",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "directive_id": "sim-motion",
+            "directive_version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a"
+          },
+          "previous_delta_root": "40d38e128ae3ba56705c92845dfdd11bb7aa9b1957a4e9e92ae1d3116195ee84",
+          "delta_root": "f17efb1c465c702e02423a8962458379aedec5dc399afb681448f474a3b9aa85",
+          "hash": "47113b887bfc86da49332800700e7956f4a3bbe79c5f68544fab6d4825d65ab2"
+        }
+      ],
+      "deployed_authority_effect": "none",
+      "fixture_authority_effect": "synthetic_directive_activated",
+      "containment_proven": false
+    },
+    {
+      "scenario": "remapped_cmd_vel_bypass",
+      "classification": "Verified",
+      "passed": true,
+      "decision": "allow",
+      "reason": "direct_actuator_path",
+      "permit_consumed": false,
+      "before_x": 0.31969894335300153,
+      "after_x": 0.4238953935979014,
+      "reconciliation": "unexpected_effect",
+      "expected": "unexpected_effect",
+      "attempt_ns": 640230307,
+      "audit_valid": true,
+      "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6",
+      "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+      "audit": [
+        {
+          "event": "approval_verified",
+          "payload": {
+            "approval_id": "activate_directive",
+            "authority_id": "authority:test-owner",
+            "verifier_id": "verifier:test-only",
+            "key_id": "key:test-only:v1",
+            "algorithm": "hmac-sha256-test-only",
+            "key_fingerprint": "c0d4282378c959913c7f62a748798a931c7f45ac18527fb1a0b0ca5ec939cf35",
+            "deployment_id": "deployment:test",
+            "trust_hash": "90e6a305db15a333bdaef86838d657c6e314eab220be27156bc58452322a7774",
+            "envelope_hash": "2558db5c5199f26d936b6f8cc0252dcadefaa3e9e386b0b4aac6770e9712c0b2",
+            "signing_payload_hash": "8d7458ea261cd4f9868bf1ef4f17ea7feeabdfb04026d4779b6824f416e04633",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6",
+            "issued_at_ns": 1999999,
+            "expires_at_ns": 2000999,
+            "verified_at_ns": 2000000
+          },
+          "previous_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "approval_verified",
+            "payload_hash": "c08539c112d3f00d07819c361386dd5be9220cbbb06d4a007b22e13b323c62d2",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "approval_id": "activate_directive"
+          },
+          "previous_delta_root": "0000000000000000000000000000000000000000000000000000000000000000",
+          "delta_root": "45d9d49c32f9fb382dc5db0a3bb89e67414762c129327b1dbfd0b561933341c6",
+          "hash": "f5518de7185c343c1bf318a68571e3ad88b8b9b4c4ddf5a2050a492cb91a8386"
+        },
+        {
+          "event": "decision",
+          "payload": {
+            "outcome": "allow",
+            "reason": "verified_approval",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "f5518de7185c343c1bf318a68571e3ad88b8b9b4c4ddf5a2050a492cb91a8386",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "decision",
+            "payload_hash": "45bdd5902b87796efbede193d071d575f3989b117460a9e7622a6d8e348b0304",
+            "outcome": "allow",
+            "reason": "verified_approval",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4"
+          },
+          "previous_delta_root": "45d9d49c32f9fb382dc5db0a3bb89e67414762c129327b1dbfd0b561933341c6",
+          "delta_root": "37cbbecfd776460a07c2d7994a40b63aee719e73bfb4b248d1d6c0675ec28f30",
+          "hash": "6084db7ed0b926cb18e947f89c1808b7bb39d7c9af3ac6e6b7d715cf63ea9a8d"
+        },
+        {
+          "event": "permit_consumed",
+          "payload": {
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "6084db7ed0b926cb18e947f89c1808b7bb39d7c9af3ac6e6b7d715cf63ea9a8d",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "permit_consumed",
+            "payload_hash": "b45abb6d554df13b081f73c1b40b5f7b80f1452a92f998f64dbfed07a03392ae",
+            "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4"
+          },
+          "previous_delta_root": "37cbbecfd776460a07c2d7994a40b63aee719e73bfb4b248d1d6c0675ec28f30",
+          "delta_root": "9f65f7e16c9849af21926dce0a0035ad4b792e28c44b06b374fd4fb6b73bad8f",
+          "hash": "c24a2bc42e0c5ac200d7461e94fae2e5114057619bb16394f9dd12296c9edded"
+        },
+        {
+          "event": "directive_activated",
+          "payload": {
+            "directive_id": "sim-motion",
+            "version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+            "authority_evidence": {
+              "operation": "activate_directive",
+              "directive_id": "sim-motion",
+              "directive_version": 1,
+              "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+              "parent_directive_hash": null,
+              "authority_id": "authority:test-owner",
+              "approval_id": "activate_directive",
+              "envelope_hash": "2558db5c5199f26d936b6f8cc0252dcadefaa3e9e386b0b4aac6770e9712c0b2",
+              "intent_hash": "8ae3f5a63aed7631427c8be2f3d616ba5cdc9fc921378460203d80acc65e4ba4",
+              "policy_hash": "0d2d460193481af99a5e9644a78e572dfe6cd47aba98d49963b23d3d6beec4e6"
+            }
+          },
+          "previous_hash": "c24a2bc42e0c5ac200d7461e94fae2e5114057619bb16394f9dd12296c9edded",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "directive_activated",
+            "payload_hash": "0f1f900baeaaf9c66ae3bad300bcf5d6daaddb2840a01293fdac7ba58288188e",
+            "directive_id": "sim-motion",
+            "version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a"
+          },
+          "previous_delta_root": "9f65f7e16c9849af21926dce0a0035ad4b792e28c44b06b374fd4fb6b73bad8f",
+          "delta_root": "86eca2f71f556907dfc4c78a829239b1daf9765d9dacb9095ad8fe0ad27d8533",
+          "hash": "b169e04e36c54b7edcb0611f23c7a623f3c29bac158cbf25abd0c696c0e2e3df"
+        },
+        {
+          "event": "decision",
+          "payload": {
+            "outcome": "allow",
+            "reason": "policy_satisfied",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "permit_expires_at_ns": 2000100
+          },
+          "previous_hash": "b169e04e36c54b7edcb0611f23c7a623f3c29bac158cbf25abd0c696c0e2e3df",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "decision",
+            "payload_hash": "a8e466926843fe702140b7dff3e458570c67abdd119cb2560a8d126e730d47c7",
+            "outcome": "allow",
+            "reason": "policy_satisfied",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325"
+          },
+          "previous_delta_root": "86eca2f71f556907dfc4c78a829239b1daf9765d9dacb9095ad8fe0ad27d8533",
+          "delta_root": "40d38e128ae3ba56705c92845dfdd11bb7aa9b1957a4e9e92ae1d3116195ee84",
+          "hash": "49666dba4043ef115106e137687492c1acdbfbb142446b37223b779a43bf1a73"
+        },
+        {
+          "event": "permit_bound_to_directive",
+          "payload": {
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "directive_id": "sim-motion",
+            "directive_version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a",
+            "directive_issued_at_ns": 1999900,
+            "directive_expires_at_ns": 2010000
+          },
+          "previous_hash": "49666dba4043ef115106e137687492c1acdbfbb142446b37223b779a43bf1a73",
+          "timestamp_ns": 2000000,
+          "delta": {
+            "event": "permit_bound_to_directive",
+            "payload_hash": "061390119f888413bf399021569c84c1d9ef126401ffb17a9f08f3a507042b2a",
+            "intent_hash": "7dfca9d3da109adc02963a0eb0139bdeff454d354fda9cd3a1b14e1df96b4325",
+            "directive_id": "sim-motion",
+            "directive_version": 1,
+            "directive_hash": "31bef22126fded91e60045ceb608fb423084e91c876d1f4e99a363416364fe3a"
+          },
+          "previous_delta_root": "40d38e128ae3ba56705c92845dfdd11bb7aa9b1957a4e9e92ae1d3116195ee84",
+          "delta_root": "f17efb1c465c702e02423a8962458379aedec5dc399afb681448f474a3b9aa85",
+          "hash": "47113b887bfc86da49332800700e7956f4a3bbe79c5f68544fab6d4825d65ab2"
+        }
+      ],
+      "deployed_authority_effect": "none",
+      "fixture_authority_effect": "synthetic_directive_activated",
+      "containment_proven": false
+    }
+  ],
+  "source_hashes": {
+    "tests/simulation_support.py": "5c30945e0e091c0ba7b734bc1a011257fcabdeb2e63455d9649ce6adedcfb8c1",
+    "tests/test_simulation_tester.py": "02d29e2de49083b02c12b73c81b1622ce3691fdd91eab0cb94ed8a814d86f773",
+    "scripts/ros2_simulation_world.py": "9b26dabca60203cb965af156542eb2963764a77e3cb9e72e4ee65b662e297aed",
+    "scripts/test_simulation.py": "fdeeb7240712f1ee4f5515a47b7f3661cb88f5314d605c7863a1efbfaba25f83",
+    "experiments/ros2-gazebo/Dockerfile": "58f3e437688a84f6c1357e4c24975ddefff61ee82d8a0c7b21b095deeffd67d5",
+    "experiments/ros2-gazebo/world.sdf": "8f290e3f60b5d712fe75eea0e9fe49b899be655256f9e7b19a4d8c0d9737deb6",
+    "pulpo/kernel.py": "6f5352609ca6dc961034c8f49144e4ed4f41be087483274c330de494bab9679f",
+    "pulpo/state.py": "71f325def7e14fa56e613f1fb7c56e1e336a121409aeb125c2988bc4969e6e02",
+    "pulpo/directives.py": "ef8f23dbd054bc97a841db0a89893a5891888f16738a3faba1f181f48b1740c5",
+    "domains/safety.py": "abc70dd19a0e702ed90772798c6cf21a44e7accb9cd1c01808e1a0c167c1815c"
+  },
+  "claim": "Scenario results apply only to the named test backend. Synthetic test authority; no independent authority or physical safety certification. Bypass detection is not containment.",
+  "installed_packages": [
+    "ros-jazzy-action-msgs=2.0.4-1noble.20260902.015426",
+    "ros-jazzy-actionlib-msgs=5.3.8-1noble.20260902.034206",
+    "ros-jazzy-actuator-msgs=0.0.1-4noble.20260911.102005",
+    "ros-jazzy-ament-cmake=2.5.6-2noble.20260225.222913",
+    "ros-jazzy-ament-cmake-auto=2.5.6-2noble.20260225.232257",
+    "ros-jazzy-ament-cmake-copyright=0.17.5-1noble.20260410.113746",
+    "ros-jazzy-ament-cmake-core=2.5.6-2noble.20260224.191131",
+    "ros-jazzy-ament-cmake-cppcheck=0.17.5-1noble.20260410.113607",
+    "ros-jazzy-ament-cmake-cpplint=0.17.5-1noble.20260410.105800",
+    "ros-jazzy-ament-cmake-export-definitions=2.5.6-2noble.20260224.232207",
+    "ros-jazzy-ament-cmake-export-dependencies=2.5.6-2noble.20260225.043730",
+    "ros-jazzy-ament-cmake-export-include-directories=2.5.6-2noble.20260224.232223",
+    "ros-jazzy-ament-cmake-export-interfaces=2.5.6-2noble.20260225.042039",
+    "ros-jazzy-ament-cmake-export-libraries=2.5.6-2noble.20260224.232254",
+    "ros-jazzy-ament-cmake-export-link-flags=2.5.6-2noble.20260225.042107",
+    "ros-jazzy-ament-cmake-export-targets=2.5.6-2noble.20260225.042100",
+    "ros-jazzy-ament-cmake-flake8=0.17.5-1noble.20260410.113910",
+    "ros-jazzy-ament-cmake-gen-version-h=2.5.6-2noble.20260225.042237",
+    "ros-jazzy-ament-cmake-gmock=2.5.6-2noble.20260225.215706",
+    "ros-jazzy-ament-cmake-gtest=2.5.6-2noble.20260225.145055",
+    "ros-jazzy-ament-cmake-include-directories=2.5.6-2noble.20260225.042241",
+    "ros-jazzy-ament-cmake-libraries=2.5.6-2noble.20260225.042312",
+    "ros-jazzy-ament-cmake-lint-cmake=0.17.5-1noble.20260410.113602",
+    "ros-jazzy-ament-cmake-pep257=0.17.5-1noble.20260410.113929",
+    "ros-jazzy-ament-cmake-pytest=2.5.6-2noble.20260225.145739",
+    "ros-jazzy-ament-cmake-python=2.5.6-2noble.20260225.042312",
+    "ros-jazzy-ament-cmake-ros=0.12.1-1noble.20260603.150631",
+    "ros-jazzy-ament-cmake-target-dependencies=2.5.6-2noble.20260225.043936",
+    "ros-jazzy-ament-cmake-test=2.5.6-2noble.20260225.143205",
+    "ros-jazzy-ament-cmake-uncrustify=0.17.5-1noble.20260410.113615",
+    "ros-jazzy-ament-cmake-version=2.5.6-2noble.20260225.042330",
+    "ros-jazzy-ament-cmake-xmllint=0.17.5-1noble.20260410.113914",
+    "ros-jazzy-ament-copyright=0.17.5-1noble.20260410.105859",
+    "ros-jazzy-ament-cppcheck=0.17.5-1noble.20260410.080408",
+    "ros-jazzy-ament-cpplint=0.17.5-1noble.20260410.080348",
+    "ros-jazzy-ament-flake8=0.17.5-1noble.20260410.113507",
+    "ros-jazzy-ament-index-cpp=1.8.4-1noble.20260519.011052",
+    "ros-jazzy-ament-index-python=1.8.4-1noble.20260519.010916",
+    "ros-jazzy-ament-lint=0.17.5-1noble.20260410.080358",
+    "ros-jazzy-ament-lint-auto=0.17.5-1noble.20260410.080333",
+    "ros-jazzy-ament-lint-cmake=0.17.5-1noble.20260410.080405",
+    "ros-jazzy-ament-lint-common=0.17.5-1noble.20260410.114154",
+    "ros-jazzy-ament-package=0.16.5-1noble.20260121.174946",
+    "ros-jazzy-ament-pep257=0.17.5-1noble.20260410.113520",
+    "ros-jazzy-ament-uncrustify=0.17.5-1noble.20260410.080359",
+    "ros-jazzy-ament-xmllint=0.17.5-1noble.20260410.113521",
+    "ros-jazzy-builtin-interfaces=2.0.4-1noble.20260902.013948",
+    "ros-jazzy-class-loader=2.7.1-1noble.20260604.024917",
+    "ros-jazzy-common-interfaces=5.3.8-1noble.20260902.043650",
+    "ros-jazzy-composition-interfaces=2.0.4-1noble.20260902.024252",
+    "ros-jazzy-compressed-depth-image-transport=4.0.7-1noble.20260912.181002",
+    "ros-jazzy-compressed-image-transport=4.0.7-1noble.20260912.181005",
+    "ros-jazzy-console-bridge-vendor=1.7.2-1noble.20260603.150411",
+    "ros-jazzy-cv-bridge=4.1.0-1noble.20260911.143610",
+    "ros-jazzy-diagnostic-msgs=5.3.8-1noble.20260902.041325",
+    "ros-jazzy-domain-coordinator=0.12.1-1noble.20260603.150342",
+    "ros-jazzy-eigen3-cmake-module=0.3.1-1noble.20260603.150413",
+    "ros-jazzy-fastcdr=2.2.8-1noble.20260901.205404",
+    "ros-jazzy-fastrtps=2.14.6-1noble.20260901.222814",
+    "ros-jazzy-fastrtps-cmake-module=3.6.4-1noble.20260603.150331",
+    "ros-jazzy-foonathan-memory-vendor=1.3.1-3noble.20260225.055155",
+    "ros-jazzy-geometry-msgs=5.3.8-1noble.20260902.030745",
+    "ros-jazzy-geometry2=0.36.22-1noble.20260903.023449",
+    "ros-jazzy-gmock-vendor=1.14.9000-2noble.20260225.143751",
+    "ros-jazzy-gps-msgs=3.1.1-1noble.20260911.103001",
+    "ros-jazzy-gtest-vendor=1.14.9000-2noble.20260225.055309",
+    "ros-jazzy-gz-cmake-vendor=0.0.12-1noble.20260618.173318",
+    "ros-jazzy-gz-common-vendor=0.0.10-1noble.20260905.033536",
+    "ros-jazzy-gz-dartsim-vendor=0.0.3-1noble.20260225.232143",
+    "ros-jazzy-gz-fuel-tools-vendor=0.0.6-1noble.20260905.065120",
+    "ros-jazzy-gz-gui-vendor=0.0.5-1noble.20260905.071619",
+    "ros-jazzy-gz-math-vendor=0.0.11-1noble.20260905.031649",
+    "ros-jazzy-gz-msgs-vendor=0.0.8-1noble.20260905.033532",
+    "ros-jazzy-gz-ogre-next-vendor=0.0.5-1noble.20260225.232146",
+    "ros-jazzy-gz-physics-vendor=0.0.9-1noble.20260905.065116",
+    "ros-jazzy-gz-plugin-vendor=0.0.5-1noble.20260820.145930",
+    "ros-jazzy-gz-rendering-vendor=0.0.7-1noble.20260905.065113",
+    "ros-jazzy-gz-sensors-vendor=0.0.6-1noble.20260905.071631",
+    "ros-jazzy-gz-sim-vendor=0.0.13-1noble.20260905.073557",
+    "ros-jazzy-gz-tools-vendor=0.0.8-1noble.20260820.143431",
+    "ros-jazzy-gz-transport-vendor=0.0.9-1noble.20260905.065154",
+    "ros-jazzy-gz-utils-vendor=0.0.5-1noble.20260618.173807",
+    "ros-jazzy-image-transport=5.1.8-1noble.20260912.165731",
+    "ros-jazzy-image-transport-plugins=4.0.7-1noble.20260912.190655",
+    "ros-jazzy-interactive-markers=2.5.5-1noble.20260915.183018",
+    "ros-jazzy-kdl-parser=2.11.0-3noble.20260901.011356",
+    "ros-jazzy-keyboard-handler=0.3.2-1noble.20260225.235108",
+    "ros-jazzy-laser-geometry=2.7.2-1noble.20260915.190032",
+    "ros-jazzy-launch=3.4.11-1noble.20260603.150356",
+    "ros-jazzy-launch-ros=0.26.12-1noble.20260902.054847",
+    "ros-jazzy-launch-testing=3.4.11-1noble.20260603.150907",
+    "ros-jazzy-launch-testing-ament-cmake=3.4.11-1noble.20260603.151149",
+    "ros-jazzy-launch-testing-ros=0.26.12-1noble.20260902.081433",
+    "ros-jazzy-launch-xml=3.4.11-1noble.20260603.150705",
+    "ros-jazzy-launch-yaml=3.4.11-1noble.20260603.150711",
+    "ros-jazzy-libcurl-vendor=3.4.4-1noble.20260225.235243",
+    "ros-jazzy-liblz4-vendor=0.26.11-1noble.20260603.150356",
+    "ros-jazzy-libstatistics-collector=1.7.4-1noble.20260902.051231",
+    "ros-jazzy-libyaml-vendor=1.6.4-2noble.20260603.150356",
+    "ros-jazzy-lifecycle-msgs=2.0.4-1noble.20260902.030832",
+    "ros-jazzy-map-msgs=2.4.1-2noble.20260911.141843",
+    "ros-jazzy-marine-acoustic-msgs=2.1.0-2noble.20260911.112832",
+    "ros-jazzy-mcap-vendor=0.26.11-1noble.20260603.151024",
+    "ros-jazzy-message-filters=4.11.17-1noble.20260902.103742",
+    "ros-jazzy-nav-msgs=5.3.8-1noble.20260902.041413",
+    "ros-jazzy-orocos-kdl-vendor=0.5.2-1noble.20260603.150813",
+    "ros-jazzy-osrf-pycommon=2.1.7-1noble.20260225.055811",
+    "ros-jazzy-pluginlib=5.4.6-1noble.20260831.165748",
+    "ros-jazzy-point-cloud-transport=4.0.9-1noble.20260912.165820",
+    "ros-jazzy-pybind11-vendor=3.1.3-1noble.20260226.000033",
+    "ros-jazzy-python-cmake-module=0.11.1-2noble.20260226.000327",
+    "ros-jazzy-python-orocos-kdl-vendor=0.5.2-1noble.20260603.151028",
+    "ros-jazzy-python-qt-binding=2.2.2-1noble.20260226.000339",
+    "ros-jazzy-qt-gui=2.7.6-1noble.20260519.011141",
+    "ros-jazzy-qt-gui-cpp=2.7.6-1noble.20260911.051453",
+    "ros-jazzy-qt-gui-py-common=2.7.6-1noble.20260519.011126",
+    "ros-jazzy-rcl=9.2.11-1noble.20260902.044558",
+    "ros-jazzy-rcl-action=9.2.11-1noble.20260902.045222",
+    "ros-jazzy-rcl-interfaces=2.0.4-1noble.20260902.021729",
+    "ros-jazzy-rcl-lifecycle=9.2.11-1noble.20260902.051007",
+    "ros-jazzy-rcl-logging-interface=3.1.1-1noble.20260603.152452",
+    "ros-jazzy-rcl-logging-spdlog=3.1.1-1noble.20260604.025148",
+    "ros-jazzy-rcl-yaml-param-parser=9.2.11-1noble.20260612.050432",
+    "ros-jazzy-rclcpp=28.1.22-1noble.20260902.055335",
+    "ros-jazzy-rclcpp-action=28.1.22-1noble.20260902.103722",
+    "ros-jazzy-rclcpp-components=28.1.22-1noble.20260902.062054",
+    "ros-jazzy-rclcpp-lifecycle=28.1.22-1noble.20260903.011547",
+    "ros-jazzy-rclpy=7.1.12-1noble.20260902.053513",
+    "ros-jazzy-rcpputils=2.11.4-1noble.20260603.152446",
+    "ros-jazzy-rcutils=6.7.6-1noble.20260603.152220",
+    "ros-jazzy-resource-retriever=3.4.4-1noble.20260911.045441",
+    "ros-jazzy-rmw=7.3.3-1noble.20260612.050218",
+    "ros-jazzy-rmw-connextdds=",
+    "ros-jazzy-rmw-cyclonedds-cpp=",
+    "ros-jazzy-rmw-dds-common=3.1.1-1noble.20260902.031038",
+    "ros-jazzy-rmw-fastrtps-cpp=8.4.4-1noble.20260902.041916",
+    "ros-jazzy-rmw-fastrtps-shared-cpp=8.4.4-1noble.20260902.041127",
+    "ros-jazzy-rmw-implementation=2.15.6-1noble.20260902.043425",
+    "ros-jazzy-rmw-implementation-cmake=7.3.3-1noble.20260225.225156",
+    "ros-jazzy-robot-state-publisher=3.3.4-1noble.20260903.022201",
+    "ros-jazzy-ros-base=0.11.0-1noble.20260903.093452",
+    "ros-jazzy-ros-core=0.11.0-1noble.20260903.085113",
+    "ros-jazzy-ros-environment=4.2.1-1noble.20260225.043405",
+    "ros-jazzy-ros-gz=1.0.24-1noble.20261006.041805",
+    "ros-jazzy-ros-gz-bridge=1.0.24-1noble.20260920.234644",
+    "ros-jazzy-ros-gz-image=1.0.24-1noble.20260921.023911",
+    "ros-jazzy-ros-gz-interfaces=1.0.24-1noble.20260911.110630",
+    "ros-jazzy-ros-gz-sim=1.0.24-1noble.20261006.035056",
+    "ros-jazzy-ros-gz-sim-demos=1.0.24-1noble.20261006.040806",
+    "ros-jazzy-ros-workspace=1.0.3-7noble.20260224.191628",
+    "ros-jazzy-ros2action=0.32.12-1noble.20260903.070315",
+    "ros-jazzy-ros2bag=0.26.11-1noble.20260903.091706",
+    "ros-jazzy-ros2cli=0.32.12-1noble.20260902.102710",
+    "ros-jazzy-ros2cli-common-extensions=0.3.1-1noble.20260903.085021",
+    "ros-jazzy-ros2component=0.32.12-1noble.20260903.084755",
+    "ros-jazzy-ros2doctor=0.32.12-1noble.20260902.103121",
+    "ros-jazzy-ros2interface=0.32.12-1noble.20260902.103123",
+    "ros-jazzy-ros2launch=0.26.12-1noble.20260903.074444",
+    "ros-jazzy-ros2lifecycle=0.32.12-1noble.20260903.084439",
+    "ros-jazzy-ros2multicast=0.32.12-1noble.20260902.103136",
+    "ros-jazzy-ros2node=0.32.12-1noble.20260902.103130",
+    "ros-jazzy-ros2param=0.32.12-1noble.20260903.084453",
+    "ros-jazzy-ros2pkg=0.32.12-1noble.20260903.070408",
+    "ros-jazzy-ros2plugin=5.4.6-1noble.20260903.074527",
+    "ros-jazzy-ros2run=0.32.12-1noble.20260903.074618",
+    "ros-jazzy-ros2service=0.32.12-1noble.20260903.074340",
+    "ros-jazzy-ros2topic=0.32.12-1noble.20260903.070408",
+    "ros-jazzy-rosbag2=0.26.11-1noble.20260903.092044",
+    "ros-jazzy-rosbag2-compression=0.26.11-1noble.20260903.070441",
+    "ros-jazzy-rosbag2-compression-zstd=0.26.11-1noble.20260903.075117",
+    "ros-jazzy-rosbag2-cpp=0.26.11-1noble.20260902.083107",
+    "ros-jazzy-rosbag2-interfaces=0.26.11-1noble.20260902.022225",
+    "ros-jazzy-rosbag2-py=0.26.11-1noble.20260903.090602",
+    "ros-jazzy-rosbag2-storage=0.26.11-1noble.20260902.082620",
+    "ros-jazzy-rosbag2-storage-default-plugins=0.26.11-1noble.20260903.075127",
+    "ros-jazzy-rosbag2-storage-mcap=0.26.11-1noble.20260903.070458",
+    "ros-jazzy-rosbag2-storage-sqlite3=0.26.11-1noble.20260903.070451",
+    "ros-jazzy-rosbag2-transport=0.26.11-1noble.20260903.085220",
+    "ros-jazzy-rosgraph-msgs=2.0.4-1noble.20260902.031408",
+    "ros-jazzy-rosidl-adapter=4.6.9-1noble.20260612.045507",
+    "ros-jazzy-rosidl-cli=4.6.9-1noble.20260612.045120",
+    "ros-jazzy-rosidl-cmake=4.6.9-1noble.20260612.050210",
+    "ros-jazzy-rosidl-core-generators=0.2.1-1noble.20260902.013715",
+    "ros-jazzy-rosidl-core-runtime=0.2.1-1noble.20260902.013745",
+    "ros-jazzy-rosidl-default-generators=1.6.1-1noble.20260902.021422",
+    "ros-jazzy-rosidl-default-runtime=1.6.1-1noble.20260902.015921",
+    "ros-jazzy-rosidl-dynamic-typesupport=0.1.2-3noble.20260612.045843",
+    "ros-jazzy-rosidl-dynamic-typesupport-fastrtps=0.1.0-3noble.20260902.013600",
+    "ros-jazzy-rosidl-generator-c=4.6.9-1noble.20260612.050418",
+    "ros-jazzy-rosidl-generator-cpp=4.6.9-1noble.20260612.050852",
+    "ros-jazzy-rosidl-generator-py=0.22.2-1noble.20260612.051058",
+    "ros-jazzy-rosidl-generator-rs=0.5.0-1noble.20260813.022251",
+    "ros-jazzy-rosidl-generator-type-description=4.6.9-1noble.20260612.050043",
+    "ros-jazzy-rosidl-parser=4.6.9-1noble.20260612.045810",
+    "ros-jazzy-rosidl-pycommon=4.6.9-1noble.20260612.045929",
+    "ros-jazzy-rosidl-runtime-c=4.6.9-1noble.20260612.045513",
+    "ros-jazzy-rosidl-runtime-cpp=4.6.9-1noble.20260612.045852",
+    "ros-jazzy-rosidl-runtime-py=0.13.2-1noble.20260612.050026",
+    "ros-jazzy-rosidl-typesupport-c=3.2.3-1noble.20260612.050857",
+    "ros-jazzy-rosidl-typesupport-cpp=3.2.3-1noble.20260612.051324",
+    "ros-jazzy-rosidl-typesupport-fastrtps-c=3.6.4-1noble.20260901.223423",
+    "ros-jazzy-rosidl-typesupport-fastrtps-cpp=3.6.4-1noble.20260901.222810",
+    "ros-jazzy-rosidl-typesupport-interface=4.6.9-1noble.20260612.045126",
+    "ros-jazzy-rosidl-typesupport-introspection-c=4.6.9-1noble.20260612.050623",
+    "ros-jazzy-rosidl-typesupport-introspection-cpp=4.6.9-1noble.20260612.051103",
+    "ros-jazzy-rpyutils=0.4.2-1noble.20260225.142204",
+    "ros-jazzy-rqt-gui=1.6.4-1noble.20260912.164610",
+    "ros-jazzy-rqt-gui-cpp=1.6.4-1noble.20260911.124247",
+    "ros-jazzy-rqt-gui-py=1.6.4-1noble.20260912.180625",
+    "ros-jazzy-rqt-image-view=1.3.0-2noble.20260912.180617",
+    "ros-jazzy-rqt-plot=1.4.5-1noble.20260912.181255",
+    "ros-jazzy-rqt-py-common=1.6.4-1noble.20260912.164629",
+    "ros-jazzy-rqt-topic=1.7.5-1noble.20261006.034535",
+    "ros-jazzy-rviz-assimp-vendor=14.1.24-1noble.20260911.033744",
+    "ros-jazzy-rviz-common=14.1.24-1noble.20260915.181303",
+    "ros-jazzy-rviz-default-plugins=14.1.24-1noble.20260915.195741",
+    "ros-jazzy-rviz-ogre-vendor=14.1.24-1noble.20260911.033743",
+    "ros-jazzy-rviz-rendering=14.1.24-1noble.20260911.050059",
+    "ros-jazzy-rviz2=14.1.24-1noble.20260915.204213",
+    "ros-jazzy-sdformat-urdf=1.0.2-1noble.20260911.051524",
+    "ros-jazzy-sdformat-vendor=0.0.14-1noble.20260905.033543",
+    "ros-jazzy-sensor-msgs=5.3.8-1noble.20260902.041633",
+    "ros-jazzy-sensor-msgs-py=5.3.8-1noble.20260902.043313",
+    "ros-jazzy-service-msgs=2.0.4-1noble.20260902.015102",
+    "ros-jazzy-shape-msgs=5.3.8-1noble.20260902.034008",
+    "ros-jazzy-simulation-interfaces=1.5.1-1noble.20260911.111314",
+    "ros-jazzy-spdlog-vendor=1.6.2-1noble.20260603.150612",
+    "ros-jazzy-sqlite3-vendor=0.26.11-1noble.20260603.150654",
+    "ros-jazzy-sros2=0.13.6-1noble.20260903.070845",
+    "ros-jazzy-sros2-cmake=0.13.6-1noble.20260903.075137",
+    "ros-jazzy-statistics-msgs=2.0.4-1noble.20260902.022352",
+    "ros-jazzy-std-msgs=5.3.8-1noble.20260902.022418",
+    "ros-jazzy-std-srvs=5.3.8-1noble.20260902.031157",
+    "ros-jazzy-stereo-msgs=5.3.8-1noble.20260902.043227",
+    "ros-jazzy-tango-icons-vendor=0.3.1-1noble.20260225.230515",
+    "ros-jazzy-tf2=0.36.22-1noble.20260902.041654",
+    "ros-jazzy-tf2-bullet=0.36.22-1noble.20260903.022532",
+    "ros-jazzy-tf2-eigen=0.36.22-1noble.20260903.022246",
+    "ros-jazzy-tf2-eigen-kdl=0.36.22-1noble.20260902.042605",
+    "ros-jazzy-tf2-geometry-msgs=0.36.22-1noble.20260903.022912",
+    "ros-jazzy-tf2-kdl=0.36.22-1noble.20260903.022912",
+    "ros-jazzy-tf2-msgs=0.36.22-1noble.20260902.041736",
+    "ros-jazzy-tf2-py=0.36.22-1noble.20260902.102727",
+    "ros-jazzy-tf2-ros=0.36.22-1noble.20260903.021700",
+    "ros-jazzy-tf2-ros-py=0.36.22-1noble.20260903.022808",
+    "ros-jazzy-tf2-sensor-msgs=0.36.22-1noble.20260903.022912",
+    "ros-jazzy-tf2-tools=0.36.22-1noble.20260903.022914",
+    "ros-jazzy-theora-image-transport=4.0.7-1noble.20260912.181634",
+    "ros-jazzy-tinyxml2-vendor=0.9.2-1noble.20260225.230621",
+    "ros-jazzy-tracetools=8.2.6-1noble.20260603.152223",
+    "ros-jazzy-trajectory-msgs=5.3.8-1noble.20260902.041818",
+    "ros-jazzy-type-description-interfaces=2.0.4-1noble.20260902.015447",
+    "ros-jazzy-uncrustify-vendor=3.0.1-1noble.20260225.230730",
+    "ros-jazzy-unique-identifier-msgs=2.5.1-1noble.20260902.014005",
+    "ros-jazzy-urdf=2.10.1-2noble.20260831.232032",
+    "ros-jazzy-urdf-parser-plugin=2.10.1-2noble.20260603.151118",
+    "ros-jazzy-urdfdom=4.0.2-1noble.20260603.151654",
+    "ros-jazzy-urdfdom-headers=1.1.3-1noble.20260603.150728",
+    "ros-jazzy-vision-msgs=4.1.1-3noble.20260911.140407",
+    "ros-jazzy-visualization-msgs=5.3.8-1noble.20260902.042956",
+    "ros-jazzy-xacro=2.1.1-1noble.20260519.011123",
+    "ros-jazzy-yaml-cpp-vendor=9.0.1-1noble.20260225.230938",
+    "ros-jazzy-zstd-image-transport=4.0.7-1noble.20260912.181809",
+    "ros-jazzy-zstd-vendor=0.26.11-1noble.20260603.150731"
+  ],
+  "benchmark": {
+    "iterations": 100,
+    "samples_ns": [
+      237552,
+      269380,
+      157418,
+      190156,
+      168237,
+      154778,
+      149029,
+      166708,
+      153388,
+      151988,
+      201575,
+      171017,
+      148839,
+      238922,
+      152198,
+      191355,
+      160958,
+      149079,
+      145709,
+      212314,
+      155658,
+      148158,
+      181856,
+      155438,
+      147569,
+      200705,
+      152138,
+      160228,
+      151759,
+      149319,
+      143569,
+      764952,
+      152988,
+      147128,
+      162748,
+      152179,
+      145909,
+      222763,
+      153029,
+      145229,
+      153459,
+      146339,
+      160248,
+      153438,
+      149938,
+      146269,
+      160478,
+      147869,
+      151888,
+      159358,
+      153239,
+      146149,
+      153928,
+      148699,
+      146709,
+      154839,
+      150909,
+      149289,
+      161778,
+      165918,
+      144369,
+      152759,
+      156548,
+      145599,
+      160958,
+      154358,
+      149258,
+      155648,
+      151418,
+      146409,
+      157418,
+      149978,
+      214044,
+      151828,
+      150329,
+      149059,
+      157748,
+      147499,
+      146658,
+      163368,
+      149539,
+      149939,
+      196115,
+      148689,
+      146589,
+      157908,
+      155069,
+      149868,
+      159198,
+      151699,
+      145039,
+      185566,
+      158948,
+      146839,
+      204315,
+      162558,
+      154718,
+      155258,
+      154518,
+      149279
+    ],
+    "median_ns": 153313.5,
+    "p95_ns": 214044,
+    "max_ns": 764952,
+    "process_cpu_ns_including_setup_and_validation": 67882259,
+    "separate_pass_peak_python_bytes": 6705,
+    "scope": "deterministic canonical evaluate + shared safety + consume + kinematic send; fixture setup and audit verification excluded from latency; no ROS, Gazebo, DDS, I/O, real-time guarantee, native RSS, GPU, or hardware performance claim"
+  },
+  "passed": true,
+  "peak_process_rss_kib_including_imports_and_setup": 75608
+}

@@ -1,0 +1,9 @@
+[WARN] [1792108776.086001419] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
+[WARN] [1792108776.086032816] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
+[WARN] [1792108776.760634057] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
+[WARN] [1792108776.760668784] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
+[INFO] [1792108776.800650424] [ros_gz_bridge]: Creating ROS->GZ Bridge: [/pulpo_sim/cmd_vel (geometry_msgs/msg/Twist) -> /pulpo_sim/cmd_vel (gz.msgs.Twist)] (Lazy 0)
+[INFO] [1792108776.808284792] [ros_gz_bridge]: Creating GZ->ROS Bridge: [/pulpo_sim/odom (gz.msgs.Odometry) -> /pulpo_sim/odom (nav_msgs/msg/Odometry)] (Lazy 0)
+[INFO] [1792108779.894922514] [ros_gz_bridge]: Passing message from ROS geometry_msgs/msg/Twist to Gazebo gz.msgs.Twist (showing msg only once per type)
+[INFO] [1792108793.382473822] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+{"passed": true, "backend": "gazebo", "cases": 15, "output": "/results/gazebo-final.json"}

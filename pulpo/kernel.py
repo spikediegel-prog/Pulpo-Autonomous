@@ -16,6 +16,7 @@ from typing import Any, Callable, Protocol
 from .authority import ApprovalEnvelope, ApprovalVerifier, AuthorityTrust
 from .state import (
     ApprovalUse,
+    AuditSigner,
     DirectivePermitBinding,
     InMemoryKernelState,
     KernelState,
@@ -306,6 +307,8 @@ class GovernanceKernel:
         clock: Callable[[], int] | None = None,
         state: KernelState | None = None,
         presenter_verifiers: dict[str, PresenterVerifier] | None = None,
+        audit_signer: AuditSigner | None = None,
+        legacy_audit_records: int = 0,
     ) -> None:
         self.policy = policy
         self._secret = secret or secrets.token_bytes(32)
@@ -318,10 +321,17 @@ class GovernanceKernel:
         # dict cannot change who this kernel will accept proofs from.
         self._presenter_verifiers: dict[str, PresenterVerifier] = dict(presenter_verifiers or {})
         self._clock = clock or time.time_ns
+        if state is not None and (audit_signer is not None or legacy_audit_records):
+            # The signer lives in the state layer (it signs at append);
+            # a caller that hands in a state must have constructed that
+            # state with its signer. Supplying both would leave two
+            # sources of truth for which records must be signed, so
+            # refuse rather than guess.
+            raise ValueError("audit_signer/legacy_audit_records must be given on the state, not the kernel, when a state is supplied")
         self._state = (
             state
             if state is not None
-            else InMemoryKernelState()
+            else InMemoryKernelState(audit_signer=audit_signer, legacy_audit_records=legacy_audit_records)
         )
 
         self._verified_audit_token: object | None = None
@@ -400,6 +410,25 @@ class GovernanceKernel:
         return sha256(
             _canonical(payload)
         ).hexdigest()
+
+    def _require_pinned_policy(self) -> None:
+        """Fail closed if the evaluation policy drifted after construction.
+
+        The policy is deployment configuration pinned at construction
+        (Repro D, upstream #355): reassigning ``kernel.policy``
+        afterwards silently swapped the evaluation policy with no audit
+        record. Every decision point recomputes the policy hash from
+        the live policy and compares it to the pinned hash; any drift
+        — or a policy that can no longer be hashed at all — raises
+        StateIntegrityError before any decision is recorded.
+        """
+        try:
+            current = self._compute_policy_hash()
+        except Exception as exc:
+            raise StateIntegrityError("policy hash cannot be recomputed") from exc
+
+        if not hmac.compare_digest(current, self._policy_hash):
+            raise StateIntegrityError("policy changed after kernel construction")
 
     @property
     def policy_hash(self) -> str:
@@ -675,6 +704,8 @@ class GovernanceKernel:
         *,
         presenter: str | None = None,
     ) -> Decision:
+        self._require_pinned_policy()
+
         digest = self.intent_hash(intent)
 
         failure = self._policy_failure(
@@ -711,6 +742,8 @@ class GovernanceKernel:
         presenter: str | None = None,
     ) -> Decision:
         """Issue a permit only after verification by the configured authority."""
+
+        self._require_pinned_policy()
 
         digest = self.intent_hash(
             intent
@@ -1126,6 +1159,8 @@ class GovernanceKernel:
         timestamp_ns: int | None = None,
         presenter: str | None = None,
     ) -> Decision:
+        self._require_pinned_policy()
+
         # Presenter binding (Phase 3, Item 4B) is enforced in this
         # funnel so every issuance path inherits it: a policy that
         # requires binding mints no unbound permit, and a permit is
@@ -1424,6 +1459,8 @@ class GovernanceKernel:
         presenter: str | None = None,
         presenter_proof: str | None = None,
     ) -> bool:
+        self._require_pinned_policy()
+
         digest = self.intent_hash(
             intent
         )
@@ -1452,6 +1489,29 @@ class GovernanceKernel:
                 return False
 
         else:
+            # Writer custody, Fix A (upstream #355, layering change
+            # 2026-11-13): the token's own authenticated digest is
+            # compared against the presented intent HERE, before the
+            # store is consulted. The store's check against the permit
+            # row's stored intent hash remains as the second layer —
+            # but that row is writer-controlled and outside the audit
+            # chain, so a state-file writer holding a genuine token
+            # could rewrite its row (new intent hash, spent reset) and
+            # spend the token for an intent the kernel never
+            # authorized. The token's digest cannot be rewritten
+            # without the kernel secret, so this comparison is the
+            # layer that stops the retarget. A mismatch is refused
+            # with permit_rejected / permit_intent_mismatch and never
+            # burns the permit, exactly like a presenter refusal.
+            if claims[0] != digest:
+                self._state.append(
+                    "permit_rejected",
+                    {"intent_hash": digest, "reason": "permit_intent_mismatch"},
+                    self._clock(),
+                )
+
+                return False
+
             refusal = self._presenter_refusal(claims, digest, permit, presenter, presenter_proof)
 
             if refusal is not None:
@@ -1503,23 +1563,39 @@ class GovernanceKernel:
             )
 
     def verify_audit_report(self) -> dict[str, Any]:
-        """Verify the audit chain and report its coverage.
+        """Verify the audit chain and report its signing coverage.
 
-        Returns ``ok`` plus per-record acceptance counts. This tree
-        carries no signed audit records (#357 is not ported), so
-        ``signing_enabled`` is always False and every record verifies
-        legacy-style. The check mirrors ``verify_audit`` exactly,
-        including the delta chain: a record's hash covers its delta
-        fields, ``previous_delta_root`` must chain, and
-        ``delta_root`` must recompute — a record whose delta was
-        rebuilt without the chain fails here even if its hash was
-        recomputed to match. A signature present anywhere is a
-        forgery-shaped anomaly on an unsigned chain and fails as
-        ``audit_signature_invalid``. Malformed records fail as
-        ``audit_record_malformed`` instead of raising, so callers
-        that treat verification as a boolean fail closed the same
-        way.
+        Returns ``ok`` plus, for every record, whether it was accepted
+        as signed or as legacy. The signature field is excluded from
+        the hashed body (it is a sibling of ``hash``, not part of it),
+        so the unkeyed chain math is identical to before signing
+        existed. When the state carries no signer, every record
+        verifies legacy-style and ``signing_enabled`` is False — the
+        exact pre-signing behavior. When a signer is configured,
+        every record at or after the legacy prefix must carry a valid
+        signature: a missing one fails as ``audit_signature_missing``,
+        a present-but-wrong one as ``audit_signature_invalid``. When
+        no signer is configured, a present signature is an opaque
+        field the chain verifies past legacy-style and counts as
+        unsigned — disabling signing is a deployment decision and must
+        not brick a chain signed under an earlier config. Malformed
+        records fail as ``audit_record_malformed``
+        instead of raising, so callers that treat verification as a
+        boolean (boot included) fail closed the same way.
+
+        The check mirrors ``verify_audit`` exactly, including the
+        delta chain: a record's hash covers its delta fields,
+        ``previous_delta_root`` must chain, and ``delta_root`` must
+        recompute — a record whose delta was rebuilt without the chain
+        fails here even if its hash was recomputed to match.
         """
+
+        signer = getattr(self._state, "audit_signer", None)
+
+        try:
+            legacy_records = int(getattr(self._state, "legacy_audit_records", 0) or 0)
+        except (TypeError, ValueError):
+            legacy_records = 0
 
         report: dict[str, Any] = {
             "ok": True,
@@ -1527,16 +1603,21 @@ class GovernanceKernel:
             "total_records": 0,
             "signed_records": 0,
             "unsigned_records": 0,
-            "legacy_records": 0,
-            "signing_enabled": False,
+            "legacy_records": legacy_records,
+            "signing_enabled": signer is not None,
             "failed_record": None,
         }
 
         previous = "0" * 64
         previous_delta_root = "0" * 64
 
+        # The report streams the trail through ``iter_audit`` rather
+        # than materializing ``self.audit``: kernel bootstrap must not
+        # load the whole chain into memory (pinned by
+        # test_delta_audit_performance's streaming test), and the old
+        # ``verify_audit`` streamed the same way.
         try:
-            records = self.audit
+            records = self._state.iter_audit()
         except Exception:
             report.update({"ok": False, "reason": "audit_record_malformed"})
             return report
@@ -1556,9 +1637,28 @@ class GovernanceKernel:
                 report.update({"ok": False, "reason": "audit_record_malformed", "failed_record": index})
                 return report
 
-            if record.get("signature") is not None:
-                report.update({"ok": False, "reason": "audit_signature_invalid", "failed_record": index})
-                return report
+            signature = record.get("signature") if isinstance(record, dict) else None
+
+            if signer is not None:
+                if signature is not None:
+                    if not signer.verify(record["hash"], signature):
+                        report.update({"ok": False, "reason": "audit_signature_invalid", "failed_record": index})
+                        return report
+
+                    report["signed_records"] += 1
+
+                elif index >= legacy_records:
+                    report.update({"ok": False, "reason": "audit_signature_missing", "failed_record": index})
+                    return report
+
+                else:
+                    report["unsigned_records"] += 1
+
+            else:
+                # No signer configured: a present signature is an
+                # opaque field — the chain verifies legacy-style and
+                # the record counts as unsigned (see docstring).
+                report["unsigned_records"] += 1
 
             delta = body.get("delta")
             if delta is not None:
@@ -1584,7 +1684,6 @@ class GovernanceKernel:
                 # forward from the legacy audit head.
                 previous_delta_root = record["hash"]
 
-            report["unsigned_records"] += 1
             previous = record["hash"]
 
         return report
@@ -1596,79 +1695,13 @@ class GovernanceKernel:
             self._audit_integrity_token()
         )
 
-        previous = "0" * 64
-        previous_delta_root = "0" * 64
-
-        for record in self._state.iter_audit():
-            body = {
-                key: value
-                for key, value
-                in record.items()
-                if key != "hash"
-            }
-
-            if body["previous_hash"] != previous:
-                self._verified_audit_token = None
-                return False
-
-            expected = sha256(
-                _canonical(body)
-            ).hexdigest()
-
-            if not hmac.compare_digest(
-                record["hash"],
-                expected,
-            ):
-                self._verified_audit_token = None
-                return False
-
-            delta = body.get("delta")
-
-            if delta is not None:
-                if (
-                    body.get(
-                        "previous_delta_root"
-                    )
-                    != previous_delta_root
-                ):
-                    self._verified_audit_token = None
-                    return False
-
-                expected_delta_root = sha256(
-                    _canonical(
-                        {
-                            "previous_delta_root": (
-                                previous_delta_root
-                            ),
-                            "delta": delta,
-                        }
-                    )
-                ).hexdigest()
-
-                if not hmac.compare_digest(
-                    body.get(
-                        "delta_root",
-                        "",
-                    ),
-                    expected_delta_root,
-                ):
-                    self._verified_audit_token = None
-                    return False
-
-                previous_delta_root = (
-                    expected_delta_root
-                )
-
-            else:
-                # Legacy records predate canonical delta logging.
-                # Their audit hash remains authoritative, and the
-                # first delta record after legacy history binds
-                # forward from the legacy audit head.
-                previous_delta_root = (
-                    record["hash"]
-                )
-
-            previous = record["hash"]
+        # The chain verdict (hash, delta, and signature checks) lives
+        # in verify_audit_report; this wrapper keeps only the
+        # audit-integrity-token logic, which must observe the state
+        # before and after the verification read.
+        if not self.verify_audit_report()["ok"]:
+            self._verified_audit_token = None
+            return False
 
         token_after = (
             self._audit_integrity_token()

@@ -6,12 +6,21 @@ from dataclasses import asdict, dataclass
 from hashlib import sha256
 import hmac
 import json
+import os
 import secrets
+import stat
 import time
-from typing import Any, Callable
+from pathlib import Path
+from typing import Any, Callable, Protocol
 
 from .authority import ApprovalEnvelope, ApprovalVerifier, AuthorityTrust
-from .state import ApprovalUse, InMemoryKernelState, KernelState
+from .state import (
+    ApprovalUse,
+    DirectivePermitBinding,
+    InMemoryKernelState,
+    KernelState,
+    SQLiteKernelState,
+)
 
 
 def _canonical(value: Any) -> bytes:
@@ -20,6 +29,122 @@ def _canonical(value: Any) -> bytes:
         sort_keys=True,
         separators=(",", ":"),
     ).encode()
+
+
+def _observe_artifact_file(path: str | Path) -> tuple[str, str, int]:
+    """Hash one stable regular file through a descriptor-bound observation.
+
+    The resolved path, descriptor identity, byte count, size, and metadata
+    must remain stable for the whole observation. A writer racing the read
+    therefore cannot produce completion evidence for a mixed or replaced
+    artifact snapshot. This is the single implementation: the target
+    reconciliation projection delegates here, and the kernel's
+    ``record_target_completion`` verb observes through it, so a caller can
+    never substitute a self-asserted hash for an observed one.
+    """
+
+    try:
+        resolved = Path(path).expanduser().resolve(strict=True)
+    except (OSError, RuntimeError) as exc:
+        raise ValueError("artifact_not_found") from exc
+
+    flags = os.O_RDONLY
+    if hasattr(os, "O_CLOEXEC"):
+        flags |= os.O_CLOEXEC
+    if hasattr(os, "O_NOFOLLOW"):
+        flags |= os.O_NOFOLLOW
+    try:
+        descriptor = os.open(resolved, flags)
+    except FileNotFoundError as exc:
+        raise ValueError("artifact_changed_during_observation") from exc
+    except OSError as exc:
+        raise ValueError("artifact_unreadable") from exc
+
+    try:
+        before = os.fstat(descriptor)
+        if not stat.S_ISREG(before.st_mode):
+            raise ValueError("artifact_not_file")
+        if before.st_size <= 0:
+            raise ValueError("artifact_empty")
+
+        digest = sha256()
+        bytes_read = 0
+        try:
+            while True:
+                chunk = os.read(descriptor, 1024 * 1024)
+                if not chunk:
+                    break
+                bytes_read += len(chunk)
+                digest.update(chunk)
+            after = os.fstat(descriptor)
+            path_after = os.stat(resolved, follow_symlinks=False)
+        except OSError as exc:
+            raise ValueError("artifact_changed_during_observation") from exc
+
+        stable_descriptor = (
+            before.st_dev == after.st_dev
+            and before.st_ino == after.st_ino
+            and before.st_size == after.st_size
+            and before.st_mtime_ns == after.st_mtime_ns
+            and before.st_ctime_ns == after.st_ctime_ns
+        )
+        stable_path = (
+            after.st_dev == path_after.st_dev
+            and after.st_ino == path_after.st_ino
+            and after.st_size == path_after.st_size
+        )
+        if bytes_read != before.st_size or not stable_descriptor or not stable_path:
+            raise ValueError("artifact_changed_during_observation")
+
+        return str(resolved), digest.hexdigest(), bytes_read
+    finally:
+        os.close(descriptor)
+
+
+def _token_time_ns(raw: str) -> int | None:
+    """Parse a token time field, or None when it is not well-formed."""
+
+    if not raw or any(char not in "0123456789" for char in raw):
+        return None
+
+    try:
+        return int(raw)
+    except ValueError:
+        # Overlong digit strings exceed the int() digit cap.
+        return None
+
+
+# Presenter binding (Phase 3, Item 4B -- token v3; ported from upstream #373
+# via Preview #148). A permit may be bound at issuance to one presenter
+# identity; the token's signed claims then carry the SHA-256 of that
+# identity, and consumption requires a proof, signed by the presenter's
+# key over the exact token and intent, that the kernel verifies against
+# the presenter verifier registered for that identity at construction.
+# An unbound permit carries the hash of the empty string as its
+# presenter claim and remains a bearer <redacted> exactly as before -- unless
+# the policy requires binding, in which case unbound permits are neither
+# minted nor spent. Autonomous jumps straight from token v1
+# (``digest:nonce:signature``) to v3: v1 strings fail closed at consume
+# under this format.
+PRESENTER_PROOF_SCHEMA = "pulpo.presenter-proof.v1"
+
+UNBOUND_PRESENTER_HASH = sha256(b"").hexdigest()
+
+
+class PresenterVerifier(Protocol):
+    """Verification-only adapter for one presenter's key.
+
+    Structurally the approval verifier's shape: the presenter signs
+    ``GovernanceKernel.presenter_proof_payload(...)`` bytes with its
+    own key; the kernel holds only verification. A deployment
+    registers one verifier per presenter identity at kernel
+    construction; the registry is deployment configuration, never
+    policy, and never enters the audit chain.
+    """
+
+    def verify(self, payload: bytes, signature: str) -> bool:
+        """Return true only for a proof signed by this presenter."""
+        ...
 
 
 @dataclass(frozen=True)
@@ -107,6 +232,13 @@ class Policy:
     authority_trust: AuthorityTrust | None = None
     permit_ttl_ns: int = 300_000_000_000
 
+    # Presenter binding (Phase 3, Item 4B): when true, every
+    # permit this policy issues must be bound to a registered
+    # presenter, and unbound permits are refused at consume.
+    # Default false keeps the bearer <redacted> posture for policies
+    # that do not opt in.
+    require_presenter_binding: bool = False
+
     def __post_init__(self) -> None:
         principals = [
             grant.principal
@@ -143,6 +275,9 @@ class Policy:
                 "permit_ttl_ns must be a positive integer"
             )
 
+        if not isinstance(self.require_presenter_binding, bool):
+            raise ValueError("require_presenter_binding must be a bool")
+
 
 @dataclass(frozen=True)
 class Decision:
@@ -170,11 +305,18 @@ class GovernanceKernel:
         approval_verifier: ApprovalVerifier | None = None,
         clock: Callable[[], int] | None = None,
         state: KernelState | None = None,
+        presenter_verifiers: dict[str, PresenterVerifier] | None = None,
     ) -> None:
         self.policy = policy
         self._secret = secret or secrets.token_bytes(32)
+        self._explicit_secret = secret is not None
         self._policy_hash = self._compute_policy_hash()
         self._approval_verifier = approval_verifier
+        # Presenter registry (Item 4B): presenter identity -> verifier.
+        # Deployment configuration injected at construction, like the
+        # approval verifier; copied so later mutation of the caller's
+        # dict cannot change who this kernel will accept proofs from.
+        self._presenter_verifiers: dict[str, PresenterVerifier] = dict(presenter_verifiers or {})
         self._clock = clock or time.time_ns
         self._state = (
             state
@@ -247,6 +389,13 @@ class GovernanceKernel:
             ),
             "permit_ttl_ns": self.policy.permit_ttl_ns,
         }
+
+        if self.policy.require_presenter_binding:
+            # Requiring presenter binding is an authority-relevant
+            # policy choice (it retires the bearer <redacted>), so it binds
+            # into the policy hash. Policies that do not require it
+            # keep the exact pre-Item-4B hash.
+            payload["require_presenter_binding"] = True
 
         return sha256(
             _canonical(payload)
@@ -493,6 +642,7 @@ class GovernanceKernel:
         expected_target_hash: str,
         *,
         version: int = 1,
+        presenter: str | None = None,
     ) -> tuple[
         TargetResolution,
         Decision | None,
@@ -514,13 +664,16 @@ class GovernanceKernel:
         return (
             resolution,
             self.evaluate(
-                resolution.target.intent
+                resolution.target.intent,
+                presenter=presenter,
             ),
         )
 
     def evaluate(
         self,
         intent: Intent,
+        *,
+        presenter: str | None = None,
     ) -> Decision:
         digest = self.intent_hash(intent)
 
@@ -546,13 +699,16 @@ class GovernanceKernel:
             )
 
         return self._issue_permit(
-            digest
+            digest,
+            presenter=presenter,
         )
 
     def evaluate_with_approval(
         self,
         intent: Intent,
         envelope: ApprovalEnvelope,
+        *,
+        presenter: str | None = None,
     ) -> Decision:
         """Issue a permit only after verification by the configured authority."""
 
@@ -849,6 +1005,7 @@ class GovernanceKernel:
             approval=approval,
             envelope=envelope,
             timestamp_ns=verified_at_ns,
+            presenter=presenter,
         )
 
     def _verifier_matches_trust(
@@ -967,22 +1124,23 @@ class GovernanceKernel:
         approval: ApprovalUse | None = None,
         envelope: ApprovalEnvelope | None = None,
         timestamp_ns: int | None = None,
+        presenter: str | None = None,
     ) -> Decision:
-        nonce = secrets.token_hex(16)
+        # Presenter binding (Phase 3, Item 4B) is enforced in this
+        # funnel so every issuance path inherits it: a policy that
+        # requires binding mints no unbound permit, and a permit is
+        # never bound to a presenter this kernel could not verify a
+        # proof from at consume time -- such a permit would be
+        # unspendable by construction, so it is not minted.
+        if presenter is None and self.policy.require_presenter_binding:
+            return self._decide("deny", "presenter_binding_required", digest)
 
-        payload = (
-            f"{digest}:{nonce}"
-        )
+        if presenter is not None:
+            if not isinstance(presenter, str) or not presenter:
+                return self._decide("deny", "presenter_invalid", digest)
 
-        signature = hmac.new(
-            self._secret,
-            payload.encode(),
-            sha256,
-        ).hexdigest()
-
-        permit = (
-            f"{payload}:{signature}"
-        )
+            if presenter not in self._presenter_verifiers:
+                return self._decide("deny", "presenter_not_registered", digest)
 
         issued_at_ns = (
             self._clock()
@@ -1000,6 +1158,32 @@ class GovernanceKernel:
                 expires_at_ns,
                 envelope.expires_at_ns,
             )
+
+        # Token v3 (Item 4B): the presenter claim -- the SHA-256 of
+        # the bound presenter identity, or of the empty string for an
+        # unbound (bearer) permit -- is inside the signed payload
+        # too, so the binding cannot be stripped or swapped without
+        # the kernel secret. Autonomous jumps from v1 straight to
+        # v3; the token's signed expiry is authenticated, not
+        # re-enforced at this layer -- expiry enforcement stays in
+        # the state layer, unchanged.
+        presenter_hash = (
+            UNBOUND_PRESENTER_HASH if presenter is None else sha256(presenter.encode()).hexdigest()
+        )
+
+        nonce = secrets.token_hex(16)
+
+        payload = f"{digest}:{nonce}:{issued_at_ns}:{expires_at_ns}:{presenter_hash}"
+
+        signature = hmac.new(
+            self._secret,
+            payload.encode(),
+            sha256,
+        ).hexdigest()
+
+        permit = (
+            f"{payload}:{signature}"
+        )
 
         replay = self._state.issue_permit(
             permit,
@@ -1028,6 +1212,146 @@ class GovernanceKernel:
             digest,
             permit,
         )
+
+    def _permit_token_claims(self, permit: object) -> tuple[str, int, int, str] | None:
+        """Authenticate a v3 permit token and return its signed claims.
+
+        Tokens are minted in ``_issue_permit`` as
+        ``digest:nonce:issued_at_ns:expires_at_ns:presenter_hash:signature``
+        with the signature an HMAC of the first five fields under the
+        kernel secret. Verification recomputes that HMAC over the token's own
+        presented fields and compares in constant time: it proves the
+        token was minted under this kernel's secret and is unaltered --
+        including its expiry, which therefore cannot be extended by a
+        holder, and its presenter claim (Item 4B), which therefore
+        cannot be stripped or swapped by a holder. Returns
+        ``(intent_digest, issued_at_ns, expires_at_ns, presenter_hash)``
+        for an authentic v3 token, else None.
+
+        v1 tokens (``digest:nonce:signature``) fail closed here: this
+        is the cutover. An outstanding pre-v3 permit is refused at
+        consume, never silently accepted -- the Phase 1 (#355)
+        precedent for outstanding tokens at a format change.
+        Malformed tokens and tokens minted under any other secret
+        fail closed the same way.
+        """
+
+        if not isinstance(permit, str):
+            return None
+
+        parts = permit.split(":")
+
+        if len(parts) != 6:
+            return None
+
+        token_digest, nonce, issued_raw, expires_raw, presenter_hash, signature = parts
+
+        issued_at_ns = _token_time_ns(issued_raw)
+        expires_at_ns = _token_time_ns(expires_raw)
+
+        if issued_at_ns is None or expires_at_ns is None:
+            return None
+
+        if expires_at_ns <= issued_at_ns:
+            return None
+
+        if len(presenter_hash) != 64 or not presenter_hash.isascii() or not all(
+            char in "0123456789abcdef" for char in presenter_hash
+        ):
+            return None
+
+        expected = hmac.new(
+            self._secret,
+            f"{token_digest}:{nonce}:{issued_raw}:{expires_raw}:{presenter_hash}".encode(),
+            sha256,
+        ).hexdigest()
+
+        if not hmac.compare_digest(signature.encode(), expected.encode()):
+            return None
+
+        return token_digest, issued_at_ns, expires_at_ns, presenter_hash
+
+    @staticmethod
+    def presenter_proof_payload(permit: str, intent_digest: str, presenter: str) -> bytes:
+        """The exact bytes a presenter signs to prove a consumption.
+
+        One canonical construction, shared by presenters and the
+        kernel: the proof binds the presenter identity to the exact
+        permit token and the exact intent digest, so a proof captured
+        for one permit or intent verifies for no other. The permit's
+        own single-use semantics bound replay of a valid proof.
+        """
+
+        return _canonical(
+            {
+                "schema": PRESENTER_PROOF_SCHEMA,
+                "permit": permit,
+                "intent_hash": intent_digest,
+                "presenter": presenter,
+            }
+        )
+
+    def _presenter_refusal(
+        self,
+        claims: tuple[str, int, int, str],
+        digest: str,
+        permit: str,
+        presenter: str | None,
+        presenter_proof: str | None,
+    ) -> str | None:
+        """The Item 4B consume gate: a refusal reason, or None to proceed.
+
+        Runs after the token is authenticated, before the store is
+        consulted -- so a refusal here never burns the permit, and the
+        bound presenter can still spend it. An unbound permit proceeds
+        exactly as a bearer <redacted> unless the pinned policy requires
+        binding. A bound permit requires the named presenter's valid
+        proof under the verifier registered for that identity; every
+        failure mode is a distinct recorded reason.
+        """
+
+        presenter_hash = claims[3]
+
+        if presenter_hash == UNBOUND_PRESENTER_HASH:
+            if self.policy.require_presenter_binding:
+                return "permit_presenter_unbound"
+            return None
+
+        if presenter is None or presenter_proof is None:
+            return "permit_presenter_proof_required"
+
+        if not isinstance(presenter, str) or not isinstance(presenter_proof, str):
+            return "permit_presenter_mismatch"
+
+        if not hmac.compare_digest(sha256(presenter.encode()).hexdigest(), presenter_hash):
+            return "permit_presenter_mismatch"
+
+        verifier = self._presenter_verifiers.get(presenter)
+
+        if verifier is None:
+            return "permit_presenter_unverifiable"
+
+        payload = self.presenter_proof_payload(permit, digest, presenter)
+
+        try:
+            verified = verifier.verify(payload, presenter_proof)
+        except Exception:
+            verified = False
+
+        if not verified:
+            return "permit_presenter_mismatch"
+
+        return None
+
+    def _permit_token_valid(self, permit: object) -> bool:
+        """Whether ``permit`` is an authentic v3 token (see _permit_token_claims).
+
+        On its own this authenticates provenance only; ``consume``
+        enforces the presenter binding on top of it, and the store
+        enforces expiry, intent binding, and single-use.
+        """
+
+        return self._permit_token_claims(permit) is not None
 
     def _approval_decide(
         self,
@@ -1096,10 +1420,48 @@ class GovernanceKernel:
         self,
         permit: str,
         intent: Intent,
+        *,
+        presenter: str | None = None,
+        presenter_proof: str | None = None,
     ) -> bool:
         digest = self.intent_hash(
             intent
         )
+
+        # Presenter binding (Phase 3, Item 4B): authenticate the token
+        # and enforce its presenter claim HERE, before the store is
+        # consulted -- so a failed presenter attempt never burns the
+        # permit. The claim lives in the signed token, not in any store
+        # row a writer could edit. Only a kernel constructed with an
+        # explicit secret can authenticate a token. A default-secret
+        # kernel falls through to the pre-existing state-only path
+        # for tokens it cannot authenticate (see _explicit_secret);
+        # the gate runs only for tokens that do authenticate.
+        # Binding is only meaningful with an explicitly configured
+        # secret.
+        claims = self._permit_token_claims(permit)
+
+        if claims is None:
+            if self._explicit_secret:
+                self._state.append(
+                    "permit_rejected",
+                    {"intent_hash": digest, "reason": "permit_signature_invalid"},
+                    self._clock(),
+                )
+
+                return False
+
+        else:
+            refusal = self._presenter_refusal(claims, digest, permit, presenter, presenter_proof)
+
+            if refusal is not None:
+                self._state.append(
+                    "permit_rejected",
+                    {"intent_hash": digest, "reason": refusal},
+                    self._clock(),
+                )
+
+                return False
 
         return self._state.consume_permit(
             permit,
@@ -1139,6 +1501,93 @@ class GovernanceKernel:
             raise StateIntegrityError(
                 "kernel state audit chain is invalid"
             )
+
+    def verify_audit_report(self) -> dict[str, Any]:
+        """Verify the audit chain and report its coverage.
+
+        Returns ``ok`` plus per-record acceptance counts. This tree
+        carries no signed audit records (#357 is not ported), so
+        ``signing_enabled`` is always False and every record verifies
+        legacy-style. The check mirrors ``verify_audit`` exactly,
+        including the delta chain: a record's hash covers its delta
+        fields, ``previous_delta_root`` must chain, and
+        ``delta_root`` must recompute — a record whose delta was
+        rebuilt without the chain fails here even if its hash was
+        recomputed to match. A signature present anywhere is a
+        forgery-shaped anomaly on an unsigned chain and fails as
+        ``audit_signature_invalid``. Malformed records fail as
+        ``audit_record_malformed`` instead of raising, so callers
+        that treat verification as a boolean fail closed the same
+        way.
+        """
+
+        report: dict[str, Any] = {
+            "ok": True,
+            "reason": None,
+            "total_records": 0,
+            "signed_records": 0,
+            "unsigned_records": 0,
+            "legacy_records": 0,
+            "signing_enabled": False,
+            "failed_record": None,
+        }
+
+        previous = "0" * 64
+        previous_delta_root = "0" * 64
+
+        try:
+            records = self.audit
+        except Exception:
+            report.update({"ok": False, "reason": "audit_record_malformed"})
+            return report
+
+        for index, record in enumerate(records):
+            report["total_records"] = index + 1
+            try:
+                body = {key: value for key, value in record.items() if key not in ("hash", "signature")}
+                if body["previous_hash"] != previous:
+                    report.update({"ok": False, "reason": "audit_previous_hash_mismatch", "failed_record": index})
+                    return report
+                expected = sha256(_canonical(body)).hexdigest()
+                if not hmac.compare_digest(str(record["hash"]), expected):
+                    report.update({"ok": False, "reason": "audit_hash_mismatch", "failed_record": index})
+                    return report
+            except (AttributeError, KeyError, TypeError, ValueError):
+                report.update({"ok": False, "reason": "audit_record_malformed", "failed_record": index})
+                return report
+
+            if record.get("signature") is not None:
+                report.update({"ok": False, "reason": "audit_signature_invalid", "failed_record": index})
+                return report
+
+            delta = body.get("delta")
+            if delta is not None:
+                if body.get("previous_delta_root") != previous_delta_root:
+                    report.update({"ok": False, "reason": "audit_previous_delta_root_mismatch", "failed_record": index})
+                    return report
+                expected_delta_root = sha256(
+                    _canonical(
+                        {
+                            "previous_delta_root": previous_delta_root,
+                            "delta": delta,
+                        }
+                    )
+                ).hexdigest()
+                if not hmac.compare_digest(body.get("delta_root", ""), expected_delta_root):
+                    report.update({"ok": False, "reason": "audit_delta_root_mismatch", "failed_record": index})
+                    return report
+                previous_delta_root = expected_delta_root
+            else:
+                # Legacy records predate canonical delta logging.
+                # Their audit hash remains authoritative, and the
+                # first delta record after legacy history binds
+                # forward from the legacy audit head.
+                previous_delta_root = record["hash"]
+
+            report["unsigned_records"] += 1
+            previous = record["hash"]
+
+        return report
 
     def verify_audit(
         self,
@@ -1238,6 +1687,293 @@ class GovernanceKernel:
 
         return True
 
+    def directive_status(self, directive_id: str, version: int, directive_hash: str) -> str:
+        """Facade read: the recorded status of one exact directive version."""
+
+        return self._state.directive_status(directive_id, version, directive_hash)
+
+    def directive_hash_status(self, directive_hash: str) -> str:
+        """Facade read: the recorded status of a directive by its hash."""
+
+        return self._state.directive_hash_status(directive_hash)
+
+    def bind_permit_to_directive(
+        self,
+        permit: str,
+        intent_hash: str,
+        binding: DirectivePermitBinding,
+        timestamp_ns: int,
+    ) -> None:
+        """Facade verb: bind an issued permit to its live directive."""
+
+        self._state.bind_permit_to_directive(permit, intent_hash, binding, timestamp_ns)
+
+    def record_target_completion(
+        self,
+        *,
+        target_id: str,
+        version: int,
+        target_hash: str,
+        intent_hash: str,
+        artifact_path: str | Path,
+        timestamp_ns: int,
+    ) -> dict[str, Any]:
+        """Facade verb: observe an artifact and append its completion record.
+
+        Fixed schema, verified at the append surface (Codex P1 fix on
+        PR #359): the verb takes an artifact *path*, never a
+        caller-supplied completion dict or hash. It resolves the
+        locked target, cross-checks the exact target and intent
+        hashes, and observes the file itself through
+        ``_observe_artifact_file`` — the same descriptor-bound stable
+        observation the governed projection performs — so evidence
+        naming a nonexistent or unobserved file cannot be recorded.
+
+        Returns the completion dict exactly as recorded.
+        """
+
+        target = self.get_locked_target(target_id, version=version)
+
+        if target is None:
+            raise ValueError("target_not_locked")
+
+        if not isinstance(target_hash, str):
+            raise ValueError("target_hash_mismatch")
+
+        if not hmac.compare_digest(target.target_hash, target_hash):
+            raise ValueError("target_hash_mismatch")
+
+        expected_intent_hash = self.intent_hash(target.intent)
+
+        if not isinstance(intent_hash, str):
+            raise ValueError("target_intent_mismatch")
+
+        if not hmac.compare_digest(expected_intent_hash, intent_hash):
+            raise ValueError("target_intent_mismatch")
+
+        if timestamp_ns < target.created_at_ns:
+            raise RuntimeError("artifact_observed_before_target")
+
+        resolved_path, artifact_sha256, size_bytes = _observe_artifact_file(artifact_path)
+
+        completion: dict[str, Any] = {
+            "target_id": target.target_id,
+            "version": target.version,
+            "target_hash": target.target_hash,
+            "intent_hash": expected_intent_hash,
+            "artifact_path": resolved_path,
+            "artifact_sha256": artifact_sha256,
+            "size_bytes": size_bytes,
+            "observed_at_ns": timestamp_ns,
+            "schema": "pulpo.target-artifact-completion.v0",
+        }
+
+        completion_hash = sha256(_canonical(completion)).hexdigest()
+
+        self._state.append(
+            "target_completed",
+            {
+                "target_id": target.target_id,
+                "version": target.version,
+                "target_hash": target.target_hash,
+                "intent_hash": expected_intent_hash,
+                "completion": completion,
+                "completion_hash": completion_hash,
+                "authority_effect": "none",
+            },
+            timestamp_ns,
+        )
+
+        return completion
+
+    def record_domain_outcome_memory(
+        self,
+        *,
+        reconciliation_transition_hash: str,
+        payload: dict[str, Any],
+        timestamp_ns: int,
+    ) -> dict[str, Any] | None:
+        """Facade verb: verify, then append-once, a domain outcome-memory record.
+
+        Fixed schema: the ``domain_outcome_memory`` event, unique on
+        ``reconciliation_transition_hash``. Returns the existing
+        payload when a record with that identity already exists (the
+        state layer's ``append_unique`` contract), else None.
+
+        Verified at the append surface (Codex P1 fix on PR #359): a
+        self-asserted payload is refused — with a distinct
+        ``outcome_memory_*`` ``ValueError`` and nothing appended —
+        unless its identity hash recomputes, its policy hash is this
+        kernel's, exactly one projected custody-transition evidence
+        record backs its transition hash with a receipt bound to its
+        order hash and epoch, its classification is consistent with
+        that receipt's transition type, and exactly one locked target
+        in the audit carries its target and intent hashes. The kernel
+        cannot re-derive the custody layer's observation/budget
+        checks; those remain the projection's authority (see the
+        change record).
+        """
+
+        if not isinstance(payload, dict):
+            raise ValueError("outcome_memory_payload_invalid")
+
+        if payload.get("reconciliation_transition_hash") != reconciliation_transition_hash:
+            raise ValueError("outcome_memory_transition_hash_mismatch")
+
+        if payload.get("schema") != "pulpo.domain-outcome-memory.v0":
+            raise ValueError("outcome_memory_schema_mismatch")
+
+        if payload.get("authority_effect") != "none":
+            raise ValueError("outcome_memory_authority_effect_mismatch")
+
+        if payload.get("governed_effect") != "canonical_outcome_memory":
+            raise ValueError("outcome_memory_governed_effect_mismatch")
+
+        identity = {
+            "schema": "pulpo.domain-outcome-memory.v0",
+            "attempt_id": payload.get("attempt_id"),
+            "order_hash": payload.get("order_hash"),
+            "target_hash": payload.get("target_hash"),
+            "intent_hash": payload.get("intent_hash"),
+            "policy_hash": payload.get("policy_hash"),
+            "observation_hash": payload.get("observation_hash"),
+            "reconciliation_transition_hash": payload.get("reconciliation_transition_hash"),
+            "reconciliation_epoch": payload.get("reconciliation_epoch"),
+            "reconciliation_outcome": payload.get("reconciliation_outcome"),
+            "classification": payload.get("classification"),
+            "reason": payload.get("reason"),
+            "reusable": payload.get("reusable"),
+            "authority_effect": "none",
+            "governed_effect": "canonical_outcome_memory",
+        }
+
+        expected_memory_id = sha256(_canonical(identity)).hexdigest()
+
+        memory_id = payload.get("memory_id")
+
+        if not isinstance(memory_id, str):
+            raise ValueError("outcome_memory_memory_id_mismatch")
+
+        if not hmac.compare_digest(expected_memory_id, memory_id):
+            raise ValueError("outcome_memory_memory_id_mismatch")
+
+        if payload.get("policy_hash") != self.policy_hash:
+            raise ValueError("outcome_memory_policy_hash_mismatch")
+
+        custody_matches: list[dict[str, Any]] = []
+
+        for record in self.audit:
+            if record.get("event") != "custody_transition":
+                continue
+
+            record_payload = record.get("payload")
+
+            if not isinstance(record_payload, dict):
+                continue
+
+            if record_payload.get("transition_hash") == reconciliation_transition_hash:
+                custody_matches.append(record_payload)
+
+        if len(custody_matches) != 1:
+            if not custody_matches:
+                raise ValueError("outcome_memory_custody_evidence_missing")
+            raise ValueError("outcome_memory_custody_evidence_ambiguous")
+
+        evidence = custody_matches[0]
+
+        receipt = evidence.get("receipt")
+
+        if (
+            evidence.get("schema") != "pulpo.custody-evidence-projection.v0"
+            or not isinstance(receipt, dict)
+            or receipt.get("transition_hash") != reconciliation_transition_hash
+            or receipt.get("object_hash") != payload.get("order_hash")
+            or receipt.get("epoch") != payload.get("reconciliation_epoch")
+        ):
+            raise ValueError("outcome_memory_custody_evidence_mismatch")
+
+        transition_type = receipt.get("transition_type")
+        outcome = payload.get("reconciliation_outcome")
+        classification = payload.get("classification")
+        reusable = payload.get("reusable")
+
+        if transition_type == "reconciled_success":
+            consistent = (
+                outcome == "success"
+                and classification == "SUCCESS_VERIFIED"
+                and reusable is True
+            )
+        elif transition_type == "reconciled_failure":
+            consistent = (
+                outcome == "failure"
+                and classification in {"RECONCILIATION_FAILURE", "RECONCILIATION_MISMATCH"}
+                and reusable is False
+            )
+        elif transition_type == "unresolved":
+            consistent = (
+                outcome == "unresolved"
+                and classification == "EVIDENCE_FAILURE"
+                and reusable is False
+            )
+        else:
+            raise ValueError("outcome_memory_custody_transition_type_invalid")
+
+        if not consistent:
+            raise ValueError("outcome_memory_classification_mismatch")
+
+        target_matches: list[dict[str, Any]] = []
+
+        for record in self.audit:
+            if record.get("event") != "target_locked":
+                continue
+
+            record_payload = record.get("payload")
+
+            if not isinstance(record_payload, dict):
+                continue
+
+            if record_payload.get("target_hash") == payload.get("target_hash"):
+                target_matches.append(record_payload)
+
+        if len(target_matches) != 1:
+            if not target_matches:
+                raise ValueError("outcome_memory_target_missing")
+            raise ValueError("outcome_memory_target_ambiguous")
+
+        if target_matches[0].get("intent_hash") != payload.get("intent_hash"):
+            raise ValueError("outcome_memory_target_intent_mismatch")
+
+        return self._state.append_unique(
+            "domain_outcome_memory",
+            "reconciliation_transition_hash",
+            reconciliation_transition_hash,
+            payload,
+            timestamp_ns,
+        )
+
+    def state_source_id(self) -> str:
+        """Opaque process-scoped identifier for this kernel's backend.
+
+        Read-only identification for evidence derivation (the incident
+        channel stamps its reports with which backend instance they
+        were derived from). Exposing an identifier is not exposing the
+        handle: callers learn a stable name for the backend in this
+        process, never the object. A SQLite backend whose connection
+        carries an ``activity_id`` reports that id, as before.
+        """
+
+        backend = self._state
+
+        source_id = sha256(f"{os.getpid()}:{id(backend)}".encode()).hexdigest()[:32]
+
+        if type(backend) is SQLiteKernelState:
+            activity_id = getattr(backend._connection, "activity_id", None)
+
+            if type(activity_id) is str and activity_id:
+                source_id = activity_id
+
+        return source_id
+
     def _decide(
         self,
         outcome: str,
@@ -1262,6 +1998,58 @@ class GovernanceKernel:
         )
 
         return decision
+
+    def record_directive_denial(
+        self,
+        intent: Intent,
+        *,
+        directive_id: str,
+        version: int,
+        directive_hash: str,
+        reason: str,
+    ) -> None:
+        """Facade verb: record a directive-scope denial in the audit.
+
+        Port of upstream Ironnember/Pulpo1.0 PR #372 (kernel build item
+        #2): the directive projection returns its directive-scope
+        denials (directive not active, parent not active, mandate
+        failure) without a kernel evaluation, so before this verb those
+        denials appended nothing - a refused attempt was invisible to
+        the canonical audit and to reconciliation, unlike
+        kernel-reached denials (``decision``) and consume denials
+        (``permit_rejected``), which append exactly one record each.
+        The projection reports each of its denials through this verb
+        instead. The schema is fixed: the caller supplies the intent,
+        the directive's identity, and the reason it already computed;
+        the kernel derives the intent hash and appends exactly one
+        ``directive_denial`` record with ``authority_effect=none``.
+        Recording a denial grants nothing, spends nothing, and
+        changes no directive state.
+
+        Fork note: upstream's fourth path - the aggregate-budget early
+        check from build item #1 (PR #369) - has no Autonomous
+        counterpart (Autonomous ``Directive`` carries no aggregate
+        budget), so the projection routes its three existing denial
+        paths through this verb.
+        """
+
+        self._append(
+            "directive_denial",
+            {
+                "schema": "pulpo.directive-denial.v0",
+                "directive_id": directive_id,
+                "version": version,
+                "directive_hash": directive_hash,
+                "intent_hash": self.intent_hash(intent),
+                "principal": intent.principal,
+                "action": intent.action,
+                "resource": intent.resource,
+                "cost": intent.cost,
+                "session_id": intent.session_id,
+                "reason": reason,
+                "authority_effect": "none",
+            },
+        )
 
     def _append(
         self,

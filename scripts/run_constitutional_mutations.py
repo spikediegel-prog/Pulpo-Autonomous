@@ -135,6 +135,84 @@ MUTATIONS: tuple[Mutation, ...] = (
         'if False and not hmac.compare_digest(\n                record["hash"],\n                expected,\n            ):',
         ("tests.test_kernel.GovernanceKernelTests.test_audit_chain_detects_tampering",),
     ),
+    Mutation(
+        # Port of upstream PR #372 (kernel build item #2): the
+        # projection's denial record call is what makes a
+        # directive-scope denial visible to the canonical audit.
+        # Removing it must be detected by the item #2 tests.
+        "projection_denial_record_removed",
+        "pulpo/directives.py",
+        '        self.kernel.record_directive_denial(\n            intent,',
+        '        None and self.kernel.record_directive_denial(\n            intent,',
+        (
+            "tests.test_projection_denial_audit.ProjectionDenialRecordTests.test_unknown_directive_denial_is_recorded_with_fixed_schema",
+            "tests.test_projection_denial_audit.ProjectionDenialRecordTests.test_mandate_failures_are_recorded",
+        ),
+    ),
+    Mutation(
+        # Port of upstream PR #371 (Phase 3, Item 3B): the service
+        # boundary's request MAC is the authentication control — a
+        # request that does not authenticate must never reach a verb.
+        # Weakening it must be detected by the boundary tests.
+        "service_request_mac_check_removed",
+        "pulpo/service.py",
+        '            if not isinstance(claimed_mac, str) or not hmac.compare_digest(claimed_mac, expected):\n                raise ServiceRefusal("request_mac_invalid")',
+        '            if False and (not isinstance(claimed_mac, str) or not hmac.compare_digest(claimed_mac, expected)):\n                raise ServiceRefusal("request_mac_invalid")',
+        (
+            "tests.test_service_boundary.AdversarialBoundaryTests.test_wrong_secret_and_tampered_args_refused_without_state_change",
+        ),
+    ),
+    Mutation(
+        # Port of upstream PR #371 (Phase 3, Item 3B): the nonce
+        # replay check is what makes a captured request frame
+        # single-use at the protocol layer, on top of the kernel's
+        # own permit single-use.
+        "service_replay_check_removed",
+        "pulpo/service.py",
+        '                if nonce in self._seen_nonces:\n                    raise ServiceRefusal("request_replayed")',
+        '                if False and nonce in self._seen_nonces:\n                    raise ServiceRefusal("request_replayed")',
+        (
+            "tests.test_service_boundary.AdversarialBoundaryTests.test_replayed_request_refused",
+        ),
+    ),
+    Mutation(
+        # Port of upstream PR #371 (Phase 3, Item 3B): request
+        # freshness — an expired request must fail closed before any
+        # verb runs.
+        "service_expiry_check_removed",
+        "pulpo/service.py",
+        '            if expires <= now_ns:\n                raise ServiceRefusal("request_expired")',
+        '            if False and expires <= now_ns:\n                raise ServiceRefusal("request_expired")',
+        (
+            "tests.test_service_boundary.AdversarialBoundaryTests.test_expired_and_not_yet_valid_requests_refused",
+        ),
+    ),
+    Mutation(
+        # Port of upstream PR #371 (Phase 3, Item 3B): the client
+        # verifies the response MAC before trusting any result; a
+        # tampered response must be refused, never consumed.
+        "service_response_mac_check_removed",
+        "pulpo/service.py",
+        '        if not isinstance(claimed_mac, str) or not hmac.compare_digest(claimed_mac, expected):\n            raise ServiceRefusal("response_mac_invalid")',
+        '        if False and (not isinstance(claimed_mac, str) or not hmac.compare_digest(claimed_mac, expected)):\n            raise ServiceRefusal("response_mac_invalid")',
+        (
+            "tests.test_service_boundary.AdversarialBoundaryTests.test_response_tampering_detected_by_client",
+        ),
+    ),
+    Mutation(
+        # Port of upstream PR #373 (Phase 3, Item 4B): the
+        # consume-side presenter gate is what makes a bound permit
+        # unspendable by a token thief. Removing it must be detected
+        # by the presenter-binding tests.
+        "presenter_binding_check_removed",
+        "pulpo/kernel.py",
+        "            refusal = self._presenter_refusal(claims, digest, permit, presenter, presenter_proof)",
+        "            refusal = None and self._presenter_refusal(claims, digest, permit, presenter, presenter_proof)",
+        (
+            "tests.test_presenter_binding.BoundConsumeTests.test_wrong_presenter_refused_and_permit_not_burned",
+            "tests.test_presenter_binding.BoundConsumeTests.test_missing_proof_refused_and_permit_not_burned",
+        ),
+    ),
 )
 
 

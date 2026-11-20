@@ -30,6 +30,7 @@ from .kernel import (
     Intent,
     LockedTarget,
     Policy,
+    PresenterVerifier,
     StateIntegrityError,
     TargetResolution,
 )
@@ -82,6 +83,7 @@ __all__ = [
     "OrchestrationError",
     "P256ApprovalVerifier",
     "Policy",
+    "PresenterVerifier",
     "PulpoOrchestrator",
     "SQLiteBudgetAccount",
     "SQLiteKernelState",

@@ -209,6 +209,14 @@ class KernelState(Protocol):
     ) -> bool:
         ...
 
+    def directive_status(
+        self,
+        directive_id: str,
+        version: int,
+        directive_hash: str,
+    ) -> str:
+        ...
+
     def directive_hash_status(
         self,
         directive_hash: str,

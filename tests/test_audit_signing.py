@@ -107,8 +107,13 @@ def _rehash_suffix_keep_signatures(state: InMemoryKernelState, start: int):
     left as they were, so they no longer match the new hashes — the
     kernel must refuse the suffix as ``audit_signature_invalid``,
     not as a hash/delta mismatch.
+
+    Store-layer helper: it rewrites ``state._audit`` directly. Audit
+    reads are detached copies (see
+    tests/test_inmemory_audit_detached_copies.py), so rewriting the
+    read path would rebuild nothing.
     """
-    records = state.audit
+    records = state._audit
     previous = records[start - 1]["hash"] if start else "0" * 64
     previous_root = (
         records[start - 1].get("delta_root", records[start - 1]["hash"])
@@ -193,7 +198,7 @@ class SignedAuditLibraryTests(unittest.TestCase):
         kernel, state, _ = _signed_kernel()
         for _ in range(3):
             _allow(kernel)
-        state.audit[1]["signature"] = "garbage-signature"
+        state._audit[1]["signature"] = "garbage-signature"
         report = kernel.verify_audit_report()
         self.assertFalse(report["ok"])
         self.assertEqual("audit_signature_invalid", report["reason"])
@@ -204,7 +209,7 @@ class SignedAuditLibraryTests(unittest.TestCase):
         kernel, state, _ = _signed_kernel()
         for _ in range(3):
             _allow(kernel)
-        del state.audit[1]["signature"]
+        del state._audit[1]["signature"]
         report = kernel.verify_audit_report()
         self.assertFalse(report["ok"])
         self.assertEqual("audit_signature_missing", report["reason"])
@@ -321,7 +326,7 @@ class SignedAuditLibraryTests(unittest.TestCase):
                     previous_root,
                 )
             )
-        state.audit[0]["signature"] = "garbage-signature"
+        state._audit[0]["signature"] = "garbage-signature"
         report = kernel.verify_audit_report()
         self.assertFalse(report["ok"])
         self.assertEqual("audit_signature_invalid", report["reason"])
@@ -345,7 +350,7 @@ class SignedAuditLibraryTests(unittest.TestCase):
         kernel, state, _ = _signed_kernel()
         _allow(kernel)
         _allow(kernel)
-        record = state.audit[1]
+        record = state._audit[1]
         record["payload"] = {"outcome": "deny"}
         # Rebuild the suffix delta-aware, keeping the stale signature.
         _rehash_suffix_keep_signatures(state, 1)

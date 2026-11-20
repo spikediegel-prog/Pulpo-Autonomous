@@ -55,7 +55,10 @@ class SimulationTesterTests(unittest.TestCase):
 
     def test_evidence_tampering_detected(self):
         fixture = SimulationFixture(DeterministicWorld())
-        fixture.kernel.audit[0]["payload"]["reason"] = "tampered"
+        # Tamper at the store: audit reads are detached copies (see
+        # tests/test_inmemory_audit_detached_copies.py), so mutating a
+        # returned record no longer reaches the stored trail.
+        fixture.kernel._state._audit[0]["payload"]["reason"] = "tampered"
         self.assertFalse(fixture.kernel.verify_audit())
 
     def test_sqlite_canonical_consumption_is_one_use_after_reopen(self):

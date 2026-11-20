@@ -15,6 +15,18 @@ from .offline_protocol import (
     OfflineProtocol,
 )
 from .cold_boot import BootEvidence, ColdBootGuard, HardwareKeyProvider, KeyUseRequest
+from .drift import (
+    JOURNAL_EVENT,
+    SUSPECT,
+    TRUSTED,
+    UNKNOWN,
+    UNTRUSTED,
+    DriftEvaluation,
+    DriftLimits,
+    DriftMonitor,
+    O2HeadSample,
+    evaluate_sample,
+)
 
 __all__ = [
     "DelegatedAuthority",
@@ -38,4 +50,14 @@ __all__ = [
     "ColdBootGuard",
     "HardwareKeyProvider",
     "KeyUseRequest",
+    "JOURNAL_EVENT",
+    "SUSPECT",
+    "TRUSTED",
+    "UNKNOWN",
+    "UNTRUSTED",
+    "DriftEvaluation",
+    "DriftLimits",
+    "DriftMonitor",
+    "O2HeadSample",
+    "evaluate_sample",
 ]

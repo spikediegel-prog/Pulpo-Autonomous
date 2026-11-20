@@ -543,6 +543,7 @@ class RestartSafeStateTests(unittest.TestCase):
             event,
             payload,
             timestamp_ns,
+            signer=None,
         ):
             nonlocal record_count
 
@@ -564,6 +565,7 @@ class RestartSafeStateTests(unittest.TestCase):
                 event,
                 payload,
                 timestamp_ns,
+                signer=signer,
             )
 
         errors = []

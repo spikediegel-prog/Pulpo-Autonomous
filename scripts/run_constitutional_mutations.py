@@ -129,11 +129,42 @@ MUTATIONS: tuple[Mutation, ...] = (
         ("tests.test_directives.DirectiveProofTests.test_revoked_directive_invalidates_previously_issued_permit",),
     ),
     Mutation(
+        # The audit hash check lives in verify_audit_report (Phase 2,
+        # Item 1 moved it out of verify_audit, which now delegates).
+        # Removing it must be detected by the audit-integrity tests.
         "audit_record_hash_check_removed",
         "pulpo/kernel.py",
-        'if not hmac.compare_digest(\n                record["hash"],\n                expected,\n            ):',
-        'if False and not hmac.compare_digest(\n                record["hash"],\n                expected,\n            ):',
+        'if not hmac.compare_digest(str(record["hash"]), expected):\n                    report.update({"ok": False, "reason": "audit_hash_mismatch", "failed_record": index})',
+        'if False and not hmac.compare_digest(str(record["hash"]), expected):\n                    report.update({"ok": False, "reason": "audit_hash_mismatch", "failed_record": index})',
         ("tests.test_kernel.GovernanceKernelTests.test_audit_chain_detects_tampering",),
+    ),
+    Mutation(
+        # Port of upstream PR #357 (Phase 2, Item 1): the signature
+        # verification in verify_audit_report is what makes a forged
+        # or garbage signature fail closed. Removing it must be
+        # detected by the audit-signing tests.
+        "audit_record_signature_check_removed",
+        "pulpo/kernel.py",
+        'if not signer.verify(record["hash"], signature):',
+        'if False:',
+        (
+            "tests.test_audit_signing.SignedAuditLibraryTests.test_single_signature_replaced_with_garbage_refused",
+        ),
+    ),
+    Mutation(
+        # Port of upstream PR #357 (Phase 2, Item 1): the signature
+        # requirement — every record at or after the legacy prefix must
+        # carry one when signing is enabled — is what makes a stripped
+        # signature fail closed instead of silently downgrading the
+        # chain to unsigned. Removing it must be detected by the
+        # audit-signing tests.
+        "audit_record_signature_required_check_removed",
+        "pulpo/kernel.py",
+        'elif index >= legacy_records:',
+        'elif False:',
+        (
+            "tests.test_audit_signing.SignedAuditLibraryTests.test_single_signature_stripped_refused",
+        ),
     ),
     Mutation(
         # Port of upstream PR #372 (kernel build item #2): the

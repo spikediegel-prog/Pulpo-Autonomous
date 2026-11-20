@@ -21,6 +21,7 @@ from .state import (
     InMemoryKernelState,
     KernelState,
     SQLiteKernelState,
+    VerifiedAuthorityEvidence,
 )
 
 
@@ -1729,6 +1730,43 @@ class GovernanceKernel:
         """Facade read: the recorded status of a directive by its hash."""
 
         return self._state.directive_hash_status(directive_hash)
+
+    def activate_directive(
+        self,
+        directive: Any,
+        authority_evidence: VerifiedAuthorityEvidence,
+        timestamp_ns: int,
+    ) -> None:
+        """Facade verb: record a verified directive activation.
+
+        The only production caller is ``DirectiveAuthorityController``,
+        after envelope verification and the one-use authority-permit
+        consume. The state layer requires the typed evidence and
+        cross-checks its binding, so the fabricated-bare-dict
+        activation from design repro 3 (part B) fails at this surface.
+        """
+
+        self._state.activate_directive(
+            directive,
+            authority_evidence,
+            timestamp_ns,
+        )
+
+    def revoke_directive(
+        self,
+        directive_id: str,
+        version: int,
+        authority_evidence: VerifiedAuthorityEvidence,
+        timestamp_ns: int,
+    ) -> None:
+        """Facade verb: record a verified directive revocation."""
+
+        self._state.revoke_directive(
+            directive_id,
+            version,
+            authority_evidence,
+            timestamp_ns,
+        )
 
     def bind_permit_to_directive(
         self,

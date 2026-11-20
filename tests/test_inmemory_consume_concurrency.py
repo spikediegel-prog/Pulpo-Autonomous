@@ -40,8 +40,32 @@ import unittest
 
 from pulpo import GovernanceKernel, Intent, Policy
 from pulpo.directives import Directive
-from pulpo.state import InMemoryKernelState
+from pulpo.state import InMemoryKernelState, VerifiedAuthorityEvidence
 from tests.authority_support import HmacTestVerifier, signed_envelope, trust_for
+
+
+def _evidence(operation: str, directive: Directive) -> VerifiedAuthorityEvidence:
+    """Typed evidence for direct state calls (Item 3A migration).
+
+    These tests exercise state-layer concurrency, not evidence
+    verification — verification lives in the controller path — but the
+    state surface no longer accepts a bare dict, so the setup builds
+    the typed value bound to the exact directive, as the controller
+    would after a verified approval.
+    """
+
+    return VerifiedAuthorityEvidence(
+        operation=operation,
+        directive_id=directive.directive_id,
+        directive_version=directive.version,
+        directive_hash=directive.directive_hash,
+        parent_directive_hash=directive.parent_directive_hash,
+        authority_id=directive.issuer_authority_id,
+        approval_id="approval:test",
+        envelope_hash="envelope:test",
+        intent_hash="intent:test",
+        policy_hash="policy:test",
+    )
 
 NOW = 1_000_000
 PERMIT = "permit-1"
@@ -69,7 +93,7 @@ def _bound_state(state: InMemoryKernelState) -> InMemoryKernelState:
     """One issued permit bound to one active directive."""
     directive = _directive()
     state.issue_permit(PERMIT, INTENT_HASH, "allow", NOW, 10_000_000)
-    state.activate_directive(directive, {"test": True}, NOW)
+    state.activate_directive(directive, _evidence("activate_directive", directive), NOW)
     state.bind_permit_to_directive(PERMIT, INTENT_HASH, directive.permit_binding, NOW)
     return state
 
@@ -116,7 +140,7 @@ class RevokeMidConsumeTests(unittest.TestCase):
         thread.start()
         # The consumer is now inside its status read, paused at the gate.
         self.assertTrue(state.gate_entered.wait(timeout=10))
-        state.revoke_directive(directive.directive_id, directive.version, {"test": True}, NOW)
+        state.revoke_directive(directive.directive_id, directive.version, _evidence("revoke_directive", directive), NOW)
         thread.join(timeout=30)
 
         events = _events(state)
@@ -248,7 +272,7 @@ class KernelPathConsumeConcurrencyTests(unittest.TestCase):
 
         directive = _directive()
 
-        state.activate_directive(directive, {"test": True}, NOW)
+        state.activate_directive(directive, _evidence("activate_directive", directive), NOW)
 
         state.bind_permit_to_directive(
             decision.permit, kernel.intent_hash(intent), directive.permit_binding, NOW

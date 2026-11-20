@@ -331,50 +331,54 @@ class InMemoryKernelState:
         expires_at_ns: int,
         approval: ApprovalUse | None = None,
     ) -> str | None:
-        if approval is not None:
-            replay = self.approval_replay_reason(
-                approval.approval_id,
-                approval.nonce,
-            )
+        # Serialize the whole check-and-record transition under the audit lock (an RLock; append()
+        # re-enters it), mirroring the SQLite backend's BEGIN IMMEDIATE transaction. Upstream #345 already
+        # had issue_permit locked; this vendored copy did not, so it is locked here too.
+        with self._audit_lock:
+            if approval is not None:
+                replay = self.approval_replay_reason(
+                    approval.approval_id,
+                    approval.nonce,
+                )
 
-            if replay:
-                return replay
+                if replay:
+                    return replay
 
-            self._approval_ids.add(
-                approval.approval_id
-            )
-            self._approval_nonces.add(
-                approval.nonce
+                self._approval_ids.add(
+                    approval.approval_id
+                )
+                self._approval_nonces.add(
+                    approval.nonce
+                )
+
+                self.append(
+                    "approval_verified",
+                    approval.audit_payload,
+                    timestamp_ns,
+                )
+
+            if expires_at_ns <= timestamp_ns:
+                raise ValueError(
+                    "permit expiry must be after issue time"
+                )
+
+            self._issued[permit] = (
+                intent_hash,
+                expires_at_ns,
             )
 
             self.append(
-                "approval_verified",
-                approval.audit_payload,
+                "decision",
+                {
+                    "outcome": "allow",
+                    "reason": decision_reason,
+                    "intent_hash": intent_hash,
+                    "permit_expires_at_ns": expires_at_ns,
+                },
                 timestamp_ns,
             )
 
-        if expires_at_ns <= timestamp_ns:
-            raise ValueError(
-                "permit expiry must be after issue time"
-            )
-
-        self._issued[permit] = (
-            intent_hash,
-            expires_at_ns,
-        )
-
-        self.append(
-            "decision",
-            {
-                "outcome": "allow",
-                "reason": decision_reason,
-                "intent_hash": intent_hash,
-                "permit_expires_at_ns": expires_at_ns,
-            },
-            timestamp_ns,
-        )
-
-        return None
+            return None
 
     def bind_permit_to_directive(
         self,
@@ -383,60 +387,63 @@ class InMemoryKernelState:
         binding: DirectivePermitBinding,
         timestamp_ns: int,
     ) -> None:
-        issued = self._issued.get(
-            permit
-        )
-
-        if (
-            issued is None
-            or issued[0] != intent_hash
-            or permit in self._spent
-            or timestamp_ns >= issued[1]
-        ):
-            raise ValueError(
-                "permit unavailable for directive binding"
+        # Serialized under the same lock as issue_permit/consume_permit: the availability and
+        # directive-status checks must hold against the same state the binding is recorded into.
+        with self._audit_lock:
+            issued = self._issued.get(
+                permit
             )
 
-        if permit in self._permit_directives:
-            raise ValueError(
-                "permit directive binding is immutable"
-            )
+            if (
+                issued is None
+                or issued[0] != intent_hash
+                or permit in self._spent
+                or timestamp_ns >= issued[1]
+            ):
+                raise ValueError(
+                    "permit unavailable for directive binding"
+                )
 
-        if (
-            self.directive_status(
-                binding.directive_id,
-                binding.version,
-                binding.directive_hash,
-            )
-            != "active"
-        ):
-            raise ValueError(
-                "directive is not active for permit binding"
-            )
+            if permit in self._permit_directives:
+                raise ValueError(
+                    "permit directive binding is immutable"
+                )
 
-        if (
-            binding.parent_directive_hash is not None
-            and self.directive_hash_status(
-                binding.parent_directive_hash
-            )
-            != "active"
-        ):
-            raise ValueError(
-                "parent directive is not active for permit binding"
-            )
+            if (
+                self.directive_status(
+                    binding.directive_id,
+                    binding.version,
+                    binding.directive_hash,
+                )
+                != "active"
+            ):
+                raise ValueError(
+                    "directive is not active for permit binding"
+                )
 
-        self._permit_directives[
-            permit
-        ] = binding
+            if (
+                binding.parent_directive_hash is not None
+                and self.directive_hash_status(
+                    binding.parent_directive_hash
+                )
+                != "active"
+            ):
+                raise ValueError(
+                    "parent directive is not active for permit binding"
+                )
 
-        self.append(
-            "permit_bound_to_directive",
-            {
-                "intent_hash": intent_hash,
-                **binding.audit_payload(),
-            },
-            timestamp_ns,
-        )
+            self._permit_directives[
+                permit
+            ] = binding
+
+            self.append(
+                "permit_bound_to_directive",
+                {
+                    "intent_hash": intent_hash,
+                    **binding.audit_payload(),
+                },
+                timestamp_ns,
+            )
 
     def consume_permit(
         self,
@@ -444,87 +451,93 @@ class InMemoryKernelState:
         intent_hash: str,
         timestamp_ns: int,
     ) -> bool:
-        issued = self._issued.get(
-            permit
-        )
-
-        expires_at_ns = (
-            issued[1]
-            if issued is not None
-            else None
-        )
-
-        valid = (
-            issued is not None
-            and issued[0] == intent_hash
-            and permit not in self._spent
-            and expires_at_ns is not None
-            and timestamp_ns < expires_at_ns
-        )
-
-        binding = self._permit_directives.get(
-            permit
-        )
-
-        payload: dict[str, Any] = {
-            "intent_hash": intent_hash,
-            "permit_expires_at_ns": expires_at_ns,
-        }
-
-        if binding is not None:
-            status = self.directive_status(
-                binding.directive_id,
-                binding.version,
-                binding.directive_hash,
-            )
-
-            if (
-                status == "active"
-                and binding.parent_directive_hash is not None
-            ):
-                status = self.directive_hash_status(
-                    binding.parent_directive_hash
-                )
-
-            if (
-                status == "active"
-                and not (
-                    binding.issued_at_ns
-                    <= timestamp_ns
-                    < binding.expires_at_ns
-                )
-            ):
-                status = "directive_inactive"
-
-            valid = (
-                valid
-                and status == "active"
-            )
-
-            payload.update(
-                binding.audit_payload()
-            )
-
-            payload[
-                "directive_status"
-            ] = status
-
-        if valid:
-            self._spent.add(
+        # Serialize the whole check-and-record transition under the audit lock (an RLock; append()
+        # re-enters it), mirroring the SQLite backend's BEGIN IMMEDIATE transaction. Without it, a
+        # revoke_directive completing mid-consume still admitted against the pre-revocation status, and
+        # two concurrent consumptions of one permit could both observe it unspent before either recorded
+        # the spend, voiding single-use.
+        with self._audit_lock:
+            issued = self._issued.get(
                 permit
             )
 
-        self.append(
-            (
-                "permit_consumed"
-                if valid
-                else "permit_rejected"
-            ),
-            payload,
-            timestamp_ns,
-        )
+            expires_at_ns = (
+                issued[1]
+                if issued is not None
+                else None
+            )
 
-        return valid
+            valid = (
+                issued is not None
+                and issued[0] == intent_hash
+                and permit not in self._spent
+                and expires_at_ns is not None
+                and timestamp_ns < expires_at_ns
+            )
+
+            binding = self._permit_directives.get(
+                permit
+            )
+
+            payload: dict[str, Any] = {
+                "intent_hash": intent_hash,
+                "permit_expires_at_ns": expires_at_ns,
+            }
+
+            if binding is not None:
+                status = self.directive_status(
+                    binding.directive_id,
+                    binding.version,
+                    binding.directive_hash,
+                )
+
+                if (
+                    status == "active"
+                    and binding.parent_directive_hash is not None
+                ):
+                    status = self.directive_hash_status(
+                        binding.parent_directive_hash
+                    )
+
+                if (
+                    status == "active"
+                    and not (
+                        binding.issued_at_ns
+                        <= timestamp_ns
+                        < binding.expires_at_ns
+                    )
+                ):
+                    status = "directive_inactive"
+
+                valid = (
+                    valid
+                    and status == "active"
+                )
+
+                payload.update(
+                    binding.audit_payload()
+                )
+
+                payload[
+                    "directive_status"
+                ] = status
+
+            if valid:
+                self._spent.add(
+                    permit
+                )
+
+            self.append(
+                (
+                    "permit_consumed"
+                    if valid
+                    else "permit_rejected"
+                ),
+                payload,
+                timestamp_ns,
+            )
+
+            return valid
 
     def activate_directive(
         self,
@@ -532,48 +545,51 @@ class InMemoryKernelState:
         authority_evidence: dict[str, object],
         timestamp_ns: int,
     ) -> None:
-        key = (
-            directive.directive_id,
-            directive.version,
-        )
-
-        if key in self._directives:
-            raise ValueError(
-                "directive version is immutable"
+        # Serialized under the same lock: the immutability and parent checks must hold against the state
+        # the activation records into.
+        with self._audit_lock:
+            key = (
+                directive.directive_id,
+                directive.version,
             )
 
-        parent_hash = getattr(
-            directive,
-            "parent_directive_hash",
-            None,
-        )
+            if key in self._directives:
+                raise ValueError(
+                    "directive version is immutable"
+                )
 
-        if (
-            parent_hash is not None
-            and self.directive_hash_status(
-                parent_hash
-            )
-            != "active"
-        ):
-            raise ValueError(
-                "parent directive is not active for activation"
+            parent_hash = getattr(
+                directive,
+                "parent_directive_hash",
+                None,
             )
 
-        self._directives[key] = (
-            directive.directive_hash,
-            False,
-        )
+            if (
+                parent_hash is not None
+                and self.directive_hash_status(
+                    parent_hash
+                )
+                != "active"
+            ):
+                raise ValueError(
+                    "parent directive is not active for activation"
+                )
 
-        self.append(
-            "directive_activated",
-            {
-                "directive_id": directive.directive_id,
-                "version": directive.version,
-                "directive_hash": directive.directive_hash,
-                "authority_evidence": authority_evidence,
-            },
-            timestamp_ns,
-        )
+            self._directives[key] = (
+                directive.directive_hash,
+                False,
+            )
+
+            self.append(
+                "directive_activated",
+                {
+                    "directive_id": directive.directive_id,
+                    "version": directive.version,
+                    "directive_hash": directive.directive_hash,
+                    "authority_evidence": authority_evidence,
+                },
+                timestamp_ns,
+            )
 
     def revoke_directive(
         self,
@@ -582,35 +598,39 @@ class InMemoryKernelState:
         authority_evidence: dict[str, object],
         timestamp_ns: int,
     ) -> None:
-        key = (
-            directive_id,
-            version,
-        )
-
-        if key not in self._directives:
-            raise ValueError(
-                "directive version not found"
+        # Serialized under the same lock: the revocation mutation and its audit append are one transition,
+        # atomic against consume_permit's status read -- a revocation fully precedes or fully follows any
+        # consumption, and never lands inside one.
+        with self._audit_lock:
+            key = (
+                directive_id,
+                version,
             )
 
-        digest, _ = self._directives[
-            key
-        ]
+            if key not in self._directives:
+                raise ValueError(
+                    "directive version not found"
+                )
 
-        self._directives[key] = (
-            digest,
-            True,
-        )
+            digest, _ = self._directives[
+                key
+            ]
 
-        self.append(
-            "directive_revoked",
-            {
-                "directive_id": directive_id,
-                "version": version,
-                "directive_hash": digest,
-                "authority_evidence": authority_evidence,
-            },
-            timestamp_ns,
-        )
+            self._directives[key] = (
+                digest,
+                True,
+            )
+
+            self.append(
+                "directive_revoked",
+                {
+                    "directive_id": directive_id,
+                    "version": version,
+                    "directive_hash": digest,
+                    "authority_evidence": authority_evidence,
+                },
+                timestamp_ns,
+            )
 
     def directive_status(
         self,

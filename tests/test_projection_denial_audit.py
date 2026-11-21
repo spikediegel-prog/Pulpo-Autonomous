@@ -14,12 +14,13 @@ production authority.
 import tempfile
 import unittest
 
-from pulpo import AgentGrant, GovernanceKernel, Intent, Policy
+from pulpo import AgentGrant, GovernanceKernel, Intent, Policy, PulpoOrchestrator
 from pulpo.directives import (
     Directive,
     DirectiveAuthorityController,
     GovernedDirectiveProjection,
 )
+from pulpo.incident_channel import freeze_incident_report
 from pulpo.state import InMemoryKernelState, SQLiteKernelState
 from tests.authority_support import HmacTestVerifier, signed_envelope, trust_for
 
@@ -347,6 +348,98 @@ class ProjectionDenialRecordTests(unittest.TestCase):
         self.assertEqual(expected, records[0]["payload"])
         self.assertTrue(kernel.verify_audit())
         restarted.close()
+
+
+class ProjectionDenialIncidentReportTests(unittest.TestCase):
+    """Codex P1 on PR #372, end to end: a projection denial recorded
+    in the canonical audit must surface in the frozen incident
+    report as a near-miss — before the classification fix, the same
+    chain froze into a report showing zero incidents and zero
+    near-misses, implying no attempt occurred.
+
+    Fixture is local to this class (the record tests above have
+    their own helpers); the two tests mirror upstream's
+    ``Fixture``-based versions step for step.
+    """
+
+    def setUp(self):
+        self.verifier = HmacTestVerifier()
+        self.policy = Policy(
+            frozenset({"write", "activate_directive", "revoke_directive"}),
+            100,
+            frozenset({"activate_directive", "revoke_directive"}),
+            authority_trust=trust_for(self.verifier),
+        )
+        self.kernel = GovernanceKernel(
+            self.policy,
+            SECRET,
+            approval_verifier=self.verifier,
+            clock=lambda: NOW,
+        )
+
+    def _activate(self, d, approval_id, nonce):
+        controller = DirectiveAuthorityController(self.kernel)
+        envelope = signed_envelope(
+            self.kernel,
+            DirectiveAuthorityController.authority_intent(
+                controller.ACTIVATE, d, operator_principal=OPERATOR
+            ),
+            self.verifier,
+            now_ns=NOW - 10,
+            approval_id=approval_id,
+            nonce=nonce,
+        )
+        decision = controller.activate(d, envelope, operator_principal=OPERATOR)
+        self.assertEqual("allow", decision.outcome)
+
+    def _revoke(self, d, approval_id, nonce):
+        controller = DirectiveAuthorityController(self.kernel)
+        envelope = signed_envelope(
+            self.kernel,
+            DirectiveAuthorityController.authority_intent(
+                controller.REVOKE, d, operator_principal=OPERATOR
+            ),
+            self.verifier,
+            now_ns=NOW - 10,
+            approval_id=approval_id,
+            nonce=nonce,
+        )
+        decision = controller.revoke(d, envelope, operator_principal=OPERATOR)
+        self.assertEqual("allow", decision.outcome)
+
+    def test_unknown_directive_denial_is_a_near_miss_in_the_report(self):
+        intent = Intent("agent:builder", "write", "repo:core", 3, "s1")
+        GovernedDirectiveProjection(self.kernel).evaluate(intent, directive())
+        report = freeze_incident_report(PulpoOrchestrator(self.kernel))
+
+        self.assertEqual(report.incidents, 0)
+        self.assertEqual(report.near_misses, 1)
+        (record,) = report.records
+        self.assertEqual(record.kind, "near_miss")
+        self.assertEqual(record.source, "canonical_audit")
+        self.assertEqual(record.source_detail, "directive_denial")
+        self.assertEqual(record.reason, "directive_not_authorized")
+        self.assertEqual(record.resolution, "not_applicable")
+        self.assertTrue(record.record_id.startswith("near-miss:"))
+        self.assertIn(("intent_hash", self.kernel.intent_hash(intent)), record.anchors)
+        self.assertTrue(report.audit_valid)
+
+    def test_revoked_directive_denial_is_a_near_miss_in_the_report(self):
+        d = directive()
+        self._activate(d, "act-1", "nonce-1")
+        self._revoke(d, "rev-1", "nonce-2")
+        GovernedDirectiveProjection(self.kernel).evaluate(
+            Intent("agent:builder", "write", "repo:core", 1, "s1"), d
+        )
+        report = freeze_incident_report(PulpoOrchestrator(self.kernel))
+
+        self.assertEqual(report.incidents, 0)
+        self.assertEqual(report.near_misses, 1)
+        (record,) = report.records
+        self.assertEqual(record.kind, "near_miss")
+        self.assertEqual(record.source_detail, "directive_denial")
+        self.assertEqual(record.reason, "directive_revoked")
+        self.assertTrue(report.audit_valid)
 
 
 if __name__ == "__main__":

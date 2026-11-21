@@ -273,6 +273,20 @@ MUTATIONS: tuple[Mutation, ...] = (
         ),
     ),
     Mutation(
+        # PR #372 Codex P1 fix: the incident channel's near-miss
+        # classification of directive_denial is what makes a recorded
+        # projection denial visible in a frozen incident report.
+        # Dropping the event from the set must be detected.
+        "incident_channel_directive_denial_unclassified",
+        "pulpo/incident_channel.py",
+        '_AUDIT_NEAR_MISS_EVENTS = frozenset({"purchase_revalidation_failed", "permit_rejected", "approval_rejected", "directive_denial"})',
+        '_AUDIT_NEAR_MISS_EVENTS = frozenset({"purchase_revalidation_failed", "permit_rejected", "approval_rejected"})',
+        (
+            "tests.test_incident_channel.IncidentChannelAuditFeedTests.test_directive_denial_audit_event_is_a_near_miss",
+            "tests.test_projection_denial_audit.ProjectionDenialIncidentReportTests.test_unknown_directive_denial_is_a_near_miss_in_the_report",
+        ),
+    ),
+    Mutation(
         # Port of upstream PR #371 (Phase 3, Item 3B): the service
         # boundary's request MAC is the authentication control — a
         # request that does not authenticate must never reach a verb.

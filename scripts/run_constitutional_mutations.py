@@ -287,6 +287,21 @@ MUTATIONS: tuple[Mutation, ...] = (
         ),
     ),
     Mutation(
+        # PR #372 Codex P2 fix: the denial verb's trusted-time
+        # resolution is what keeps an unavailable clock from breaking
+        # the fail-closed Decision. Restoring the raw clock read must
+        # be detected by the clock-posture tests.
+        "directive_denial_clock_unchecked",
+        "pulpo/kernel.py",
+        "        trusted_time = self._trusted_now()\n        record_time = 0 if trusted_time is None else trusted_time",
+        "        record_time = self._clock()",
+        (
+            "tests.test_projection_denial_audit.ProjectionDenialClockPostureTests.test_raising_clock_unknown_directive_still_denies_and_records",
+            "tests.test_projection_denial_audit.ProjectionDenialClockPostureTests.test_none_clock_records_zero_timestamp_in_memory",
+            "tests.test_projection_denial_audit.ProjectionDenialClockPostureTests.test_unavailable_clock_records_zero_timestamp_in_sqlite",
+        ),
+    ),
+    Mutation(
         # Port of upstream PR #371 (Phase 3, Item 3B): the service
         # boundary's request MAC is the authentication control — a
         # request that does not authenticate must never reach a verb.

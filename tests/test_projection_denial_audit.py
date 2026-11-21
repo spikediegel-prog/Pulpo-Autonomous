@@ -13,6 +13,7 @@ production authority.
 
 import tempfile
 import unittest
+from pathlib import Path
 
 from pulpo import AgentGrant, GovernanceKernel, Intent, Policy, PulpoOrchestrator
 from pulpo.directives import (
@@ -348,6 +349,231 @@ class ProjectionDenialRecordTests(unittest.TestCase):
         self.assertEqual(expected, records[0]["payload"])
         self.assertTrue(kernel.verify_audit())
         restarted.close()
+
+
+class SwitchClock:
+    """A kernel clock whose failure mode the test arms after setup.
+
+    The Codex P2 shape is precisely a clock that was healthy while
+    directives were activated and revoked, then becomes unavailable
+    at evaluation time.
+    """
+
+    def __init__(self):
+        self.mode = "ok"
+
+    def __call__(self):
+        if self.mode == "raise":
+            raise RuntimeError("clock exploded")
+
+        if self.mode == "none":
+            return None
+
+        return NOW
+
+
+class ProjectionDenialClockPostureTests(unittest.TestCase):
+    """Codex P2 on upstream PR #372: the denial record must survive an
+    unavailable clock.
+
+    The projection's status denials (unknown, revoked, parent
+    revoked) are computed before any trusted-time check, and before
+    item #2 those paths returned their fail-closed Decision without
+    touching the clock at all. The record verb therefore resolves
+    its timestamp through the kernel's trusted clock and degrades
+    to the 0 sentinel (the ``approval_rejected`` precedent) instead
+    of propagating a clock exception, writing a ``None`` timestamp
+    into the in-memory chain, or tripping the SQLite backend's
+    NOT NULL timestamp constraint. The Decision returned is the one
+    the projection has always returned; the denial is recorded
+    exactly once; only the record's timestamp degrades.
+    """
+
+    def governed(self, state=None, clock=None):
+        verifier = HmacTestVerifier()
+        policy = Policy(
+            frozenset({"write", "activate_directive", "revoke_directive"}),
+            100,
+            frozenset({"activate_directive", "revoke_directive"}),
+            authority_trust=trust_for(verifier),
+        )
+        kernel = GovernanceKernel(
+            policy,
+            SECRET,
+            approval_verifier=verifier,
+            clock=clock if clock is not None else (lambda: NOW),
+            state=state,
+        )
+        return kernel, verifier
+
+    def approve(self, kernel, verifier, operation, d, approval_id, nonce):
+        intent = DirectiveAuthorityController.authority_intent(
+            operation,
+            d,
+            operator_principal=OPERATOR,
+        )
+        return signed_envelope(
+            kernel,
+            intent,
+            verifier,
+            now_ns=NOW - 10,
+            approval_id=approval_id,
+            nonce=nonce,
+        )
+
+    def activate(
+        self, kernel, verifier, controller, d, approval_id, nonce, **kwargs
+    ):
+        envelope = self.approve(
+            kernel, verifier, controller.ACTIVATE, d, approval_id, nonce
+        )
+        decision = controller.activate(
+            d, envelope, operator_principal=OPERATOR, **kwargs
+        )
+        self.assertEqual("allow", decision.outcome)
+        return decision
+
+    def revoke(self, kernel, verifier, controller, d, approval_id, nonce):
+        envelope = self.approve(
+            kernel, verifier, controller.REVOKE, d, approval_id, nonce
+        )
+        decision = controller.revoke(d, envelope, operator_principal=OPERATOR)
+        self.assertEqual("allow", decision.outcome)
+        return decision
+
+    def denials(self, state):
+        return [r for r in state.audit if r["event"] == "directive_denial"]
+
+    def test_healthy_clock_stamps_the_denial_with_kernel_time(self):
+        state = InMemoryKernelState()
+        kernel, _ = self.governed(state)
+        projection = GovernedDirectiveProjection(kernel)
+
+        projection.evaluate(
+            Intent("agent:builder", "write", "repo:core", 3, "s1"), directive()
+        )
+
+        self.assertEqual(1, len(self.denials(state)))
+        self.assertEqual(NOW, self.denials(state)[0]["timestamp_ns"])
+
+    def test_raising_clock_unknown_directive_still_denies_and_records(self):
+        clock = SwitchClock()
+        state = InMemoryKernelState()
+        kernel, _ = self.governed(state, clock=clock)
+        projection = GovernedDirectiveProjection(kernel)
+        clock.mode = "raise"
+
+        intent = Intent("agent:builder", "write", "repo:core", 3, "s1")
+        decision = projection.evaluate(intent, directive())
+
+        self.assertEqual("deny", decision.outcome)
+        self.assertEqual("directive_not_authorized", decision.reason)
+        self.assertEqual(kernel.intent_hash(intent), decision.intent_hash)
+        self.assertIsNone(decision.permit)
+        self.assertEqual(1, len(self.denials(state)))
+        self.assertEqual(0, self.denials(state)[0]["timestamp_ns"])
+        self.assertTrue(kernel.verify_audit())
+
+    def test_raising_clock_revoked_directive_still_denies_and_records(self):
+        clock = SwitchClock()
+        state = InMemoryKernelState()
+        kernel, verifier = self.governed(state, clock=clock)
+        controller = DirectiveAuthorityController(kernel)
+        projection = GovernedDirectiveProjection(kernel)
+        d = directive()
+        self.activate(
+            kernel, verifier, controller, d, "activate-1", "activate-nonce-1"
+        )
+        self.revoke(kernel, verifier, controller, d, "revoke-1", "revoke-nonce-1")
+        clock.mode = "raise"
+
+        decision = projection.evaluate(
+            Intent("agent:builder", "write", "repo:core", 1, "s1"), d
+        )
+
+        self.assertEqual("deny", decision.outcome)
+        self.assertEqual("directive_revoked", decision.reason)
+        self.assertEqual(1, len(self.denials(state)))
+        self.assertEqual(0, self.denials(state)[0]["timestamp_ns"])
+        self.assertTrue(kernel.verify_audit())
+
+    def test_raising_clock_parent_revoked_directive_still_denies_and_records(
+        self,
+    ):
+        clock = SwitchClock()
+        state = InMemoryKernelState()
+        kernel, verifier = self.governed(state, clock=clock)
+        controller = DirectiveAuthorityController(kernel)
+        projection = GovernedDirectiveProjection(kernel)
+        parent = directive()
+        child = derived(parent)
+        self.activate(
+            kernel, verifier, controller, parent, "activate-1", "activate-nonce-1"
+        )
+        self.activate(
+            kernel,
+            verifier,
+            controller,
+            child,
+            "activate-child-1",
+            "activate-child-nonce-1",
+            parent_directive=parent,
+        )
+        self.revoke(kernel, verifier, controller, parent, "revoke-1", "revoke-nonce-1")
+        clock.mode = "raise"
+
+        decision = projection.evaluate(
+            Intent("agent:builder", "write", "repo:service:api", 1, "s1"), child
+        )
+
+        self.assertEqual("deny", decision.outcome)
+        self.assertEqual("directive_parent_revoked", decision.reason)
+        self.assertEqual(1, len(self.denials(state)))
+        self.assertEqual(
+            "deploy-prod-child", self.denials(state)[0]["payload"]["directive_id"]
+        )
+        self.assertEqual(0, self.denials(state)[0]["timestamp_ns"])
+        self.assertTrue(kernel.verify_audit())
+
+    def test_none_clock_records_zero_timestamp_in_memory(self):
+        clock = SwitchClock()
+        state = InMemoryKernelState()
+        kernel, _ = self.governed(state, clock=clock)
+        projection = GovernedDirectiveProjection(kernel)
+        clock.mode = "none"
+
+        decision = projection.evaluate(
+            Intent("agent:builder", "write", "repo:core", 3, "s1"), directive()
+        )
+
+        self.assertEqual("deny", decision.outcome)
+        self.assertEqual("directive_not_authorized", decision.reason)
+        self.assertEqual(1, len(self.denials(state)))
+        self.assertEqual(0, self.denials(state)[0]["timestamp_ns"])
+        self.assertTrue(kernel.verify_audit())
+
+    def test_unavailable_clock_records_zero_timestamp_in_sqlite(self):
+        for mode in ("none", "raise"):
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as td:
+                state = SQLiteKernelState(Path(td) / "state.sqlite3")
+                try:
+                    clock = SwitchClock()
+                    kernel, _ = self.governed(state, clock=clock)
+                    projection = GovernedDirectiveProjection(kernel)
+                    clock.mode = mode
+
+                    decision = projection.evaluate(
+                        Intent("agent:builder", "write", "repo:core", 3, "s1"),
+                        directive(),
+                    )
+
+                    self.assertEqual("deny", decision.outcome)
+                    self.assertEqual("directive_not_authorized", decision.reason)
+                    self.assertEqual(1, len(self.denials(state)))
+                    self.assertEqual(0, self.denials(state)[0]["timestamp_ns"])
+                    self.assertTrue(kernel.verify_audit())
+                finally:
+                    state.close()
 
 
 class ProjectionDenialIncidentReportTests(unittest.TestCase):

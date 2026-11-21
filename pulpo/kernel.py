@@ -225,6 +225,27 @@ class AgentGrant:
             raise ValueError("agent max_cost must be non-negative")
 
 
+# Permit lifetime bounds (Phase 2, Item 4 — token v2, remainder port of
+# upstream PR #358). The signed-expiry token format and the store's
+# recorded-expiry re-check arrived earlier, with the v3 presenter-binding
+# port (Item 4B): Autonomous jumped from v1 straight to v3, so the token
+# carries ``issued_at``/``expires_at`` inside the HMAC and both state
+# backends refuse a consume at or after the recorded expiry. What #358
+# still adds here is the policy-side cap: no policy may mint permits
+# living longer than the absolute ceiling.
+#
+# Fork divergences, kept deliberately (see the change record): the field
+# is named ``permit_ttl_ns`` here, not upstream's ``max_permit_ttl_ns``,
+# and its default is 5 minutes, not upstream's 4 hours — the 5-minute
+# default predates this port and changing it would change every default
+# policy's hash (this tree binds ``permit_ttl_ns`` into the policy hash
+# unconditionally, where upstream binds its field only when non-default)
+# and every issued permit's lifetime. The ceiling itself is upstream's
+# 24 hours.
+DEFAULT_PERMIT_TTL_NS = 300_000_000_000  # 5 minutes
+PERMIT_TTL_CEILING_NS = 24 * 3600 * 1_000_000_000  # 24 hours
+
+
 @dataclass(frozen=True)
 class Policy:
     allowed_actions: frozenset[str]
@@ -232,7 +253,7 @@ class Policy:
     approval_actions: frozenset[str] = frozenset()
     agent_grants: tuple[AgentGrant, ...] = ()
     authority_trust: AuthorityTrust | None = None
-    permit_ttl_ns: int = 300_000_000_000
+    permit_ttl_ns: int = DEFAULT_PERMIT_TTL_NS
 
     # Presenter binding (Phase 3, Item 4B): when true, every
     # permit this policy issues must be bound to a registered
@@ -275,6 +296,11 @@ class Policy:
         ):
             raise ValueError(
                 "permit_ttl_ns must be a positive integer"
+            )
+
+        if self.permit_ttl_ns > PERMIT_TTL_CEILING_NS:
+            raise ValueError(
+                "permit_ttl_ns exceeds the permit TTL ceiling"
             )
 
         if not isinstance(self.require_presenter_binding, bool):

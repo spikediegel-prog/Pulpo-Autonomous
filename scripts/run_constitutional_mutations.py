@@ -122,6 +122,28 @@ MUTATIONS: tuple[Mutation, ...] = (
         ("tests.test_kernel.GovernanceKernelTests.test_allowed_intent_gets_bound_one_use_permit",),
     ),
     Mutation(
+        # Phase 2, Item 4 (remainder port of upstream #358): the
+        # in-memory store's recorded-expiry re-check is the second
+        # layer behind the kernel's signed-expiry authentication,
+        # binding direct handle-level consume calls. Removing it
+        # must be detected by the store second-layer tests: an
+        # expired permit would then consume.
+        "permit_store_expiry_check_removed_inmemory",
+        "pulpo/state.py",
+        '                and permit not in self._spent\n                and expires_at_ns is not None\n                and timestamp_ns < expires_at_ns',
+        '                and permit not in self._spent\n                and expires_at_ns is not None',
+        ("tests.test_permit_ttl.StoreSecondLayerTests.test_inmemory_store_refuses_consume_at_expiry",),
+    ),
+    Mutation(
+        # Phase 2, Item 4 (remainder port of upstream #358): the same
+        # second layer on the SQLite backend.
+        "permit_store_expiry_check_removed_sqlite",
+        "pulpo/state.py",
+        '                and permit_row[1] == 0\n                and expires_at_ns is not None\n                and timestamp_ns < expires_at_ns',
+        '                and permit_row[1] == 0\n                and expires_at_ns is not None',
+        ("tests.test_permit_ttl.StoreSecondLayerTests.test_sqlite_store_refuses_consume_at_expiry",),
+    ),
+    Mutation(
         "directive_revocation_guard_removed",
         "pulpo/state.py",
         'return (\n            "directive_revoked"\n            if revoked\n            else "active"\n        )',

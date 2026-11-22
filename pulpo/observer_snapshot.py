@@ -1,0 +1,715 @@
+"""Versioned, bounded, frozen observer snapshot for the Autonomous CC.
+
+Control Center design v0, item 5.1: the single JSON document the Control
+Center polls. It replaces the five-way stitching of design section 2.11
+(MCP snapshot file, frozen incident report file, whole journal file,
+anchor store file, live service verbs) with one contract produced by a
+kernel-side freeze function in the same shape as ``freeze_mcp_snapshot``
+and ``freeze_incident_report``.
+
+Read-only by construction, like the two freeze functions it follows:
+
+- the freeze is a pure read over the orchestrator and the deployment
+  inputs the caller supplies (leases, journal, anchor store, drift
+  evaluations, incident report); it appends nothing to the audit chain
+  or the journal, mints or extends no lease, issues no permit, and
+  holds no kernel, state, or authority reference afterwards -- the
+  returned snapshot carries only primitives;
+- the snapshot is frozen: repeated freezes with the same clock are
+  byte-identical, and a failed load never returns a stale good value;
+- absent sources are represented as unavailable or unknown, never
+  invented. In particular: reconciliation state is ``"unknown"`` because
+  no surface exposes it today (design item 5.5); a drift head's
+  calibration age is ``None`` because ``DriftEvaluation`` does not carry
+  it; a lease or journal record with no device identity carries
+  ``device_id: None``, which the CC renders as "Unknown device" (design
+  section 4.6) -- identity is never guessed into a device.
+
+Size bound: 1 MiB (``MAX_OBSERVER_SNAPSHOT_BYTES``), the incident
+report's precedent. Export prefights the serialized size before
+anything is published, and the loader rejects anything larger.
+"""
+
+from __future__ import annotations
+
+import json
+import math
+import os
+import time
+from dataclasses import asdict, dataclass, fields
+from datetime import datetime, timedelta, timezone
+from typing import Any, Callable, Mapping, Sequence
+
+from core.drift import DriftEvaluation
+from core.journal import DurableJournal
+from core.offline_protocol import OfflineMissionLease
+
+from .anchor import AnchorStore, AnchorVerifier, verify_anchored_audit
+from .incident_channel import IncidentReport, freeze_incident_report
+from .mcp_boundary import MCPBoundaryError, _publish_snapshot
+from .mcp_plugin import read_snapshot_document
+from .orchestrator import PulpoOrchestrator
+
+OBSERVER_SNAPSHOT_SCHEMA = "pulpo.observer-snapshot.v0"
+MAX_OBSERVER_SNAPSHOT_BYTES = 1_048_576
+
+LEASE_STATES = frozenset({"active", "expired"})
+DRIFT_DECISIONS = frozenset({"TRUSTED", "SUSPECT", "UNTRUSTED", "UNKNOWN"})
+# The only reconciliation state this contract can report: no surface in
+# the tree exposes whether a reconciliation is in progress or when the
+# last one completed (design item 5.5). When item 5.5 lands, extend this
+# set and the freeze function together -- never report "reconciling"
+# from a source that does not actually report it.
+RECONCILIATION_STATES = frozenset({"unknown"})
+
+
+def _is_hex(value: object, length: int) -> bool:
+    return (
+        type(value) is str
+        and len(value) == length
+        and all(character in "0123456789abcdef" for character in value)
+    )
+
+
+def _number(value: object) -> bool:
+    return type(value) is int and value >= 0
+
+
+def _positive_number(value: object) -> bool:
+    return type(value) is int and value > 0
+
+
+def _finite_number(value: object) -> bool:
+    return (
+        isinstance(value, (int, float))
+        and not isinstance(value, bool)
+        and math.isfinite(value)
+    )
+
+
+def _non_empty_str(value: object) -> bool:
+    return type(value) is str and bool(value)
+
+
+def _optional_non_empty_str(value: object) -> bool:
+    return value is None or _non_empty_str(value)
+
+
+def _optional_hex(value: object, length: int) -> bool:
+    return value is None or _is_hex(value, length)
+
+
+def _datetime_to_ns(moment: datetime) -> int:
+    """Convert an aware datetime to epoch nanoseconds; naive times fail."""
+
+    if not isinstance(moment, datetime) or moment.tzinfo is None:
+        raise ValueError("observer_snapshot_time_invalid")
+    return int(moment.timestamp() * 1_000_000_000)
+
+
+def _datetime_from_ns(moment_ns: int) -> datetime:
+    seconds, remainder_ns = divmod(moment_ns, 1_000_000_000)
+    return datetime.fromtimestamp(seconds, tz=timezone.utc) + timedelta(
+        microseconds=remainder_ns // 1_000
+    )
+
+
+@dataclass(frozen=True, slots=True)
+class ObserverSignatureSummary:
+    """Signing coverage of the audit chain, from ``verify_audit_report``.
+
+    Counts are the report's own: when verification fails it returns early,
+    so signed + unsigned may be below total -- the failure is reported by
+    ``audit_valid`` on the snapshot, not hidden by this summary.
+    """
+
+    signing_enabled: bool
+    signed_records: int
+    unsigned_records: int
+    legacy_records: int
+    total_records: int
+
+    def __post_init__(self) -> None:
+        if (
+            type(self.signing_enabled) is not bool
+            or not _number(self.signed_records)
+            or not _number(self.unsigned_records)
+            or not _number(self.legacy_records)
+            or not _number(self.total_records)
+        ):
+            raise ValueError("invalid_observer_signature_summary")
+
+
+@dataclass(frozen=True, slots=True)
+class ObserverAnchorState:
+    """Anchored-audit result, or the honest absence of an anchor store."""
+
+    available: bool
+    head_hash: str | None
+    anchored_records: int
+    verified: bool | None
+    reason: str | None
+    anchors_checked: int
+
+    def __post_init__(self) -> None:
+        if (
+            type(self.available) is not bool
+            or not _optional_hex(self.head_hash, 64)
+            or not _number(self.anchored_records)
+            or (self.verified is not None and type(self.verified) is not bool)
+            or not _optional_non_empty_str(self.reason)
+            or not _number(self.anchors_checked)
+        ):
+            raise ValueError("invalid_observer_anchor_state")
+        # When no store was supplied, verified is None but the reason
+        # names the absence ("anchor_store_absent") -- the absence
+        # itself is the reportable fact, not a silent gap.
+        if not self.available and self.verified is not None:
+            raise ValueError("invalid_observer_anchor_state")
+
+
+@dataclass(frozen=True, slots=True)
+class ObserverJournalTip:
+    """Verified journal tip, or the honest absence of a journal.
+
+    A verification failure carries ``verified=False`` and the reason, and
+    no tip fields at all: the CC shows Attention rather than a partial
+    tail (design section 4.2).
+    """
+
+    available: bool
+    sequence: int | None
+    last_event: str | None
+    last_record_hash: str | None
+    verified: bool | None
+    verification_reason: str | None
+    deployment_id: str | None
+    device_id: str | None
+
+    def __post_init__(self) -> None:
+        if (
+            type(self.available) is not bool
+            or (self.sequence is not None and not _positive_number(self.sequence))
+            or not _optional_non_empty_str(self.last_event)
+            or not _optional_hex(self.last_record_hash, 64)
+            or (self.verified is not None and type(self.verified) is not bool)
+            or not _optional_non_empty_str(self.verification_reason)
+            or not _optional_non_empty_str(self.deployment_id)
+            or not _optional_non_empty_str(self.device_id)
+        ):
+            raise ValueError("invalid_observer_journal_tip")
+        if not self.available and (
+            self.sequence is not None
+            or self.last_event is not None
+            or self.last_record_hash is not None
+            or self.verified is not None
+            or self.verification_reason is not None
+        ):
+            raise ValueError("invalid_observer_journal_tip")
+
+
+@dataclass(frozen=True, slots=True)
+class ObserverLeaseSummary:
+    """One lease as the Missions page shows it (design sections 4.1, 4.6).
+
+    ``window_remaining_ns`` is the governed envelope's remaining validity
+    (``None`` when the envelope has no expiry); the lease's own offline
+    bound is ``max_disconnected_ns``. ``device_id`` is ``None`` when the
+    deployment supplied no device identity for this lease's deployment --
+    the CC renders that as "Unknown device", never guessed.
+    """
+
+    lease_id: str
+    principal: str
+    deployment_id: str
+    device_id: str | None
+    safe_fallback: str
+    issued_at_ns: int
+    window_remaining_ns: int | None
+    max_disconnected_ns: int
+    max_commands: int | None
+    state: str
+
+    def __post_init__(self) -> None:
+        if (
+            not _non_empty_str(self.lease_id)
+            or not _non_empty_str(self.principal)
+            or not _non_empty_str(self.deployment_id)
+            or not _optional_non_empty_str(self.device_id)
+            or not _non_empty_str(self.safe_fallback)
+            or not _number(self.issued_at_ns)
+            or (self.window_remaining_ns is not None and not _number(self.window_remaining_ns))
+            or not _positive_number(self.max_disconnected_ns)
+            or (self.max_commands is not None and not _positive_number(self.max_commands))
+            or self.state not in LEASE_STATES
+        ):
+            raise ValueError("invalid_observer_lease_summary")
+
+
+@dataclass(frozen=True, slots=True)
+class ObserverDriftHead:
+    """One O2 head's latest drift evaluation, as the Sensors page shows it.
+
+    ``calibration_age_days`` is ``None`` because ``DriftEvaluation`` does
+    not carry it -- the evaluation's reasons still name a calibration
+    failure when one applies. ``last_evaluated_ns`` is ``None`` unless the
+    deployment supplied an evaluation time for this head. ``sensor_id``
+    is the head's identity (e.g. ``O2-E04-01``); the drift monitor never
+    authorizes a fan stop, so no fan-stop field exists here.
+    """
+
+    sensor_id: str
+    decision: str
+    reasons: tuple[str, ...]
+    raw_o2_pct: float
+    drift_pct_per_hour: float
+    step_change_pct_per_minute: float
+    neighbor_median_pct: float | None
+    neighbor_deviation_pct: float | None
+    rate_limit_pct_per_hour: float
+    step_limit_pct_per_minute: float
+    max_neighbor_deviation_pct: float
+    max_reading_age_seconds: float
+    age_seconds: float
+    calibration_age_days: float | None
+    retrust_soak_minutes: float
+    retrust_soak_required_minutes: float
+    last_evaluated_ns: int | None
+
+    def __post_init__(self) -> None:
+        if (
+            not _non_empty_str(self.sensor_id)
+            or self.decision not in DRIFT_DECISIONS
+            or type(self.reasons) is not tuple
+            or any(not _non_empty_str(reason) for reason in self.reasons)
+            or not _finite_number(self.raw_o2_pct)
+            or not _finite_number(self.drift_pct_per_hour)
+            or not _finite_number(self.step_change_pct_per_minute)
+            or (self.neighbor_median_pct is not None and not _finite_number(self.neighbor_median_pct))
+            or (self.neighbor_deviation_pct is not None and not _finite_number(self.neighbor_deviation_pct))
+            or not _finite_number(self.rate_limit_pct_per_hour)
+            or not _finite_number(self.step_limit_pct_per_minute)
+            or not _finite_number(self.max_neighbor_deviation_pct)
+            or not _finite_number(self.max_reading_age_seconds)
+            or not _finite_number(self.age_seconds)
+            or (self.calibration_age_days is not None and not _finite_number(self.calibration_age_days))
+            or not _finite_number(self.retrust_soak_minutes)
+            or not _finite_number(self.retrust_soak_required_minutes)
+            or (self.last_evaluated_ns is not None and not _positive_number(self.last_evaluated_ns))
+        ):
+            raise ValueError("invalid_observer_drift_head")
+
+
+@dataclass(frozen=True, slots=True)
+class ObserverSnapshot:
+    """The single frozen document the Control Center polls (design 5.1).
+
+    Only primitives: strings, booleans, numbers, ``None``, and tuples of
+    the frozen section dataclasses. No callbacks, no object references,
+    no private key material, no permit or approval content -- hashes and
+    counts only.
+    """
+
+    source_id: str
+    deployment_id: str | None
+    device_id: str | None
+    frozen_at_ns: int
+    policy_hash: str
+    audit_valid: bool
+    audit_records: int
+    audit_tip: str | None
+    signatures: ObserverSignatureSummary
+    anchor: ObserverAnchorState
+    journal: ObserverJournalTip
+    leases: tuple[ObserverLeaseSummary, ...]
+    drift_heads: tuple[ObserverDriftHead, ...]
+    incidents: int
+    near_misses: int
+    incident_report_available: bool
+    incident_report_frozen_at_ns: int | None
+    reconciliation_state: str
+    reconciliation_since_ns: int | None
+    last_reconciliation_completed_ns: int | None
+    schema: str = OBSERVER_SNAPSHOT_SCHEMA
+
+    def __post_init__(self) -> None:
+        if (
+            self.schema != OBSERVER_SNAPSHOT_SCHEMA
+            or not _is_hex(self.source_id, 32)
+            or not _optional_non_empty_str(self.deployment_id)
+            or not _optional_non_empty_str(self.device_id)
+            or not _positive_number(self.frozen_at_ns)
+            or not _is_hex(self.policy_hash, 64)
+            or type(self.audit_valid) is not bool
+            or not _number(self.audit_records)
+            or not _optional_hex(self.audit_tip, 64)
+            or type(self.signatures) is not ObserverSignatureSummary
+            or type(self.anchor) is not ObserverAnchorState
+            or type(self.journal) is not ObserverJournalTip
+            or type(self.leases) is not tuple
+            or any(type(lease) is not ObserverLeaseSummary for lease in self.leases)
+            or type(self.drift_heads) is not tuple
+            or any(type(head) is not ObserverDriftHead for head in self.drift_heads)
+            or not _number(self.incidents)
+            or not _number(self.near_misses)
+            or type(self.incident_report_available) is not bool
+            or (
+                self.incident_report_frozen_at_ns is not None
+                and not _positive_number(self.incident_report_frozen_at_ns)
+            )
+            or self.reconciliation_state not in RECONCILIATION_STATES
+            or (
+                self.reconciliation_since_ns is not None
+                and not _positive_number(self.reconciliation_since_ns)
+            )
+            or (
+                self.last_reconciliation_completed_ns is not None
+                and not _positive_number(self.last_reconciliation_completed_ns)
+            )
+        ):
+            raise ValueError("invalid_observer_snapshot")
+        if not self.incident_report_available and self.incident_report_frozen_at_ns is not None:
+            raise ValueError("invalid_observer_snapshot")
+
+
+def _lease_summary(
+    lease: OfflineMissionLease,
+    *,
+    device_id: str | None,
+    now: datetime,
+) -> ObserverLeaseSummary:
+    envelope = lease.envelope
+    if envelope.expires_at is None:
+        window_remaining_ns = None
+    else:
+        remaining = (envelope.expires_at - now).total_seconds() * 1_000_000_000
+        window_remaining_ns = max(0, int(remaining))
+    return ObserverLeaseSummary(
+        lease_id=lease.lease_id,
+        principal=lease.principal,
+        deployment_id=lease.deployment_id,
+        device_id=device_id,
+        safe_fallback=lease.safe_fallback,
+        issued_at_ns=_datetime_to_ns(lease.issued_at),
+        window_remaining_ns=window_remaining_ns,
+        max_disconnected_ns=int(lease.max_disconnected.total_seconds() * 1_000_000_000),
+        max_commands=lease.max_commands,
+        state="active" if lease.active_at(now) else "expired",
+    )
+
+
+def _drift_head_summary(
+    evaluation: DriftEvaluation,
+    *,
+    last_evaluated_ns: int | None,
+) -> ObserverDriftHead:
+    return ObserverDriftHead(
+        sensor_id=evaluation.sensor_id,
+        decision=evaluation.decision,
+        reasons=tuple(evaluation.reasons),
+        raw_o2_pct=evaluation.raw_o2_pct,
+        drift_pct_per_hour=evaluation.drift_pct_per_hour,
+        step_change_pct_per_minute=evaluation.step_change_pct_per_minute,
+        neighbor_median_pct=evaluation.neighbor_median_pct,
+        neighbor_deviation_pct=evaluation.neighbor_deviation_pct,
+        rate_limit_pct_per_hour=evaluation.rate_limit_pct_per_hour,
+        step_limit_pct_per_minute=evaluation.step_limit_pct_per_minute,
+        max_neighbor_deviation_pct=evaluation.max_neighbor_deviation_pct,
+        max_reading_age_seconds=evaluation.max_reading_age_seconds,
+        age_seconds=evaluation.age_seconds,
+        # DriftEvaluation does not carry calibration age: unknown, not
+        # invented. A calibration failure is still visible in reasons.
+        calibration_age_days=None,
+        retrust_soak_minutes=evaluation.retrust_soak_minutes,
+        retrust_soak_required_minutes=evaluation.retrust_soak_required_minutes,
+        last_evaluated_ns=last_evaluated_ns,
+    )
+
+
+def freeze_observer_snapshot(
+    orchestrator: PulpoOrchestrator,
+    *,
+    deployment_id: str | None = None,
+    device_id: str | None = None,
+    device_ids: Mapping[str, str] | None = None,
+    leases: Sequence[OfflineMissionLease] = (),
+    journal: DurableJournal | None = None,
+    anchor_store: AnchorStore | None = None,
+    anchor_verifier: AnchorVerifier | None = None,
+    drift_evaluations: Sequence[DriftEvaluation] = (),
+    drift_evaluated_at_ns: Mapping[str, int] | None = None,
+    incident_report: IncidentReport | None = None,
+    clock: Callable[[], int] | None = None,
+) -> ObserverSnapshot:
+    """Freeze one capability-free observer snapshot from trusted Pulpo.
+
+    Pure read: nothing is appended to the audit chain or the journal, no
+    lease is minted or extended, no permit is issued. The caller supplies
+    what the deployment already holds -- leases, journal, anchor store,
+    drift evaluations, incident report -- and anything not supplied is
+    reported as unavailable or unknown, never synthesized.
+
+    Identity resolution, in order: an explicit ``deployment_id`` wins,
+    else the first supplied lease's deployment, else ``None``. Device
+    identity comes from ``device_id``, else ``device_ids`` keyed by the
+    resolved deployment for the snapshot and by each lease's deployment
+    for its summary; anything unmapped stays ``None`` ("Unknown device"
+    in the CC). ``clock`` returns epoch nanoseconds and defaults to
+    ``time.time_ns``; it also derives the ``now`` lease windows are
+    measured against, so one frozen clock pins the whole document.
+    """
+
+    if type(orchestrator) is not PulpoOrchestrator:
+        raise TypeError("canonical PulpoOrchestrator required")
+    if deployment_id is not None and not _non_empty_str(deployment_id):
+        raise ValueError("observer_deployment_id_invalid")
+    if device_id is not None and not _non_empty_str(device_id):
+        raise ValueError("observer_device_id_invalid")
+    if device_ids is not None and (
+        not isinstance(device_ids, Mapping)
+        or any(not _non_empty_str(key) or not _non_empty_str(value) for key, value in device_ids.items())
+    ):
+        raise ValueError("observer_device_ids_invalid")
+    if not isinstance(leases, Sequence) or any(
+        type(lease) is not OfflineMissionLease for lease in leases
+    ):
+        raise TypeError("observer_leases_invalid")
+    if journal is not None and type(journal) is not DurableJournal:
+        raise TypeError("observer_journal_invalid")
+    # AnchorStore is a plain Protocol (not runtime-checkable): check the
+    # shape structurally instead of isinstance.
+    if anchor_store is not None and not (
+        callable(getattr(anchor_store, "anchors", None))
+        and callable(getattr(anchor_store, "append", None))
+    ):
+        raise TypeError("observer_anchor_store_invalid")
+    if not isinstance(drift_evaluations, Sequence) or any(
+        type(evaluation) is not DriftEvaluation for evaluation in drift_evaluations
+    ):
+        raise TypeError("observer_drift_evaluations_invalid")
+    if drift_evaluated_at_ns is not None and (
+        not isinstance(drift_evaluated_at_ns, Mapping)
+        or any(
+            not _non_empty_str(key) or not _positive_number(value)
+            for key, value in drift_evaluated_at_ns.items()
+        )
+    ):
+        raise ValueError("observer_drift_evaluated_at_ns_invalid")
+    if incident_report is not None and type(incident_report) is not IncidentReport:
+        raise TypeError("observer_incident_report_invalid")
+    if clock is not None and not callable(clock):
+        raise TypeError("observer_clock_invalid")
+
+    frozen_at_ns = clock() if clock is not None else time.time_ns()
+    if not _positive_number(frozen_at_ns):
+        raise ValueError("observer_clock_invalid")
+    now = _datetime_from_ns(frozen_at_ns)
+
+    kernel = orchestrator.kernel
+    evidence = orchestrator.evidence_snapshot()
+    source_id = kernel.state_source_id()
+    audit_report = kernel.verify_audit_report()
+
+    signatures = ObserverSignatureSummary(
+        signing_enabled=bool(audit_report["signing_enabled"]),
+        signed_records=int(audit_report["signed_records"]),
+        unsigned_records=int(audit_report["unsigned_records"]),
+        legacy_records=int(audit_report["legacy_records"]),
+        total_records=int(audit_report["total_records"]),
+    )
+
+    if anchor_store is None:
+        anchor = ObserverAnchorState(
+            available=False,
+            head_hash=None,
+            anchored_records=0,
+            verified=None,
+            reason="anchor_store_absent",
+            anchors_checked=0,
+        )
+    else:
+        anchors = anchor_store.anchors()
+        verification = verify_anchored_audit(
+            kernel.audit, anchors, verifier=anchor_verifier
+        )
+        anchor = ObserverAnchorState(
+            available=True,
+            head_hash=anchors[-1].head_hash if anchors else None,
+            anchored_records=int(verification.anchored_records),
+            verified=bool(verification.ok),
+            reason=None if verification.ok else verification.reason,
+            anchors_checked=int(verification.anchors_checked),
+        )
+
+    resolved_deployment_id = deployment_id
+    if resolved_deployment_id is None and leases:
+        resolved_deployment_id = leases[0].deployment_id
+    resolved_device_id = device_id
+    if resolved_device_id is None and device_ids is not None and resolved_deployment_id is not None:
+        resolved_device_id = device_ids.get(resolved_deployment_id)
+
+    if journal is None:
+        journal_tip = ObserverJournalTip(
+            available=False,
+            sequence=None,
+            last_event=None,
+            last_record_hash=None,
+            verified=None,
+            verification_reason=None,
+            deployment_id=None,
+            device_id=None,
+        )
+    else:
+        try:
+            records = journal.read(verify=True)
+        except ValueError:
+            journal_tip = ObserverJournalTip(
+                available=True,
+                sequence=None,
+                last_event=None,
+                last_record_hash=None,
+                verified=False,
+                verification_reason="journal_integrity_failure",
+                deployment_id=resolved_deployment_id,
+                device_id=resolved_device_id,
+            )
+        else:
+            tip = records[-1] if records else None
+            journal_tip = ObserverJournalTip(
+                available=True,
+                sequence=tip.sequence if tip is not None else None,
+                last_event=tip.event if tip is not None else None,
+                last_record_hash=tip.record_hash if tip is not None else None,
+                verified=True,
+                verification_reason=None,
+                deployment_id=resolved_deployment_id,
+                device_id=resolved_device_id,
+            )
+
+    lease_summaries = tuple(
+        _lease_summary(
+            lease,
+            device_id=(
+                device_ids.get(lease.deployment_id)
+                if device_ids is not None
+                else None
+            ),
+            now=now,
+        )
+        for lease in leases
+    )
+
+    drift_heads = tuple(
+        _drift_head_summary(
+            evaluation,
+            last_evaluated_ns=(
+                drift_evaluated_at_ns.get(evaluation.sensor_id)
+                if drift_evaluated_at_ns is not None
+                else None
+            ),
+        )
+        for evaluation in drift_evaluations
+    )
+
+    # The incident report is derived audit-only when the deployment did
+    # not supply one, exactly as freeze_incident_report does with
+    # custody=None: counts only, no custody resolution.
+    report = incident_report
+    if report is None:
+        report = freeze_incident_report(orchestrator)
+
+    return ObserverSnapshot(
+        source_id=source_id,
+        deployment_id=resolved_deployment_id,
+        device_id=resolved_device_id,
+        frozen_at_ns=frozen_at_ns,
+        policy_hash=evidence.policy_hash,
+        audit_valid=evidence.audit_valid,
+        audit_records=evidence.audit_records,
+        audit_tip=evidence.audit_tip,
+        signatures=signatures,
+        anchor=anchor,
+        journal=journal_tip,
+        leases=lease_summaries,
+        drift_heads=drift_heads,
+        incidents=int(report.incidents),
+        near_misses=int(report.near_misses),
+        incident_report_available=True,
+        incident_report_frozen_at_ns=int(report.observed_at_ns),
+        # No surface exposes reconciliation state today (design item
+        # 5.5): explicitly unknown, never "reconciling" on a guess.
+        reconciliation_state="unknown",
+        reconciliation_since_ns=None,
+        last_reconciliation_completed_ns=None,
+    )
+
+
+def export_observer_snapshot(
+    orchestrator: PulpoOrchestrator,
+    destination: str | os.PathLike[str],
+    **kwargs: Any,
+) -> ObserverSnapshot:
+    """Atomically export one frozen observer snapshot from trusted Pulpo.
+
+    Size preflight: the snapshot is serialized exactly as
+    ``_publish_snapshot`` will serialize it, and an over-limit snapshot
+    fails here -- before anything is published -- so an export can never
+    produce a file that ``load_observer_snapshot`` would reject.
+    """
+
+    snapshot = freeze_observer_snapshot(orchestrator, **kwargs)
+    payload = json.dumps(asdict(snapshot), sort_keys=True, separators=(",", ":")) + "\n"
+    if len(payload.encode("utf-8")) > MAX_OBSERVER_SNAPSHOT_BYTES:
+        raise MCPBoundaryError("observer_snapshot_too_large")
+    return _publish_snapshot(snapshot, destination)
+
+
+def _load_section(value: object, section: type) -> dict[str, Any]:
+    if type(value) is not dict or set(value) != {item.name for item in fields(section)}:
+        raise ValueError("snapshot_fields_invalid")
+    return value
+
+
+def load_observer_snapshot(path: str | os.PathLike[str]) -> ObserverSnapshot:
+    """Load one frozen observer snapshot through the hardened reader.
+
+    Any malformed, oversize, stale, or wrong-schema input raises: the
+    caller (the CC) treats a load failure as Unknown, never as a stale
+    good value. No field is defaulted from another field, and no record
+    is guessed into a device.
+    """
+
+    value = read_snapshot_document(path, max_bytes=MAX_OBSERVER_SNAPSHOT_BYTES)
+    if set(value) != {item.name for item in fields(ObserverSnapshot)}:
+        raise ValueError("snapshot_fields_invalid")
+    value["signatures"] = ObserverSignatureSummary(
+        **_load_section(value["signatures"], ObserverSignatureSummary)
+    )
+    value["anchor"] = ObserverAnchorState(
+        **_load_section(value["anchor"], ObserverAnchorState)
+    )
+    value["journal"] = ObserverJournalTip(
+        **_load_section(value["journal"], ObserverJournalTip)
+    )
+    if type(value["leases"]) is not list or any(
+        type(lease) is not dict
+        or set(lease) != {item.name for item in fields(ObserverLeaseSummary)}
+        for lease in value["leases"]
+    ):
+        raise ValueError("snapshot_nested_invalid")
+    value["leases"] = tuple(ObserverLeaseSummary(**lease) for lease in value["leases"])
+    if type(value["drift_heads"]) is not list or any(
+        type(head) is not dict
+        or set(head) != {item.name for item in fields(ObserverDriftHead)}
+        for head in value["drift_heads"]
+    ):
+        raise ValueError("snapshot_nested_invalid")
+    drift_heads = []
+    for head in value["drift_heads"]:
+        if type(head["reasons"]) is not list:
+            raise ValueError("snapshot_nested_invalid")
+        drift_heads.append(
+            ObserverDriftHead(**{**head, "reasons": tuple(head["reasons"])})
+        )
+    value["drift_heads"] = tuple(drift_heads)
+    return ObserverSnapshot(**value)

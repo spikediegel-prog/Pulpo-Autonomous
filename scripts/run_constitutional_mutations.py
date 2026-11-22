@@ -306,12 +306,27 @@ MUTATIONS: tuple[Mutation, ...] = (
         # boundary's request MAC is the authentication control — a
         # request that does not authenticate must never reach a verb.
         # Weakening it must be detected by the boundary tests.
+        # Anchor updated by the Control Center §5.2 read-only role:
+        # the MAC check now falls through to the read-only secret
+        # before refusing, so the anchor is the whole if-block.
         "service_request_mac_check_removed",
         "pulpo/service.py",
-        '            if not isinstance(claimed_mac, str) or not hmac.compare_digest(claimed_mac, expected):\n                raise ServiceRefusal("request_mac_invalid")',
-        '            if False and (not isinstance(claimed_mac, str) or not hmac.compare_digest(claimed_mac, expected)):\n                raise ServiceRefusal("request_mac_invalid")',
+        '            if not isinstance(claimed_mac, str) or not hmac.compare_digest(claimed_mac, expected):\n                if not self._authenticate_read_only(claimed_mac, body):\n                    raise ServiceRefusal("request_mac_invalid")\n                role = "read_only"',
+        '            if False and (not isinstance(claimed_mac, str) or not hmac.compare_digest(claimed_mac, expected)):\n                if not self._authenticate_read_only(claimed_mac, body):\n                    raise ServiceRefusal("request_mac_invalid")\n                role = "read_only"',
         (
             "tests.test_service_boundary.AdversarialBoundaryTests.test_wrong_secret_and_tampered_args_refused_without_state_change",
+        ),
+    ),
+    Mutation(
+        # Control Center design §5.2: the read-only role gate is
+        # what keeps a read-only credential from reaching a mutating
+        # verb. Removing it must be detected by the read-only tests.
+        "service_read_only_role_gate_removed",
+        "pulpo/service.py",
+        '                if role == "read_only" and verb not in READ_ONLY_VERBS:\n                    self._record_read_only_refusal(verb, now_ns)\n                    raise ServiceRefusal("read_only_role_forbidden")',
+        '                if False and (role == "read_only" and verb not in READ_ONLY_VERBS):\n                    self._record_read_only_refusal(verb, now_ns)\n                    raise ServiceRefusal("read_only_role_forbidden")',
+        (
+            "tests.test_read_only_service_role.ReadOnlyRoleTests.test_every_mutating_verb_refused_for_read_only_credential",
         ),
     ),
     Mutation(

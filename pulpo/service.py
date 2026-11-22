@@ -44,6 +44,16 @@ expired, malformed, or wrongly authenticated request fails closed
 with no state change. The transport is any bytes-to-bytes callable:
 a loopback transport for in-process embedding and tests, and a
 length-prefixed Unix-socket transport for a real second process.
+
+Control Center design §5.2: the service may also be constructed
+with a separate read-only secret. Requests authenticated under it
+hold the read-only role and may call only ``READ_ONLY_VERBS``
+(the reads the §5.1 observer snapshot needs, plus ``health``);
+every other verb is refused server-side before it runs, with the
+refusal counted in process-local diagnostics — never appended to
+the canonical audit, so a read-only credential cannot buy a write
+into canonical state by being refused. The CC must never hold the
+full service secret.
 """
 
 from __future__ import annotations
@@ -77,6 +87,31 @@ REQUEST_SCHEMA = "pulpo.service.request.v1"
 RESPONSE_SCHEMA = "pulpo.service.response.v1"
 _REQUEST_MAC_DOMAIN = b"pulpo.service.request.v1\n"
 _RESPONSE_MAC_DOMAIN = b"pulpo.service.response.v1\n"
+# Control Center design §5.2: the read-only role uses its own MAC
+# domains, so a request MAC'd for one role never verifies as the
+# other. The credential is the role claim — the server derives the
+# role from which secret verified, never from a client-asserted
+# field — and the response is MAC'd under the same role's domain.
+_READ_ONLY_REQUEST_MAC_DOMAIN = b"pulpo.service.request.read-only.v1\n"
+_READ_ONLY_RESPONSE_MAC_DOMAIN = b"pulpo.service.response.read-only.v1\n"
+
+# Control Center design §5.2: the verbs a read-only credential may
+# call — exactly the reads the §5.1 observer snapshot needs, plus
+# health. Deliberately excluded: the unbounded `audit` verb (§5.6 is
+# a separate build item) and `get_locked_target` (a read, but not one
+# the snapshot needs). Everything not in this set is refused for the
+# read-only role before it runs, whatever the verb's own shape is.
+READ_ONLY_VERBS = frozenset(
+    {
+        "health",
+        "verify_audit",
+        "verify_audit_report",
+        "state_source_id",
+        "policy_hash",
+        "directive_status",
+        "directive_hash_status",
+    }
+)
 
 DEFAULT_MAX_REQUEST_TTL_NS = 300_000_000_000  # five minutes
 _MAX_FRAME_BYTES = 16 * 1024 * 1024
@@ -334,6 +369,16 @@ class KernelService:
     dedicated service secret; there is no default and no ambient
     fallback, so a service that was never given its secret cannot be
     constructed at all.
+
+    Control Center design §5.2: construction may also take a
+    separate read-only secret. A request that authenticates under
+    that secret (and only that secret) holds the read-only role and
+    may call only ``READ_ONLY_VERBS``; every other verb is refused
+    before it runs. The read-only secret must differ from the full
+    secret — if the two were equal the role distinction would
+    collapse, so equal secrets are refused at construction. Without
+    a read-only secret there is no read-only role at all, and the
+    service behaves exactly as before.
     """
 
     def __init__(
@@ -341,6 +386,7 @@ class KernelService:
         kernel: GovernanceKernel,
         secret: str | bytes,
         *,
+        read_only_secret: str | bytes | None = None,
         clock: Callable[[], int] | None = None,
         max_request_ttl_ns: int = DEFAULT_MAX_REQUEST_TTL_NS,
     ) -> None:
@@ -348,15 +394,31 @@ class KernelService:
             secret = secret.encode()
         if not secret:
             raise ValueError("service secret must be non-empty")
+        if read_only_secret is not None:
+            if isinstance(read_only_secret, str):
+                read_only_secret = read_only_secret.encode()
+            if not read_only_secret:
+                raise ValueError("read-only service secret must be non-empty")
+            if hmac.compare_digest(read_only_secret, secret):
+                raise ValueError("read-only service secret must differ from the service secret")
         if max_request_ttl_ns <= 0:
             raise ValueError("max_request_ttl_ns must be positive")
         self._kernel = kernel
         self._controller = DirectiveAuthorityController(kernel)
         self._projection = GovernedDirectiveProjection(kernel)
         self._secret = secret
+        self._read_only_secret = read_only_secret
         self._clock = clock or time.time_ns
         self._max_request_ttl_ns = max_request_ttl_ns
         self._seen_nonces: dict[str, int] = {}
+        # Bounded, process-local evidence of read-only refusals:
+        # counts per refused verb plus the last refusal time. This is
+        # deliberately NOT a canonical audit record (see
+        # _record_read_only_refusal): a read-only credential must not
+        # be able to cause a canonical state mutation by being
+        # refused, or the refusal path itself would be a write route.
+        self._read_only_refusals: dict[str, int] = {}
+        self._last_read_only_refusal_ns: int | None = None
         self._lock = threading.Lock()
         self._verbs: dict[str, Callable[[dict[str, Any]], Any]] = {
             "evaluate": self._verb_evaluate,
@@ -382,6 +444,7 @@ class KernelService:
             "verify_audit_report": self._verb_verify_audit_report,
             "state_source_id": self._verb_state_source_id,
             "policy_hash": self._verb_policy_hash,
+            "health": self._verb_health,
         }
 
     # -- protocol --
@@ -391,9 +454,13 @@ class KernelService:
 
         Every failure is a refusal response, never an exception and
         never a state change: authentication, freshness, and replay
-        are all checked before any verb runs.
+        are all checked before any verb runs. A read-only credential
+        that reaches a verb outside ``READ_ONLY_VERBS`` is refused
+        the same way — before the verb runs, with no state change —
+        and the refusal is counted, not silently dropped.
         """
         nonce: str | None = None
+        role = "full"
         try:
             request = json.loads(raw.decode("utf-8"))
             if not isinstance(request, dict):
@@ -405,7 +472,9 @@ class KernelService:
             body = {key: value for key, value in request.items() if key != "mac"}
             expected = _mac(self._secret, _REQUEST_MAC_DOMAIN, body)
             if not isinstance(claimed_mac, str) or not hmac.compare_digest(claimed_mac, expected):
-                raise ServiceRefusal("request_mac_invalid")
+                if not self._authenticate_read_only(claimed_mac, body):
+                    raise ServiceRefusal("request_mac_invalid")
+                role = "read_only"
             if request.get("schema") != REQUEST_SCHEMA:
                 raise ServiceRefusal("request_schema_invalid")
             if nonce is None:
@@ -437,16 +506,52 @@ class KernelService:
                 if nonce in self._seen_nonces:
                     raise ServiceRefusal("request_replayed")
                 self._seen_nonces[nonce] = expires
+                if role == "read_only" and verb not in READ_ONLY_VERBS:
+                    self._record_read_only_refusal(verb, now_ns)
+                    raise ServiceRefusal("read_only_role_forbidden")
                 result = self._verbs[verb](args)
-            return self._respond(nonce, True, result=result)
+            return self._respond(nonce, True, role=role, result=result)
         except ServiceRefusal as refusal:
-            return self._respond(nonce, False, error=str(refusal))
+            return self._respond(nonce, False, role=role, error=str(refusal))
         except ValueError as exc:
             # Kernel and constructor refusals already speak in reason
             # tokens; they are refusals, not service failures.
-            return self._respond(nonce, False, error=str(exc))
+            return self._respond(nonce, False, role=role, error=str(exc))
         except Exception:
-            return self._respond(nonce, False, error="service_internal_error")
+            return self._respond(nonce, False, role=role, error="service_internal_error")
+
+    def _authenticate_read_only(self, claimed_mac: Any, body: dict[str, Any]) -> bool:
+        """True when the request MAC verifies under the read-only secret.
+
+        The read-only credential uses its own MAC domain, so a request
+        MAC'd for one role never verifies as the other, and a request
+        MAC'd with the read-only secret under the full domain (or vice
+        versa) verifies as neither. There is no role field to forge:
+        the role is whichever secret verified.
+        """
+        if self._read_only_secret is None or not isinstance(claimed_mac, str):
+            return False
+        expected = _mac(self._read_only_secret, _READ_ONLY_REQUEST_MAC_DOMAIN, body)
+        return hmac.compare_digest(claimed_mac, expected)
+
+    def _record_read_only_refusal(self, verb: str, now_ns: int) -> None:
+        """Count a read-only role refusal in process-local diagnostics.
+
+        Deliberately NOT a canonical audit record: the refusal is
+        evidence production about an attempt that the kernel never
+        evaluated, and appending it to the audit chain would hand a
+        read-only credential a write primitive into canonical state —
+        anyone holding the read-only secret could bloat the audit by
+        spamming mutating verbs (AGENTS.md: NO_WRITE_ROUTE !=
+        NO_WRITE_CAPABILITY). The refusal is evidenced three other
+        ways instead: the typed, server-MAC'd refusal response the
+        caller retains; these bounded per-verb counts, visible
+        through the health verb; and the caller's own records. The
+        counts are bounded by the verb set — no per-attempt log is
+        kept, so repeated refusals cannot grow this state.
+        """
+        self._read_only_refusals[verb] = self._read_only_refusals.get(verb, 0) + 1
+        self._last_read_only_refusal_ns = now_ns
 
     def _prune_nonces(self, now_ns: int) -> None:
         expired = [nonce for nonce, expiry in self._seen_nonces.items() if expiry <= now_ns]
@@ -460,13 +565,24 @@ class KernelService:
             for nonce, _ in by_expiry[: len(self._seen_nonces) - _NONCE_CACHE_LIMIT]:
                 del self._seen_nonces[nonce]
 
-    def _respond(self, nonce: str | None, ok: bool, *, result: Any = None, error: str | None = None) -> bytes:
+    def _respond(
+        self,
+        nonce: str | None,
+        ok: bool,
+        *,
+        role: str = "full",
+        result: Any = None,
+        error: str | None = None,
+    ) -> bytes:
         body: dict[str, Any] = {"schema": RESPONSE_SCHEMA, "nonce": nonce, "ok": ok}
         if ok:
             body["result"] = result
         else:
             body["error"] = error
-        body["mac"] = _mac(self._secret, _RESPONSE_MAC_DOMAIN, body)
+        if role == "read_only" and self._read_only_secret is not None:
+            body["mac"] = _mac(self._read_only_secret, _READ_ONLY_RESPONSE_MAC_DOMAIN, body)
+        else:
+            body["mac"] = _mac(self._secret, _RESPONSE_MAC_DOMAIN, body)
         return _canonical(body)
 
     # -- verbs: authority decisions --
@@ -616,6 +732,22 @@ class KernelService:
     def _verb_policy_hash(self, args: dict[str, Any]) -> Any:
         return {"policy_hash": self._kernel.policy_hash}
 
+    def _verb_health(self, args: dict[str, Any]) -> Any:
+        # Control Center design §5.2: reachability + kernel liveness,
+        # no authority content. The CC calls this to distinguish
+        # "kernel down" (no response at all — a transport failure, never
+        # a fabricated value) from "snapshot stale" (a response whose
+        # data is old). The refusal counts are the process-local
+        # diagnostics from _record_read_only_refusal, bounded by the
+        # verb set; they are not canonical state.
+        return {
+            "status": "ok",
+            "state_source_id": self._kernel.state_source_id(),
+            "now_ns": self._clock(),
+            "read_only_refusals": dict(self._read_only_refusals),
+            "last_read_only_refusal_ns": self._last_read_only_refusal_ns,
+        }
+
 
 # --- The client ---------------------------------------------------------
 
@@ -648,6 +780,8 @@ class KernelServiceClient:
         self._secret = secret
         self._clock = clock or time.time_ns
         self._request_ttl_ns = request_ttl_ns
+        self._request_mac_domain = _REQUEST_MAC_DOMAIN
+        self._response_mac_domain = _RESPONSE_MAC_DOMAIN
 
     def _call(self, verb: str, args: dict[str, Any]) -> Any:
         issued = self._clock()
@@ -659,7 +793,7 @@ class KernelServiceClient:
             "expires_at_ns": issued + self._request_ttl_ns,
             "args": args,
         }
-        body["mac"] = _mac(self._secret, _REQUEST_MAC_DOMAIN, body)
+        body["mac"] = _mac(self._secret, self._request_mac_domain, body)
         raw = self._transport(_canonical(body))
         try:
             response = json.loads(raw.decode("utf-8"))
@@ -669,7 +803,7 @@ class KernelServiceClient:
             raise ServiceRefusal("response_malformed")
         claimed_mac = response.get("mac")
         response_body = {key: value for key, value in response.items() if key != "mac"}
-        expected = _mac(self._secret, _RESPONSE_MAC_DOMAIN, response_body)
+        expected = _mac(self._secret, self._response_mac_domain, response_body)
         if not isinstance(claimed_mac, str) or not hmac.compare_digest(claimed_mac, expected):
             raise ServiceRefusal("response_mac_invalid")
         if response.get("schema") != RESPONSE_SCHEMA or response.get("nonce") != body["nonce"]:
@@ -867,6 +1001,37 @@ class KernelServiceClient:
 
     def policy_hash(self) -> str:
         return self._call("policy_hash", {})["policy_hash"]
+
+    def health(self) -> dict[str, Any]:
+        return self._call("health", {})
+
+
+class ReadOnlyKernelServiceClient(KernelServiceClient):
+    """The observer client: the read-only role, nothing else.
+
+    Control Center design §5.2: this client holds the read-only
+    secret under the read-only MAC domains, so the server derives the
+    read-only role from its requests. The mutating methods exist on
+    this class only by inheritance, and every one of them fails
+    closed server-side with ``read_only_role_forbidden`` — the
+    server is the single enforcement point, and no client-side
+    method absence is load-bearing. Do not call them: the honest
+    surface of this client is ``health`` plus the ``READ_ONLY_VERBS``
+    reads below. A read-only client holds no kernel, no state
+    backend, and no full service secret.
+    """
+
+    def __init__(
+        self,
+        transport: Callable[[bytes], bytes],
+        read_only_secret: str | bytes,
+        *,
+        clock: Callable[[], int] | None = None,
+        request_ttl_ns: int = DEFAULT_MAX_REQUEST_TTL_NS,
+    ) -> None:
+        super().__init__(transport, read_only_secret, clock=clock, request_ttl_ns=request_ttl_ns)
+        self._request_mac_domain = _READ_ONLY_REQUEST_MAC_DOMAIN
+        self._response_mac_domain = _READ_ONLY_RESPONSE_MAC_DOMAIN
 
 
 # --- Transports ---------------------------------------------------------

@@ -17,14 +17,17 @@ This repository is intentionally shared across autonomous domains. The domain-sp
 - safety vetoes
 - unknown-state handling for uncertain outcomes
 
-## Current release — v0.3.0: bounded routing and trustworthy JSON
+## Current release — v0.4.0-rc.1: kernel hardening, drift monitor, incident replays
 
-The lead improvements are **bounded command traffic routing** and **trustworthy
-JSON data handling**: deterministic audit/evidence records plus bounded parsing.
-The new opt-in router joins the JSON and governance foundations introduced in
-v0.2.0, while preserving the existing authority and execution boundaries.
-See the [v0.3.0 release notes](docs/releases/v0.3.0.md) for changes, verification
-and setup.
+The lead improvements are **a hardened vendored governance kernel** (signed
+audit records, an anchored audit head, a service boundary, presenter-bound
+permits, writer custody, and a capability facade), **an O2 drift-rate monitor**
+in SHADOW_ADVISORY mode, and **twenty incident-replay scenarios** ported from
+upstream, closing Wave 1. Authority continues to belong to the existing
+governance path; the replays are test-only and prove the approval-envelope
+layer, not a ceremony deployment.
+See the [v0.4.0-rc.1 release notes](docs/releases/v0.4.0-rc.1.md) for changes,
+verification and setup.
 
 ### Bounded command traffic router
 

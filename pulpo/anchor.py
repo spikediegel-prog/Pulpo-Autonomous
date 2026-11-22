@@ -5,8 +5,9 @@ its own length.  ``GovernanceKernel.verify_audit`` therefore proves internal
 consistency of the records it is shown, but a writer with direct access to
 the audit store can truncate the chain's tail, or delete a record and
 recompute every following ``previous_hash``/``hash``, and the shortened or
-rebuilt chain still verifies (see the documented gaps in
-``tests/test_mythos_laundering_scenario.py``).
+rebuilt chain still verifies (see the gap tests in
+``tests/test_mythos_laundering_scenario.py``, ported from upstream #350,
+which pin exactly that chain-alone behavior).
 
 This module is the external witness for that gap.  An anchor records the
 audit head hash and record count at a moment in time, chained to the

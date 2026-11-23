@@ -104,6 +104,26 @@ DRIFT_HEAD_PROVENANCE_FIELDS = frozenset(
 #: last-calibration time plus an interval in days.
 _NS_PER_DAY = 86_400 * 1_000_000_000
 
+#: Maximum audit records in one frozen window (design item 5.6), and
+#: the maximum canonical-JSON bytes the window section may occupy. A
+#: summary record is ~200-300 bytes, so 50 records are ~15 KiB -- far
+#: inside the 1 MiB snapshot cap; the byte budget guards degenerate
+#: event names, not ordinary chains.
+AUDIT_WINDOW_MAX_RECORDS = 50
+AUDIT_WINDOW_MAX_BYTES = 65_536
+
+#: Top-level snapshot fields a document frozen before they existed
+#: may omit. A missing ``audit_window`` reads as ``None`` ("this
+#: document carries no audit window"), never as a guessed window --
+#: the Evidence page's designed fallback without a window is
+#: summaries, not records (design 4.1), so absence of the section is
+#: semantically identical to ``None``. This extends the
+#: ``DRIFT_HEAD_PROVENANCE_FIELDS`` evolution rule to additive
+#: optional top-level sections; every other top-level field is still
+#: enforced exactly -- a missing required field or an unknown extra
+#: field still rejects the document.
+OPTIONAL_SNAPSHOT_FIELDS = frozenset({"audit_window"})
+
 
 def _is_hex(value: object, length: int) -> bool:
     return (
@@ -402,13 +422,100 @@ class ObserverDriftHead:
 
 
 @dataclass(frozen=True, slots=True)
+class ObserverAuditRecord:
+    """One audit-chain record as the observer may see it (design 5.6).
+
+    A summary, not the record: event, position, time, and hashes --
+    never the payload. Payloads are arbitrary dicts written by kernel
+    append sites (a ``target_locked`` payload carries the full
+    intent), and the snapshot contract is hashes and counts only, so
+    no payload enters this document. ``has_signature`` reports
+    whether the record carries a signature field; verification
+    coverage is the signature summary's job.
+    """
+
+    sequence: int
+    event: str
+    timestamp_ns: int
+    hash: str
+    previous_hash: str
+    has_signature: bool
+
+    def __post_init__(self) -> None:
+        if (
+            not _number(self.sequence)
+            or not _non_empty_str(self.event)
+            or not _number(self.timestamp_ns)
+            or not _is_hex(self.hash, 64)
+            or not _is_hex(self.previous_hash, 64)
+            or type(self.has_signature) is not bool
+        ):
+            raise ValueError("invalid_observer_audit_record")
+
+
+@dataclass(frozen=True, slots=True)
+class ObserverAuditWindow:
+    """The bounded recent-records window over the audit chain (design 5.6).
+
+    The window is the last ``len(records)`` records of a chain of
+    ``total_records``, in chain order, covering
+    ``[window_start_sequence, window_end_sequence)``. ``complete`` is
+    true exactly when the window is the whole chain. A partial window
+    is never presented as the whole audit: the CC reads "showing the
+    last N of M" from start/end/total, and a window truncated by the
+    byte budget reports the range it actually covers, never a
+    silently shortened chain.
+    """
+
+    records: tuple[ObserverAuditRecord, ...]
+    window_start_sequence: int
+    window_end_sequence: int
+    total_records: int
+    complete: bool
+
+    def __post_init__(self) -> None:
+        if (
+            type(self.records) is not tuple
+            or any(type(record) is not ObserverAuditRecord for record in self.records)
+            or not _number(self.window_start_sequence)
+            or not _number(self.window_end_sequence)
+            or not _number(self.total_records)
+            or type(self.complete) is not bool
+            or self.window_start_sequence > self.window_end_sequence
+            or self.window_end_sequence > self.total_records
+            or self.window_end_sequence - self.window_start_sequence
+            != len(self.records)
+            or self.complete
+            != (
+                self.window_start_sequence == 0
+                and self.window_end_sequence == self.total_records
+            )
+            or any(
+                record.sequence != self.window_start_sequence + index
+                for index, record in enumerate(self.records)
+            )
+            or any(
+                self.records[index].previous_hash != self.records[index - 1].hash
+                for index in range(1, len(self.records))
+            )
+            or (
+                self.records
+                and self.window_start_sequence == 0
+                and self.records[0].previous_hash != "0" * 64
+            )
+        ):
+            raise ValueError("invalid_observer_audit_window")
+
+
+@dataclass(frozen=True, slots=True)
 class ObserverSnapshot:
     """The single frozen document the Control Center polls (design 5.1).
 
     Only primitives: strings, booleans, numbers, ``None``, and tuples of
     the frozen section dataclasses. No callbacks, no object references,
     no private key material, no permit or approval content -- hashes and
-    counts only.
+    counts only. The audit window carries record summaries (event,
+    sequence, time, hashes), never payloads.
     """
 
     source_id: str
@@ -419,6 +526,7 @@ class ObserverSnapshot:
     audit_valid: bool
     audit_records: int
     audit_tip: str | None
+    audit_window: ObserverAuditWindow | None
     signatures: ObserverSignatureSummary
     anchor: ObserverAnchorState
     journal: ObserverJournalTip
@@ -444,6 +552,10 @@ class ObserverSnapshot:
             or type(self.audit_valid) is not bool
             or not _number(self.audit_records)
             or not _optional_hex(self.audit_tip, 64)
+            or (
+                self.audit_window is not None
+                and type(self.audit_window) is not ObserverAuditWindow
+            )
             or type(self.signatures) is not ObserverSignatureSummary
             or type(self.anchor) is not ObserverAnchorState
             or type(self.journal) is not ObserverJournalTip
@@ -618,6 +730,82 @@ def _drift_next_calibration_due_ns(
     return last_calibration_ns + int(calibration_interval_days * _NS_PER_DAY)
 
 
+def _audit_record_summary(sequence: int, record: dict[str, Any]) -> ObserverAuditRecord:
+    """Summarize one audit-chain record for the observer window.
+
+    Event, position, time, and hashes only -- never the payload. A
+    record missing its envelope fields, or carrying a malformed one,
+    is contradictory input and fails closed with a named error rather
+    than a bare ``KeyError``; the snapshot cannot honestly window a
+    chain it cannot read. Whether the record carries a signature is
+    reported as a boolean; the signature value itself stays with the
+    chain.
+    """
+    try:
+        return ObserverAuditRecord(
+            sequence=sequence,
+            event=record["event"],
+            timestamp_ns=record["timestamp_ns"],
+            hash=record["hash"],
+            previous_hash=record["previous_hash"],
+            has_signature="signature" in record,
+        )
+    except (KeyError, TypeError, ValueError) as exc:
+        raise ValueError("observer_audit_window_record_invalid") from exc
+
+
+def _audit_window(
+    records: Sequence[dict[str, Any]],
+    requested: int | None,
+) -> ObserverAuditWindow:
+    """Derive the bounded recent-records window over the audit chain.
+
+    The window is the tail of the chain: the last ``requested``
+    records (the cap when unrequested), in chain order, with the
+    sequence range and total so the CC can say "showing the last N
+    of M". Two bounds apply: the record count cap and a byte budget
+    on the window's canonical JSON; when the budget binds, the
+    oldest records drop first and the window reports the range it
+    actually covers. A chain shorter than the request is the whole
+    chain, and ``complete`` says so. A single record larger than the
+    budget leaves an empty window -- the CC shows summaries, not a
+    truncated record.
+    """
+    if requested is None:
+        count = AUDIT_WINDOW_MAX_RECORDS
+    else:
+        if (
+            type(requested) is not int
+            or requested < 0
+            or requested > AUDIT_WINDOW_MAX_RECORDS
+        ):
+            raise ValueError("observer_audit_window_records_invalid")
+        count = requested
+    total = len(records)
+    start = max(0, total - count)
+    chosen = [
+        _audit_record_summary(sequence, record)
+        for sequence, record in enumerate(records[start:], start=start)
+    ]
+    while chosen:
+        encoded = json.dumps(
+            [asdict(summary) for summary in chosen],
+            sort_keys=True,
+            separators=(",", ":"),
+        )
+        if len(encoded.encode("utf-8")) <= AUDIT_WINDOW_MAX_BYTES:
+            break
+        chosen.pop(0)
+    start = total - len(chosen)
+    return ObserverAuditWindow(
+        records=tuple(chosen),
+        window_start_sequence=start,
+        window_end_sequence=total,
+        total_records=total,
+        complete=start == 0,
+    )
+
+
 def _drift_head_summary(
     evaluation: DriftEvaluation,
     *,
@@ -692,6 +880,7 @@ def freeze_observer_snapshot(
     drift_span_check_passed: Mapping[str, bool] | None = None,
     drift_span_check_ns: Mapping[str, int] | None = None,
     incident_report: IncidentReport | None = None,
+    audit_window_records: int | None = None,
     clock: Callable[[], int] | None = None,
 ) -> ObserverSnapshot:
     """Freeze one capability-free observer snapshot from trusted Pulpo.
@@ -738,9 +927,14 @@ def freeze_observer_snapshot(
     head must appear in both span-check mappings or neither, and a
     supplied deadline must not precede the last calibration. Any head
     with no entry reports ``None`` for that field, never a guessed
-    value. ``clock`` returns epoch nanoseconds and defaults
-    to ``time.time_ns``; it also derives the ``now`` lease windows are
-    measured against, so one frozen clock pins the whole document.
+    value. ``audit_window_records`` caps the recent-records window
+    over the audit chain (design item 5.6): the last that many
+    records, summaries only (event, sequence, time, hashes -- never
+    payloads), capped at ``AUDIT_WINDOW_MAX_RECORDS``; unrequested,
+    the window takes the cap. ``clock`` returns epoch nanoseconds and
+    defaults to ``time.time_ns``; it also derives the ``now`` lease
+    windows are measured against, so one frozen clock pins the whole
+    document.
     """
 
     if type(orchestrator) is not PulpoOrchestrator:
@@ -1030,6 +1224,7 @@ def freeze_observer_snapshot(
         audit_valid=evidence.audit_valid,
         audit_records=evidence.audit_records,
         audit_tip=evidence.audit_tip,
+        audit_window=_audit_window(kernel.audit, audit_window_records),
         signatures=signatures,
         anchor=anchor,
         journal=journal_tip,
@@ -1077,11 +1272,14 @@ def load_observer_snapshot(path: str | os.PathLike[str]) -> ObserverSnapshot:
     Any malformed, oversize, stale, or wrong-schema input raises: the
     caller (the CC) treats a load failure as Unknown, never as a stale
     good value. No field is defaulted from another field, and no record
-    is guessed into a device. One deliberate exception: a drift head
+    is guessed into a device. Two deliberate exceptions: a drift head
     from a document frozen before the calibration-provenance fields
     existed may omit any of ``DRIFT_HEAD_PROVENANCE_FIELDS``; each
     missing one reads as ``None`` (unknown), because absence of a
-    provenance field is semantically identical to ``None``. Every
+    provenance field is semantically identical to ``None``. And a
+    document frozen before the audit window existed may omit
+    ``audit_window`` (see ``OPTIONAL_SNAPSHOT_FIELDS``); it reads as
+    ``None`` (no window in this document), for the same reason. Every
     other field on every section is still enforced exactly -- a
     missing required field or an unknown extra field still rejects
     the document, including a missing ``commands_remaining`` on a
@@ -1089,8 +1287,12 @@ def load_observer_snapshot(path: str | os.PathLike[str]) -> ObserverSnapshot:
     """
 
     value = read_snapshot_document(path, max_bytes=MAX_OBSERVER_SNAPSHOT_BYTES)
-    if set(value) != {item.name for item in fields(ObserverSnapshot)}:
+    snapshot_fields = {item.name for item in fields(ObserverSnapshot)}
+    if not snapshot_fields - OPTIONAL_SNAPSHOT_FIELDS <= set(value) <= snapshot_fields:
         raise ValueError("snapshot_fields_invalid")
+    # Documents frozen before the audit window existed omit it; it
+    # reads as None (no window in this document).
+    value.setdefault("audit_window", None)
     value["signatures"] = ObserverSignatureSummary(
         **_load_section(value["signatures"], ObserverSignatureSummary)
     )
@@ -1100,6 +1302,27 @@ def load_observer_snapshot(path: str | os.PathLike[str]) -> ObserverSnapshot:
     value["journal"] = ObserverJournalTip(
         **_load_section(value["journal"], ObserverJournalTip)
     )
+    if value["audit_window"] is not None:
+        window = value["audit_window"]
+        if type(window) is not dict or set(window) != {
+            item.name for item in fields(ObserverAuditWindow)
+        }:
+            raise ValueError("snapshot_nested_invalid")
+        if type(window["records"]) is not list or any(
+            type(record) is not dict
+            or set(record) != {item.name for item in fields(ObserverAuditRecord)}
+            for record in window["records"]
+        ):
+            raise ValueError("snapshot_nested_invalid")
+        value["audit_window"] = ObserverAuditWindow(
+            records=tuple(
+                ObserverAuditRecord(**record) for record in window["records"]
+            ),
+            window_start_sequence=window["window_start_sequence"],
+            window_end_sequence=window["window_end_sequence"],
+            total_records=window["total_records"],
+            complete=window["complete"],
+        )
     if type(value["leases"]) is not list or any(
         type(lease) is not dict
         or set(lease) != {item.name for item in fields(ObserverLeaseSummary)}

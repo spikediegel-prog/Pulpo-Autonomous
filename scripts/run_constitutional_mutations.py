@@ -374,6 +374,22 @@ MUTATIONS: tuple[Mutation, ...] = (
         ),
     ),
     Mutation(
+        # Bounded audit-window reads (design item 5.6): the freeze
+        # derives the recent-records window from the tail of the
+        # chain. Removing the derivation must be detected by the
+        # window tests -- a snapshot that reports an empty window
+        # over a populated chain hides the records the Evidence page
+        # exists to show.
+        "audit_window_derivation_removed",
+        "pulpo/observer_snapshot.py",
+        "    chosen = [\n        _audit_record_summary(sequence, record)\n        for sequence, record in enumerate(records[start:], start=start)\n    ]",
+        "    chosen = []  # audit window derivation removed",
+        (
+            "tests.test_audit_window.AuditWindowTests.test_long_chain_window_covers_the_last_fifty",
+            "tests.test_audit_window.AuditWindowTests.test_short_chain_window_is_the_whole_chain",
+        ),
+    ),
+    Mutation(
         # Port of upstream PR #371 (Phase 3, Item 3B): the nonce
         # replay check is what makes a captured request frame
         # single-use at the protocol layer, on top of the kernel's

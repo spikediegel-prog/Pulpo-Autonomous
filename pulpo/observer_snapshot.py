@@ -20,10 +20,15 @@ Read-only by construction, like the two freeze functions it follows:
 - absent sources are represented as unavailable or unknown, never
   invented. In particular: reconciliation state is ``"unknown"`` because
   no surface exposes it today (design item 5.5); a drift head's
-  calibration age is ``None`` because ``DriftEvaluation`` does not carry
-  it; a lease or journal record with no device identity carries
-  ``device_id: None``, which the CC renders as "Unknown device" (design
-  section 4.6) -- identity is never guessed into a device.
+  calibration age is ``None`` unless the deployment supplies it through
+  ``drift_calibration_age_days`` (the drift feed reports the last age a
+  sample carried — ``DriftEvaluation`` itself does not carry it), and
+  the same holds for the head's calibration provenance (last
+  calibration, interval, deadline, rated-life expiry, last span
+  check), supplied through the ``drift_*`` mappings; a lease or
+  journal record with no device identity carries ``device_id: None``,
+  which the CC renders as "Unknown device" (design section 4.6) --
+  identity is never guessed into a device.
 
 Size bound: 1 MiB (``MAX_OBSERVER_SNAPSHOT_BYTES``), the incident
 report's precedent. Export prefights the serialized size before
@@ -61,6 +66,35 @@ DRIFT_DECISIONS = frozenset({"TRUSTED", "SUSPECT", "UNTRUSTED", "UNKNOWN"})
 # set and the freeze function together -- never report "reconciling"
 # from a source that does not actually report it.
 RECONCILIATION_STATES = frozenset({"unknown"})
+
+#: Calibration-provenance fields on ``ObserverDriftHead``. These are
+#: purely additive, optional provenance: a document frozen before they
+#: existed carries none of them, and the loader reads each missing one
+#: as ``None`` (unknown), never as a guessed value. Every other field
+#: on every section is still enforced exactly -- a missing required
+#: field or an unknown extra field still rejects the document. The
+#: lease field ``commands_remaining`` (design item 5.3) is NOT in this
+#: set: documents without it are still rejected, as the item 5.3
+#: change record states. The difference is deliberate: absence of a
+#: provenance field is semantically identical to ``None`` ("unknown,
+#: never invented"), while the lease count is a page-required value
+#: whose absence means the document predates the surface that carries
+#: it. This set is the contract's evolution rule for additive optional
+#: fields going forward.
+DRIFT_HEAD_PROVENANCE_FIELDS = frozenset(
+    {
+        "last_calibration_ns",
+        "calibration_interval_days",
+        "next_calibration_due_ns",
+        "rated_life_expiry_ns",
+        "span_check_passed",
+        "span_check_ns",
+    }
+)
+
+#: Nanoseconds in one day, for deriving a calibration deadline from a
+#: last-calibration time plus an interval in days.
+_NS_PER_DAY = 86_400 * 1_000_000_000
 
 
 def _is_hex(value: object, length: int) -> bool:
@@ -277,6 +311,20 @@ class ObserverDriftHead:
     deployment supplied an evaluation time for this head. ``sensor_id``
     is the head's identity (e.g. ``O2-E04-01``); the drift monitor never
     authorizes a fan stop, so no fan-stop field exists here.
+
+    Calibration provenance -- the expected side, next to the reported
+    age, so the operator sees actual vs. should-be: ``last_calibration_ns``
+    (when this head was actually calibrated), ``calibration_interval_days``
+    (how often it should be calibrated, from the sensor profile),
+    ``next_calibration_due_ns`` (the deadline: last calibration plus
+    interval, or a deployment-supplied deadline), ``rated_life_expiry_ns``
+    (when the sensor itself is past its rated life), and the last
+    span check (``span_check_passed`` plus ``span_check_ns`` -- a failed
+    span check is what makes a head UNTRUSTED). Every one of these is
+    ``None`` unless the deployment supplied it, never invented; a fresh
+    calibration (age 0, or a last-calibration time of right now) is a
+    real value, not Unknown. A span-check result without a time, or a
+    time without a result, is invalid -- both or neither.
     """
 
     sensor_id: str
@@ -296,6 +344,12 @@ class ObserverDriftHead:
     retrust_soak_minutes: float
     retrust_soak_required_minutes: float
     last_evaluated_ns: int | None
+    last_calibration_ns: int | None
+    calibration_interval_days: float | None
+    next_calibration_due_ns: int | None
+    rated_life_expiry_ns: int | None
+    span_check_passed: bool | None
+    span_check_ns: int | None
 
     def __post_init__(self) -> None:
         if (
@@ -317,6 +371,24 @@ class ObserverDriftHead:
             or not _finite_number(self.retrust_soak_minutes)
             or not _finite_number(self.retrust_soak_required_minutes)
             or (self.last_evaluated_ns is not None and not _positive_number(self.last_evaluated_ns))
+            or (self.last_calibration_ns is not None and not _number(self.last_calibration_ns))
+            or (
+                self.calibration_interval_days is not None
+                and (
+                    not _finite_number(self.calibration_interval_days)
+                    or self.calibration_interval_days <= 0
+                )
+            )
+            or (self.next_calibration_due_ns is not None and not _number(self.next_calibration_due_ns))
+            or (
+                self.next_calibration_due_ns is not None
+                and self.last_calibration_ns is not None
+                and self.next_calibration_due_ns < self.last_calibration_ns
+            )
+            or (self.rated_life_expiry_ns is not None and not _number(self.rated_life_expiry_ns))
+            or (self.span_check_passed is not None and type(self.span_check_passed) is not bool)
+            or (self.span_check_ns is not None and not _number(self.span_check_ns))
+            or (self.span_check_passed is None) != (self.span_check_ns is None)
         ):
             raise ValueError("invalid_observer_drift_head")
 
@@ -447,10 +519,41 @@ def _lease_summary(
     )
 
 
+def _drift_next_calibration_due_ns(
+    last_calibration_ns: int | None,
+    calibration_interval_days: float | None,
+    supplied_due_ns: int | None,
+) -> int | None:
+    """Resolve one head's calibration deadline.
+
+    A deployment-supplied deadline wins when present, but only when it
+    is consistent: it must not precede the last calibration. Otherwise
+    the deadline is derived -- last calibration plus interval -- when
+    both are known. With neither, the deadline is unknown, never
+    guessed. A supplied deadline that precedes the last calibration is
+    contradictory input and fails closed.
+    """
+
+    if supplied_due_ns is not None:
+        if last_calibration_ns is not None and supplied_due_ns < last_calibration_ns:
+            raise ValueError("observer_drift_calibration_due_invalid")
+        return supplied_due_ns
+    if last_calibration_ns is None or calibration_interval_days is None:
+        return None
+    return last_calibration_ns + int(calibration_interval_days * _NS_PER_DAY)
+
+
 def _drift_head_summary(
     evaluation: DriftEvaluation,
     *,
     last_evaluated_ns: int | None,
+    calibration_age_days: float | None,
+    last_calibration_ns: int | None,
+    calibration_interval_days: float | None,
+    next_calibration_due_ns: int | None,
+    rated_life_expiry_ns: int | None,
+    span_check_passed: bool | None,
+    span_check_ns: int | None,
 ) -> ObserverDriftHead:
     return ObserverDriftHead(
         sensor_id=evaluation.sensor_id,
@@ -466,12 +569,29 @@ def _drift_head_summary(
         max_neighbor_deviation_pct=evaluation.max_neighbor_deviation_pct,
         max_reading_age_seconds=evaluation.max_reading_age_seconds,
         age_seconds=evaluation.age_seconds,
-        # DriftEvaluation does not carry calibration age: unknown, not
-        # invented. A calibration failure is still visible in reasons.
-        calibration_age_days=None,
+        # DriftEvaluation does not carry calibration age: it is supplied
+        # by the deployment (the drift feed reports the last age a
+        # sample carried), and stays None when no sample reported one.
+        # A calibration failure is still visible in reasons either way.
+        calibration_age_days=calibration_age_days,
         retrust_soak_minutes=evaluation.retrust_soak_minutes,
         retrust_soak_required_minutes=evaluation.retrust_soak_required_minutes,
         last_evaluated_ns=last_evaluated_ns,
+        # Calibration provenance is deployment-supplied maintenance
+        # fact, not evaluation output: the last calibration date, the
+        # profile interval, the deadline (supplied, else derived from
+        # the two), the rated-life expiry, and the last span check.
+        # Each stays None when the deployment did not supply it.
+        last_calibration_ns=last_calibration_ns,
+        calibration_interval_days=calibration_interval_days,
+        next_calibration_due_ns=_drift_next_calibration_due_ns(
+            last_calibration_ns,
+            calibration_interval_days,
+            next_calibration_due_ns,
+        ),
+        rated_life_expiry_ns=rated_life_expiry_ns,
+        span_check_passed=span_check_passed,
+        span_check_ns=span_check_ns,
     )
 
 
@@ -488,6 +608,13 @@ def freeze_observer_snapshot(
     anchor_verifier: AnchorVerifier | None = None,
     drift_evaluations: Sequence[DriftEvaluation] = (),
     drift_evaluated_at_ns: Mapping[str, int] | None = None,
+    drift_calibration_age_days: Mapping[str, float] | None = None,
+    drift_last_calibration_ns: Mapping[str, int] | None = None,
+    drift_calibration_interval_days: Mapping[str, float] | None = None,
+    drift_next_calibration_due_ns: Mapping[str, int] | None = None,
+    drift_rated_life_expiry_ns: Mapping[str, int] | None = None,
+    drift_span_check_passed: Mapping[str, bool] | None = None,
+    drift_span_check_ns: Mapping[str, int] | None = None,
     incident_report: IncidentReport | None = None,
     clock: Callable[[], int] | None = None,
 ) -> ObserverSnapshot:
@@ -507,7 +634,23 @@ def freeze_observer_snapshot(
     in the CC). ``commands_remaining`` is an optional mapping keyed by
     lease id, supplied by the deployment from its execution journals;
     a lease with no entry reports ``None`` (Unknown in the CC), never
-    a guessed count. ``clock`` returns epoch nanoseconds and defaults
+    a guessed count. ``drift_calibration_age_days`` is an optional
+    mapping keyed by sensor id, supplied by the deployment from its
+    drift feed (the last calibration age a sample reported for that
+    head); a head with no entry reports ``None``, never a guessed age.
+    Calibration provenance is the same shape, one optional mapping per
+    field, all keyed by sensor id: ``drift_last_calibration_ns`` (when
+    the head was last calibrated), ``drift_calibration_interval_days``
+    (how often it should be calibrated, from the sensor profile),
+    ``drift_next_calibration_due_ns`` (a deployment-supplied deadline;
+    when absent, the deadline is derived as last calibration plus
+    interval when both are known), ``drift_rated_life_expiry_ns``
+    (when the sensor is past its rated life), and the last span check
+    as ``drift_span_check_passed`` plus ``drift_span_check_ns`` -- a
+    head must appear in both span-check mappings or neither, and a
+    supplied deadline must not precede the last calibration. Any head
+    with no entry reports ``None`` for that field, never a guessed
+    value. ``clock`` returns epoch nanoseconds and defaults
     to ``time.time_ns``; it also derives the ``now`` lease windows are
     measured against, so one frozen clock pins the whole document.
     """
@@ -556,6 +699,71 @@ def freeze_observer_snapshot(
         )
     ):
         raise ValueError("observer_drift_evaluated_at_ns_invalid")
+    if drift_calibration_age_days is not None and (
+        not isinstance(drift_calibration_age_days, Mapping)
+        or any(
+            not _non_empty_str(key)
+            or not _finite_number(value)
+            or value < 0
+            for key, value in drift_calibration_age_days.items()
+        )
+    ):
+        raise ValueError("observer_drift_calibration_age_days_invalid")
+    if drift_last_calibration_ns is not None and (
+        not isinstance(drift_last_calibration_ns, Mapping)
+        or any(
+            not _non_empty_str(key) or not _number(value)
+            for key, value in drift_last_calibration_ns.items()
+        )
+    ):
+        raise ValueError("observer_drift_last_calibration_ns_invalid")
+    if drift_calibration_interval_days is not None and (
+        not isinstance(drift_calibration_interval_days, Mapping)
+        or any(
+            not _non_empty_str(key)
+            or not _finite_number(value)
+            or value <= 0
+            for key, value in drift_calibration_interval_days.items()
+        )
+    ):
+        raise ValueError("observer_drift_calibration_interval_days_invalid")
+    if drift_next_calibration_due_ns is not None and (
+        not isinstance(drift_next_calibration_due_ns, Mapping)
+        or any(
+            not _non_empty_str(key) or not _number(value)
+            for key, value in drift_next_calibration_due_ns.items()
+        )
+    ):
+        raise ValueError("observer_drift_next_calibration_due_ns_invalid")
+    if drift_rated_life_expiry_ns is not None and (
+        not isinstance(drift_rated_life_expiry_ns, Mapping)
+        or any(
+            not _non_empty_str(key) or not _number(value)
+            for key, value in drift_rated_life_expiry_ns.items()
+        )
+    ):
+        raise ValueError("observer_drift_rated_life_expiry_ns_invalid")
+    if drift_span_check_passed is not None and (
+        not isinstance(drift_span_check_passed, Mapping)
+        or any(
+            not _non_empty_str(key) or type(value) is not bool
+            for key, value in drift_span_check_passed.items()
+        )
+    ):
+        raise ValueError("observer_drift_span_check_passed_invalid")
+    if drift_span_check_ns is not None and (
+        not isinstance(drift_span_check_ns, Mapping)
+        or any(
+            not _non_empty_str(key) or not _number(value)
+            for key, value in drift_span_check_ns.items()
+        )
+    ):
+        raise ValueError("observer_drift_span_check_ns_invalid")
+    # A span check is a maintenance event with a result AND a time:
+    # a head in one span-check mapping must be in the other, or the
+    # deployment is reporting half a fact.
+    if set(drift_span_check_passed or {}) != set(drift_span_check_ns or {}):
+        raise ValueError("observer_drift_span_check_invalid")
     if incident_report is not None and type(incident_report) is not IncidentReport:
         raise TypeError("observer_incident_report_invalid")
     if clock is not None and not callable(clock):
@@ -671,6 +879,41 @@ def freeze_observer_snapshot(
                 if drift_evaluated_at_ns is not None
                 else None
             ),
+            calibration_age_days=(
+                drift_calibration_age_days.get(evaluation.sensor_id)
+                if drift_calibration_age_days is not None
+                else None
+            ),
+            last_calibration_ns=(
+                drift_last_calibration_ns.get(evaluation.sensor_id)
+                if drift_last_calibration_ns is not None
+                else None
+            ),
+            calibration_interval_days=(
+                drift_calibration_interval_days.get(evaluation.sensor_id)
+                if drift_calibration_interval_days is not None
+                else None
+            ),
+            next_calibration_due_ns=(
+                drift_next_calibration_due_ns.get(evaluation.sensor_id)
+                if drift_next_calibration_due_ns is not None
+                else None
+            ),
+            rated_life_expiry_ns=(
+                drift_rated_life_expiry_ns.get(evaluation.sensor_id)
+                if drift_rated_life_expiry_ns is not None
+                else None
+            ),
+            span_check_passed=(
+                drift_span_check_passed.get(evaluation.sensor_id)
+                if drift_span_check_passed is not None
+                else None
+            ),
+            span_check_ns=(
+                drift_span_check_ns.get(evaluation.sensor_id)
+                if drift_span_check_ns is not None
+                else None
+            ),
         )
         for evaluation in drift_evaluations
     )
@@ -740,7 +983,15 @@ def load_observer_snapshot(path: str | os.PathLike[str]) -> ObserverSnapshot:
     Any malformed, oversize, stale, or wrong-schema input raises: the
     caller (the CC) treats a load failure as Unknown, never as a stale
     good value. No field is defaulted from another field, and no record
-    is guessed into a device.
+    is guessed into a device. One deliberate exception: a drift head
+    from a document frozen before the calibration-provenance fields
+    existed may omit any of ``DRIFT_HEAD_PROVENANCE_FIELDS``; each
+    missing one reads as ``None`` (unknown), because absence of a
+    provenance field is semantically identical to ``None``. Every
+    other field on every section is still enforced exactly -- a
+    missing required field or an unknown extra field still rejects
+    the document, including a missing ``commands_remaining`` on a
+    lease (design item 5.3).
     """
 
     value = read_snapshot_document(path, max_bytes=MAX_OBSERVER_SNAPSHOT_BYTES)
@@ -762,9 +1013,11 @@ def load_observer_snapshot(path: str | os.PathLike[str]) -> ObserverSnapshot:
     ):
         raise ValueError("snapshot_nested_invalid")
     value["leases"] = tuple(ObserverLeaseSummary(**lease) for lease in value["leases"])
+    drift_head_fields = {item.name for item in fields(ObserverDriftHead)}
+    required_drift_head_fields = drift_head_fields - DRIFT_HEAD_PROVENANCE_FIELDS
     if type(value["drift_heads"]) is not list or any(
         type(head) is not dict
-        or set(head) != {item.name for item in fields(ObserverDriftHead)}
+        or not required_drift_head_fields <= set(head) <= drift_head_fields
         for head in value["drift_heads"]
     ):
         raise ValueError("snapshot_nested_invalid")
@@ -773,7 +1026,15 @@ def load_observer_snapshot(path: str | os.PathLike[str]) -> ObserverSnapshot:
         if type(head["reasons"]) is not list:
             raise ValueError("snapshot_nested_invalid")
         drift_heads.append(
-            ObserverDriftHead(**{**head, "reasons": tuple(head["reasons"])})
+            ObserverDriftHead(
+                **{
+                    # Documents frozen before the provenance fields
+                    # existed omit them; each reads as None (unknown).
+                    **{name: None for name in DRIFT_HEAD_PROVENANCE_FIELDS},
+                    **head,
+                    "reasons": tuple(head["reasons"]),
+                }
+            )
         )
     value["drift_heads"] = tuple(drift_heads)
     return ObserverSnapshot(**value)

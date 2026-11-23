@@ -19,7 +19,7 @@ import os
 import stat
 import tempfile
 import unittest
-from dataclasses import asdict
+from dataclasses import asdict, replace
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from unittest.mock import patch
@@ -562,6 +562,259 @@ class ObserverSnapshotTests(unittest.TestCase):
             orchestrator, drift_evaluations=[evaluation], clock=lambda: CLOCK_NS
         )
         self.assertIsNone(without_time.drift_heads[0].last_evaluated_ns)
+
+    def test_drift_head_carries_calibration_provenance(self):
+        _, _, orchestrator = _kernel()
+        evaluation = evaluate_sample(_dying_head_sample())
+        last_ns = CLOCK_NS - 5 * 86_400 * 1_000_000_000
+        snapshot = freeze_observer_snapshot(
+            orchestrator,
+            drift_evaluations=[evaluation],
+            drift_last_calibration_ns={"O2-E04-01": last_ns},
+            drift_calibration_interval_days={"O2-E04-01": 21},
+            drift_rated_life_expiry_ns={"O2-E04-01": CLOCK_NS + 365 * 86_400 * 1_000_000_000},
+            drift_span_check_passed={"O2-E04-01": True},
+            drift_span_check_ns={"O2-E04-01": last_ns},
+            clock=lambda: CLOCK_NS,
+        )
+        (head,) = snapshot.drift_heads
+        self.assertEqual(head.sensor_id, "O2-E04-01")
+        self.assertEqual(head.decision, "UNTRUSTED")
+        self.assertEqual(head.last_calibration_ns, last_ns)
+        self.assertEqual(head.calibration_interval_days, 21)
+        # No supplied deadline: derived as last calibration + interval.
+        self.assertEqual(
+            head.next_calibration_due_ns, CLOCK_NS + 16 * 86_400 * 1_000_000_000
+        )
+        self.assertEqual(
+            head.rated_life_expiry_ns,
+            CLOCK_NS + 365 * 86_400 * 1_000_000_000,
+        )
+        self.assertIs(head.span_check_passed, True)
+        self.assertEqual(head.span_check_ns, last_ns)
+
+    def test_calibration_provenance_unknown_when_absent(self):
+        _, _, orchestrator = _kernel()
+        evaluation = evaluate_sample(_dying_head_sample())
+        snapshot = freeze_observer_snapshot(
+            orchestrator, drift_evaluations=[evaluation], clock=lambda: CLOCK_NS
+        )
+        (head,) = snapshot.drift_heads
+        self.assertIsNone(head.last_calibration_ns)
+        self.assertIsNone(head.calibration_interval_days)
+        self.assertIsNone(head.next_calibration_due_ns)
+        self.assertIsNone(head.rated_life_expiry_ns)
+        self.assertIsNone(head.span_check_passed)
+        self.assertIsNone(head.span_check_ns)
+
+    def test_supplied_deadline_wins_when_consistent(self):
+        _, _, orchestrator = _kernel()
+        evaluation = evaluate_sample(_dying_head_sample())
+        last_ns = CLOCK_NS - 5 * 86_400 * 1_000_000_000
+        snapshot = freeze_observer_snapshot(
+            orchestrator,
+            drift_evaluations=[evaluation],
+            drift_last_calibration_ns={"O2-E04-01": last_ns},
+            drift_calibration_interval_days={"O2-E04-01": 21},
+            # The maintenance schedule moved the deadline later than
+            # last + interval; the supplied deadline is authoritative.
+            drift_next_calibration_due_ns={
+                "O2-E04-01": CLOCK_NS + 30 * 86_400 * 1_000_000_000
+            },
+            clock=lambda: CLOCK_NS,
+        )
+        (head,) = snapshot.drift_heads
+        self.assertEqual(
+            head.next_calibration_due_ns,
+            CLOCK_NS + 30 * 86_400 * 1_000_000_000,
+        )
+
+    def test_calibration_provenance_validation_rejects_contradictory_input(self):
+        _, _, orchestrator = _kernel()
+        evaluation = evaluate_sample(_dying_head_sample())
+        last_ns = CLOCK_NS - 5 * 86_400 * 1_000_000_000
+        base = {
+            "drift_evaluations": [evaluation],
+            "drift_last_calibration_ns": {"O2-E04-01": last_ns},
+            "drift_calibration_interval_days": {"O2-E04-01": 21},
+        }
+        cases = {
+            "negative last calibration": {
+                **base,
+                "drift_last_calibration_ns": {"O2-E04-01": -1},
+            },
+            "float last calibration": {
+                **base,
+                "drift_last_calibration_ns": {"O2-E04-01": 1.5},
+            },
+            "bool last calibration": {
+                **base,
+                "drift_last_calibration_ns": {"O2-E04-01": True},
+            },
+            "zero interval": {
+                **base,
+                "drift_calibration_interval_days": {"O2-E04-01": 0},
+            },
+            "negative interval": {
+                **base,
+                "drift_calibration_interval_days": {"O2-E04-01": -21},
+            },
+            "nan interval": {
+                **base,
+                "drift_calibration_interval_days": {"O2-E04-01": float("nan")},
+            },
+            "infinite interval": {
+                **base,
+                "drift_calibration_interval_days": {"O2-E04-01": float("inf")},
+            },
+            "bool interval": {
+                **base,
+                "drift_calibration_interval_days": {"O2-E04-01": True},
+            },
+            "negative rated-life expiry": {
+                **base,
+                "drift_rated_life_expiry_ns": {"O2-E04-01": -1},
+            },
+            "deadline before last calibration": {
+                **base,
+                "drift_next_calibration_due_ns": {"O2-E04-01": last_ns - 1},
+            },
+            "span result without time": {
+                **base,
+                "drift_span_check_passed": {"O2-E04-01": True},
+            },
+            "span time without result": {
+                **base,
+                "drift_span_check_ns": {"O2-E04-01": last_ns},
+            },
+            "non-bool span result": {
+                **base,
+                "drift_span_check_passed": {"O2-E04-01": "yes"},
+                "drift_span_check_ns": {"O2-E04-01": last_ns},
+            },
+            "negative span time": {
+                **base,
+                "drift_span_check_passed": {"O2-E04-01": True},
+                "drift_span_check_ns": {"O2-E04-01": -1},
+            },
+            "empty sensor id": {
+                **base,
+                "drift_last_calibration_ns": {"": last_ns},
+            },
+        }
+        for label, kwargs in cases.items():
+            with self.subTest(label=label):
+                with self.assertRaises(ValueError):
+                    freeze_observer_snapshot(
+                        orchestrator, clock=lambda: CLOCK_NS, **kwargs
+                    )
+        # A deadline exactly at the last calibration is consistent
+        # (due now), and a fresh calibration at the freeze time is a
+        # real value, not Unknown.
+        due_now = freeze_observer_snapshot(
+            orchestrator,
+            drift_evaluations=[evaluation],
+            drift_last_calibration_ns={"O2-E04-01": CLOCK_NS},
+            drift_next_calibration_due_ns={"O2-E04-01": CLOCK_NS},
+            clock=lambda: CLOCK_NS,
+        )
+        self.assertEqual(due_now.drift_heads[0].next_calibration_due_ns, CLOCK_NS)
+        self.assertEqual(due_now.drift_heads[0].last_calibration_ns, CLOCK_NS)
+
+    def test_load_reads_provenance_fields_as_none_for_older_documents(self):
+        # A document frozen by the PR #44/#46 builds has no
+        # calibration-provenance fields on its drift heads. Those
+        # fields are purely additive optional provenance: absence is
+        # semantically identical to None ("unknown, never invented"),
+        # so the loader reads each missing one as None instead of
+        # rejecting the whole document -- the verified audit, lease,
+        # and drift data in it is not discarded over missing
+        # provenance. Every other field is still enforced exactly.
+        _, _, orchestrator = _kernel()
+        evaluation = evaluate_sample(_dying_head_sample())
+        last_ns = CLOCK_NS - 5 * 86_400 * 1_000_000_000
+        frozen = freeze_observer_snapshot(
+            orchestrator,
+            drift_evaluations=[evaluation],
+            drift_evaluated_at_ns={"O2-E04-01": CLOCK_NS},
+            drift_calibration_age_days={"O2-E04-01": 5},
+            drift_last_calibration_ns={"O2-E04-01": last_ns},
+            drift_calibration_interval_days={"O2-E04-01": 21},
+            drift_rated_life_expiry_ns={"O2-E04-01": CLOCK_NS},
+            drift_span_check_passed={"O2-E04-01": True},
+            drift_span_check_ns={"O2-E04-01": last_ns},
+            clock=lambda: CLOCK_NS,
+        )
+        document = asdict(frozen)
+        for head in document["drift_heads"]:
+            del head["last_calibration_ns"]
+            del head["calibration_interval_days"]
+            del head["next_calibration_due_ns"]
+            del head["rated_life_expiry_ns"]
+            del head["span_check_passed"]
+            del head["span_check_ns"]
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "snapshot.json"
+            path.write_text(json.dumps(document))
+            # The hardened reader requires owner-only permissions.
+            os.chmod(path, 0o600)
+            loaded = load_observer_snapshot(path)
+        (old_head,) = frozen.drift_heads
+        expected_head = replace(
+            old_head,
+            last_calibration_ns=None,
+            calibration_interval_days=None,
+            next_calibration_due_ns=None,
+            rated_life_expiry_ns=None,
+            span_check_passed=None,
+            span_check_ns=None,
+        )
+        expected = replace(frozen, drift_heads=(expected_head,))
+        self.assertEqual(loaded, expected)
+        # But a missing REQUIRED drift field still rejects, as does an
+        # unknown extra field -- only the six provenance fields are
+        # lenient, and only by omission.
+        for mutate in (
+            lambda head: head.pop("decision"),
+            lambda head: head.update({"notes": "calibrated by hand"}),
+        ):
+            document = asdict(frozen)
+            for head in document["drift_heads"]:
+                mutate(head)
+            with tempfile.TemporaryDirectory() as tmp:
+                path = Path(tmp) / "snapshot.json"
+                path.write_text(json.dumps(document))
+                os.chmod(path, 0o600)
+                with self.assertRaises(ValueError):
+                    load_observer_snapshot(path)
+
+    def test_provenance_round_trips_through_export_and_load(self):
+        _, _, orchestrator = _kernel()
+        evaluation = evaluate_sample(_dying_head_sample())
+        last_ns = CLOCK_NS - 5 * 86_400 * 1_000_000_000
+        with tempfile.TemporaryDirectory() as tmp:
+            destination = Path(tmp) / "observer-snapshot.json"
+            exported = export_observer_snapshot(
+                orchestrator,
+                destination,
+                drift_evaluations=[evaluation],
+                drift_last_calibration_ns={"O2-E04-01": last_ns},
+                drift_calibration_interval_days={"O2-E04-01": 21},
+                drift_rated_life_expiry_ns={"O2-E04-01": CLOCK_NS},
+                drift_span_check_passed={"O2-E04-01": True},
+                drift_span_check_ns={"O2-E04-01": last_ns},
+                clock=lambda: CLOCK_NS,
+            )
+            loaded = load_observer_snapshot(destination)
+            self.assertEqual(loaded, exported)
+            (head,) = loaded.drift_heads
+            self.assertEqual(head.last_calibration_ns, last_ns)
+            self.assertEqual(head.calibration_interval_days, 21)
+            self.assertEqual(
+                head.next_calibration_due_ns,
+                CLOCK_NS + 16 * 86_400 * 1_000_000_000,
+            )
+            self.assertIs(head.span_check_passed, True)
 
     def test_incident_counts_come_from_the_derived_report(self):
         kernel, state, orchestrator = _kernel()

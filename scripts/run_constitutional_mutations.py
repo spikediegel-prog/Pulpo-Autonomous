@@ -330,6 +330,34 @@ MUTATIONS: tuple[Mutation, ...] = (
         ),
     ),
     Mutation(
+        # Control Center design §5.4: the journal append is the
+        # feed's evidence commitment — an evaluation that is never
+        # appended is a decision with no receipt. Removing it must
+        # be detected by the ingestion tests.
+        "drift_feed_journal_append_removed",
+        "core/drift_feed.py",
+        "        self._journal.append(JOURNAL_EVENT, evaluation.to_journal_payload())",
+        "        pass  # journal append removed",
+        (
+            "tests.test_drift_ingestion.DriftIngestionTests.test_dying_sensor_end_to_end",
+            "tests.test_drift_ingestion.DriftIngestionTests.test_repeated_identical_samples_are_each_recorded_and_persist",
+        ),
+    ),
+    Mutation(
+        # Calibration provenance on the drift head: the deadline is
+        # derived as last calibration plus interval when the
+        # deployment supplied no explicit deadline. Removing the
+        # derivation must be detected by the provenance tests.
+        "drift_calibration_due_derivation_removed",
+        "pulpo/observer_snapshot.py",
+        "    return last_calibration_ns + int(calibration_interval_days * _NS_PER_DAY)",
+        "    return None  # calibration deadline derivation removed",
+        (
+            "tests.test_observer_snapshot.ObserverSnapshotTests.test_drift_head_carries_calibration_provenance",
+            "tests.test_drift_ingestion.DriftIngestionTests.test_calibration_provenance_is_recorded_and_supplied",
+        ),
+    ),
+    Mutation(
         # Port of upstream PR #371 (Phase 3, Item 3B): the nonce
         # replay check is what makes a captured request frame
         # single-use at the protocol layer, on top of the kernel's

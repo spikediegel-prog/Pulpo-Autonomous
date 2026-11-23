@@ -47,7 +47,11 @@ from typing import Any, Callable, Mapping, Sequence
 
 from core.drift import DriftEvaluation
 from core.journal import DurableJournal
-from core.offline_protocol import OfflineMissionLease
+from core.offline_protocol import (
+    ConnectivityState,
+    OfflineMissionLease,
+    OfflineProtocol,
+)
 
 from .anchor import AnchorStore, AnchorVerifier, verify_anchored_audit
 from .incident_channel import IncidentReport, freeze_incident_report
@@ -60,12 +64,16 @@ MAX_OBSERVER_SNAPSHOT_BYTES = 1_048_576
 
 LEASE_STATES = frozenset({"active", "expired"})
 DRIFT_DECISIONS = frozenset({"TRUSTED", "SUSPECT", "UNTRUSTED", "UNKNOWN"})
-# The only reconciliation state this contract can report: no surface in
-# the tree exposes whether a reconciliation is in progress or when the
-# last one completed (design item 5.5). When item 5.5 lands, extend this
-# set and the freeze function together -- never report "reconciling"
+# Reconciliation states this contract can report (design item 5.5).
+# ``unknown``: no protocol was supplied, so nothing reports it.
+# ``idle``: a protocol was supplied and none of its missions is
+# reconciling. ``reconciling``: at least one supplied protocol is
+# reconciling, and ``reconciliation_since_ns`` says since when. There
+# is no ``failed`` state: the protocol has no failure transition -- a
+# reconciliation that never finishes simply stays reconciling, and its
+# growing duration is itself the signal. Never report "reconciling"
 # from a source that does not actually report it.
-RECONCILIATION_STATES = frozenset({"unknown"})
+RECONCILIATION_STATES = frozenset({"unknown", "idle", "reconciling"})
 
 #: Calibration-provenance fields on ``ObserverDriftHead``. These are
 #: purely additive, optional provenance: a document frozen before they
@@ -463,6 +471,21 @@ class ObserverSnapshot:
             raise ValueError("invalid_observer_snapshot")
         if not self.incident_report_available and self.incident_report_frozen_at_ns is not None:
             raise ValueError("invalid_observer_snapshot")
+        # A reconciliation in progress must say since when, and a state
+        # that is not "reconciling" must not claim a start time; neither
+        # timestamp may postdate the freeze itself.
+        if (self.reconciliation_state == "reconciling") != (
+            self.reconciliation_since_ns is not None
+        ):
+            raise ValueError("invalid_observer_snapshot")
+        if (
+            self.reconciliation_since_ns is not None
+            and self.reconciliation_since_ns > self.frozen_at_ns
+        ) or (
+            self.last_reconciliation_completed_ns is not None
+            and self.last_reconciliation_completed_ns > self.frozen_at_ns
+        ):
+            raise ValueError("invalid_observer_snapshot")
 
 
 def _lease_commands_remaining(
@@ -489,6 +512,58 @@ def _lease_commands_remaining(
     if lease.max_commands is None or remaining > lease.max_commands:
         raise ValueError("observer_commands_remaining_invalid")
     return remaining
+
+
+def _reconciliation_state(
+    protocols: Sequence[OfflineProtocol],
+    deployment_id: str | None,
+    frozen_at_ns: int,
+) -> tuple[str, int | None, int | None]:
+    """Derive the snapshot's reconciliation triple from deployment protocols.
+
+    Only protocols for the resolved deployment report: a reconciliation
+    on another deployment is not this snapshot's to show, and with no
+    resolved deployment there is nothing to attribute it to. A
+    reconciling protocol without a recorded start is contradictory
+    input and fails closed, as is any timestamp after the freeze --
+    the deployment's clock and the freeze clock disagree, and the
+    snapshot must not paper over that with a future-dated claim.
+    """
+    if deployment_id is None:
+        return "unknown", None, None
+    matching = [
+        protocol
+        for protocol in protocols
+        if protocol.lease.deployment_id == deployment_id
+    ]
+    if not matching:
+        return "unknown", None, None
+    last_completed_ns: int | None = None
+    for protocol in matching:
+        if protocol.last_reconciliation_completed_at is not None:
+            completed_ns = _datetime_to_ns(protocol.last_reconciliation_completed_at)
+            if completed_ns > frozen_at_ns:
+                raise ValueError("observer_reconciliation_time_invalid")
+            if last_completed_ns is None or completed_ns > last_completed_ns:
+                last_completed_ns = completed_ns
+    reconciling = [
+        protocol
+        for protocol in matching
+        if protocol.connectivity == ConnectivityState.RECONCILING
+    ]
+    if not reconciling:
+        return "idle", None, last_completed_ns
+    since_values: list[int] = []
+    for protocol in reconciling:
+        if protocol.reconciling_since is None:
+            raise ValueError("observer_reconciliation_since_missing")
+        since_ns = _datetime_to_ns(protocol.reconciling_since)
+        if since_ns > frozen_at_ns:
+            raise ValueError("observer_reconciliation_time_invalid")
+        since_values.append(since_ns)
+    # Earliest start: "for how long" is measured from the longest
+    # running reconciliation.
+    return "reconciling", min(since_values), last_completed_ns
 
 
 def _lease_summary(
@@ -602,6 +677,7 @@ def freeze_observer_snapshot(
     device_id: str | None = None,
     device_ids: Mapping[str, str] | None = None,
     leases: Sequence[OfflineMissionLease] = (),
+    protocols: Sequence[OfflineProtocol] = (),
     commands_remaining: Mapping[str, int] | None = None,
     journal: DurableJournal | None = None,
     anchor_store: AnchorStore | None = None,
@@ -634,7 +710,19 @@ def freeze_observer_snapshot(
     in the CC). ``commands_remaining`` is an optional mapping keyed by
     lease id, supplied by the deployment from its execution journals;
     a lease with no entry reports ``None`` (Unknown in the CC), never
-    a guessed count. ``drift_calibration_age_days`` is an optional
+    a guessed count. ``protocols`` is the deployment's offline
+    protocols, supplied the same way as ``leases``: the snapshot
+    reports ``reconciling`` with its start time when one of them is
+    reconciling, ``idle`` with the last completion time when one is
+    supplied and none is reconciling, and ``unknown`` when none is
+    supplied for this deployment -- the CC must never display
+    "reconciling" unless a protocol actually reports it. A
+    reconciling protocol records its start in
+    ``OfflineProtocol.reconciling_since`` and its last completion in
+    ``last_reconciliation_completed_at``; both are timestamps of
+    transitions the protocol itself made, not journal-verified
+    history, and both are lost if the deployment restarts before
+    freezing. ``drift_calibration_age_days`` is an optional
     mapping keyed by sensor id, supplied by the deployment from its
     drift feed (the last calibration age a sample reported for that
     head); a head with no entry reports ``None``, never a guessed age.
@@ -670,6 +758,10 @@ def freeze_observer_snapshot(
         type(lease) is not OfflineMissionLease for lease in leases
     ):
         raise TypeError("observer_leases_invalid")
+    if not isinstance(protocols, Sequence) or any(
+        type(protocol) is not OfflineProtocol for protocol in protocols
+    ):
+        raise TypeError("observer_protocols_invalid")
     if commands_remaining is not None and (
         not isinstance(commands_remaining, Mapping)
         or any(
@@ -925,6 +1017,10 @@ def freeze_observer_snapshot(
     if report is None:
         report = freeze_incident_report(orchestrator)
 
+    reconciliation_state, reconciliation_since_ns, last_reconciliation_completed_ns = (
+        _reconciliation_state(protocols, resolved_deployment_id, frozen_at_ns)
+    )
+
     return ObserverSnapshot(
         source_id=source_id,
         deployment_id=resolved_deployment_id,
@@ -943,11 +1039,9 @@ def freeze_observer_snapshot(
         near_misses=int(report.near_misses),
         incident_report_available=True,
         incident_report_frozen_at_ns=int(report.observed_at_ns),
-        # No surface exposes reconciliation state today (design item
-        # 5.5): explicitly unknown, never "reconciling" on a guess.
-        reconciliation_state="unknown",
-        reconciliation_since_ns=None,
-        last_reconciliation_completed_ns=None,
+        reconciliation_state=reconciliation_state,
+        reconciliation_since_ns=reconciliation_since_ns,
+        last_reconciliation_completed_ns=last_reconciliation_completed_ns,
     )
 
 

@@ -217,6 +217,16 @@ class ObserverLeaseSummary:
     bound is ``max_disconnected_ns``. ``device_id`` is ``None`` when the
     deployment supplied no device identity for this lease's deployment --
     the CC renders that as "Unknown device", never guessed.
+    ``commands_remaining`` is the Missions page's "max commands
+    remaining": ``max_commands`` minus the commands already sent under
+    this lease. The lease type carries only the bound; the sent count
+    lives in the execution journal (``ExecutionContext._command_count``),
+    so only the deployment -- which pairs a lease with its execution
+    context -- can supply it, via the freeze's ``commands_remaining``
+    mapping keyed by lease id. ``None`` when the deployment did not
+    supply it: the CC shows Unknown for that cell, never a guessed
+    number. An unbounded lease (``max_commands`` is ``None``) has no
+    remaining count, so ``commands_remaining`` must be ``None`` there.
     """
 
     lease_id: str
@@ -228,6 +238,7 @@ class ObserverLeaseSummary:
     window_remaining_ns: int | None
     max_disconnected_ns: int
     max_commands: int | None
+    commands_remaining: int | None
     state: str
 
     def __post_init__(self) -> None:
@@ -241,6 +252,16 @@ class ObserverLeaseSummary:
             or (self.window_remaining_ns is not None and not _number(self.window_remaining_ns))
             or not _positive_number(self.max_disconnected_ns)
             or (self.max_commands is not None and not _positive_number(self.max_commands))
+            or (self.commands_remaining is not None and not _number(self.commands_remaining))
+            or (
+                self.max_commands is None
+                and self.commands_remaining is not None
+            )
+            or (
+                self.max_commands is not None
+                and self.commands_remaining is not None
+                and self.commands_remaining > self.max_commands
+            )
             or self.state not in LEASE_STATES
         ):
             raise ValueError("invalid_observer_lease_summary")
@@ -372,10 +393,37 @@ class ObserverSnapshot:
             raise ValueError("invalid_observer_snapshot")
 
 
+def _lease_commands_remaining(
+    lease: OfflineMissionLease,
+    commands_remaining: Mapping[str, int] | None,
+) -> int | None:
+    """Resolve one lease's remaining-command count from the deployment map.
+
+    ``None`` when the deployment supplied no count for this lease: the
+    CC shows Unknown, never a guessed number. A count for an unbounded
+    lease, or a count above the lease's bound, is contradictory input
+    and fails closed -- the deployment computes remaining as bound
+    minus commands sent, so neither case can arise from a correct
+    caller. An entry for a lease id the snapshot does not carry is
+    ignored here; it is the caller's stale input, not this lease's
+    state.
+    """
+
+    if commands_remaining is None:
+        return None
+    remaining = commands_remaining.get(lease.lease_id)
+    if remaining is None:
+        return None
+    if lease.max_commands is None or remaining > lease.max_commands:
+        raise ValueError("observer_commands_remaining_invalid")
+    return remaining
+
+
 def _lease_summary(
     lease: OfflineMissionLease,
     *,
     device_id: str | None,
+    commands_remaining: int | None,
     now: datetime,
 ) -> ObserverLeaseSummary:
     envelope = lease.envelope
@@ -394,6 +442,7 @@ def _lease_summary(
         window_remaining_ns=window_remaining_ns,
         max_disconnected_ns=int(lease.max_disconnected.total_seconds() * 1_000_000_000),
         max_commands=lease.max_commands,
+        commands_remaining=commands_remaining,
         state="active" if lease.active_at(now) else "expired",
     )
 
@@ -433,6 +482,7 @@ def freeze_observer_snapshot(
     device_id: str | None = None,
     device_ids: Mapping[str, str] | None = None,
     leases: Sequence[OfflineMissionLease] = (),
+    commands_remaining: Mapping[str, int] | None = None,
     journal: DurableJournal | None = None,
     anchor_store: AnchorStore | None = None,
     anchor_verifier: AnchorVerifier | None = None,
@@ -454,8 +504,11 @@ def freeze_observer_snapshot(
     identity comes from ``device_id``, else ``device_ids`` keyed by the
     resolved deployment for the snapshot and by each lease's deployment
     for its summary; anything unmapped stays ``None`` ("Unknown device"
-    in the CC). ``clock`` returns epoch nanoseconds and defaults to
-    ``time.time_ns``; it also derives the ``now`` lease windows are
+    in the CC). ``commands_remaining`` is an optional mapping keyed by
+    lease id, supplied by the deployment from its execution journals;
+    a lease with no entry reports ``None`` (Unknown in the CC), never
+    a guessed count. ``clock`` returns epoch nanoseconds and defaults
+    to ``time.time_ns``; it also derives the ``now`` lease windows are
     measured against, so one frozen clock pins the whole document.
     """
 
@@ -474,6 +527,14 @@ def freeze_observer_snapshot(
         type(lease) is not OfflineMissionLease for lease in leases
     ):
         raise TypeError("observer_leases_invalid")
+    if commands_remaining is not None and (
+        not isinstance(commands_remaining, Mapping)
+        or any(
+            not _non_empty_str(key) or not _number(value)
+            for key, value in commands_remaining.items()
+        )
+    ):
+        raise ValueError("observer_commands_remaining_invalid")
     if journal is not None and type(journal) is not DurableJournal:
         raise TypeError("observer_journal_invalid")
     # AnchorStore is a plain Protocol (not runtime-checkable): check the
@@ -593,6 +654,9 @@ def freeze_observer_snapshot(
                 device_ids.get(lease.deployment_id)
                 if device_ids is not None
                 else None
+            ),
+            commands_remaining=_lease_commands_remaining(
+                lease, commands_remaining
             ),
             now=now,
         )

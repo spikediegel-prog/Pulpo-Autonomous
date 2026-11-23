@@ -291,6 +291,121 @@ class ObserverSnapshotTests(unittest.TestCase):
         self.assertEqual(summary.state, "expired")
         self.assertEqual(summary.window_remaining_ns, 0)
 
+    def test_commands_remaining_supplied_per_lease_and_unknown_when_absent(self):
+        # Design section 5.3: the Missions page shows "max commands
+        # remaining". The lease type carries only the bound; the sent
+        # count lives in the execution journal, so only the deployment
+        # can supply the remaining count, keyed by lease id.
+        _, _, orchestrator = _kernel()
+        lease = _lease()
+        other = _lease(lease_id="lease-2", deployment_id="deployment-2")
+        snapshot = freeze_observer_snapshot(
+            orchestrator,
+            leases=[lease, other],
+            commands_remaining={"lease-1": 1},
+            clock=lambda: CLOCK_NS,
+        )
+        first, second = snapshot.leases
+        self.assertEqual(first.max_commands, 3)
+        self.assertEqual(first.commands_remaining, 1)
+        # No entry for lease-2: Unknown, never a guessed count.
+        self.assertIsNone(second.commands_remaining)
+
+    def test_commands_remaining_zero_is_a_count_not_unknown(self):
+        _, _, orchestrator = _kernel()
+        lease = _lease()
+        snapshot = freeze_observer_snapshot(
+            orchestrator,
+            leases=[lease],
+            commands_remaining={"lease-1": 0},
+            clock=lambda: CLOCK_NS,
+        )
+        (summary,) = snapshot.leases
+        self.assertEqual(summary.commands_remaining, 0)
+
+    def test_commands_remaining_rejects_contradictory_and_malformed_maps(self):
+        _, _, orchestrator = _kernel()
+        lease = _lease()
+        unbounded = _lease(lease_id="lease-2", max_commands=None)
+        cases = [
+            # A count for an unbounded lease contradicts the lease.
+            ({"lease-2": 1}, [unbounded]),
+            # Remaining can never exceed the bound.
+            ({"lease-1": 4}, [lease]),
+            ({"lease-1": -1}, [lease]),
+            ({"lease-1": 1.5}, [lease]),
+            ({"lease-1": True}, [lease]),
+            ({"": 1}, [lease]),
+            ({None: 1}, [lease]),
+        ]
+        for mapping, leases in cases:
+            with self.subTest(mapping=mapping):
+                with self.assertRaises(ValueError):
+                    freeze_observer_snapshot(
+                        orchestrator,
+                        leases=leases,
+                        commands_remaining=mapping,
+                        clock=lambda: CLOCK_NS,
+                    )
+        with self.assertRaises(ValueError):
+            freeze_observer_snapshot(
+                orchestrator,
+                leases=[lease],
+                commands_remaining=[("lease-1", 1)],
+                clock=lambda: CLOCK_NS,
+            )
+        # An entry for a lease id the snapshot does not carry is stale
+        # caller input, not this lease's state: ignored, not an error.
+        snapshot = freeze_observer_snapshot(
+            orchestrator,
+            leases=[lease],
+            commands_remaining={"lease-9": 2},
+            clock=lambda: CLOCK_NS,
+        )
+        (summary,) = snapshot.leases
+        self.assertIsNone(summary.commands_remaining)
+
+    def test_commands_remaining_round_trips_through_export_and_load(self):
+        _, _, orchestrator = _kernel()
+        lease = _lease()
+        with tempfile.TemporaryDirectory() as tmp:
+            destination = Path(tmp) / "observer-snapshot.json"
+            exported = export_observer_snapshot(
+                orchestrator,
+                destination,
+                leases=[lease],
+                commands_remaining={"lease-1": 2},
+                clock=lambda: CLOCK_NS,
+            )
+            loaded = load_observer_snapshot(destination)
+            self.assertEqual(loaded, exported)
+            (summary,) = loaded.leases
+            self.assertEqual(summary.commands_remaining, 2)
+
+    def test_load_rejects_snapshot_without_commands_remaining_field(self):
+        # A document frozen by the PR #44 build has no
+        # commands_remaining field on its lease summaries. The loader
+        # enforces exact field sets, so that document is rejected --
+        # the CC treats the load failure as Unknown, never as a stale
+        # good value. No CC reads these documents yet, so no deployed
+        # reader is affected.
+        _, _, orchestrator = _kernel()
+        lease = _lease()
+        snapshot = freeze_observer_snapshot(
+            orchestrator,
+            leases=[lease],
+            commands_remaining={"lease-1": 2},
+            clock=lambda: CLOCK_NS,
+        )
+        document = asdict(snapshot)
+        for entry in document["leases"]:
+            del entry["commands_remaining"]
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "snapshot.json"
+            path.write_text(json.dumps(document))
+            with self.assertRaises(ValueError):
+                load_observer_snapshot(path)
+
     def test_journal_tip_reports_last_verified_record(self):
         _, _, orchestrator = _kernel()
         with tempfile.TemporaryDirectory() as tmp:

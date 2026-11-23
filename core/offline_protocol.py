@@ -107,6 +107,17 @@ class OfflineProtocol:
     lease: OfflineMissionLease
     connectivity: ConnectivityState = ConnectivityState.CONNECTED
     disconnected_at: datetime | None = None
+    # Reconciliation bookkeeping for the observer snapshot (design item
+    # 5.5). The protocol is the only party that knows when a
+    # reconciliation began and when the last one completed: it records
+    # both here, and the freeze reads them. Neither field is authority
+    # -- they are timestamps of transitions this protocol already made,
+    # and both stay ``None`` until the transition happens. ``now``
+    # defaults to UTC now (the ``OfflineMissionLease.issue`` precedent)
+    # so existing callers that pass no time keep working; tests and
+    # deployments that need determinism pass an explicit time.
+    reconciling_since: datetime | None = None
+    last_reconciliation_completed_at: datetime | None = None
 
     def disconnect(self, now: datetime) -> None:
         if self.connectivity != ConnectivityState.CONNECTED:
@@ -118,16 +129,21 @@ class OfflineProtocol:
         if self.connectivity == ConnectivityState.DISCONNECTED:
             self.connectivity = ConnectivityState.RECONNECTING
 
-    def begin_reconciliation(self) -> None:
+    def begin_reconciliation(self, now: datetime | None = None) -> None:
         if self.connectivity != ConnectivityState.RECONNECTING:
             raise ValueError("reconciliation_requires_reconnecting")
         self.connectivity = ConnectivityState.RECONCILING
+        self.reconciling_since = now if now is not None else datetime.now(timezone.utc)
 
-    def finish_reconciliation(self) -> None:
+    def finish_reconciliation(self, now: datetime | None = None) -> None:
         if self.connectivity != ConnectivityState.RECONCILING:
             raise ValueError("reconciliation_requires_reconciling")
         self.connectivity = ConnectivityState.CONNECTED
         self.disconnected_at = None
+        self.last_reconciliation_completed_at = (
+            now if now is not None else datetime.now(timezone.utc)
+        )
+        self.reconciling_since = None
 
     def can_execute(self, now: datetime) -> bool:
         if self.connectivity == ConnectivityState.RECONCILING:

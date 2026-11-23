@@ -358,6 +358,22 @@ MUTATIONS: tuple[Mutation, ...] = (
         ),
     ),
     Mutation(
+        # Reconciliation-state exposure (design item 5.5): the freeze
+        # derives "reconciling" with its start time from the
+        # deployment's protocols. Removing the derivation must be
+        # detected by the reconciliation tests -- a snapshot that
+        # reports "unknown" while a mission is reconciling hides the
+        # mid-reconciliation state the CC exists to show.
+        "reconciliation_state_derivation_removed",
+        "pulpo/observer_snapshot.py",
+        '    return "reconciling", min(since_values), last_completed_ns',
+        '    return "unknown", None, None  # reconciliation state derivation removed',
+        (
+            "tests.test_reconciliation_state.ReconciliationSnapshotTests.test_reconciling_protocol_reports_state_and_since",
+            "tests.test_reconciliation_state.ReconciliationSnapshotTests.test_earliest_start_wins_across_protocols",
+        ),
+    ),
+    Mutation(
         # Port of upstream PR #371 (Phase 3, Item 3B): the nonce
         # replay check is what makes a captured request frame
         # single-use at the protocol layer, on top of the kernel's

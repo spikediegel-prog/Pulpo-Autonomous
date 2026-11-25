@@ -1,8 +1,10 @@
 # Pulpo Autonomous
 
-Pulpo Autonomous is the governance and evidence plane for autonomous physical systems. It applies the same policy-driven authority model to ground robots, drones, autonomous vehicles, industrial systems, and spacecraft while enforcing the stricter constraints of delayed telemetry, intermittent communication, and uncertain execution.
+Pulpo for machines that move — robots, drones, vehicles, and factory systems.
 
-This repository inherits the Pulpo 1.0 governance kernel and evidence model, but reorients the project boundary around autonomous physical systems rather than terrestrial robotics alone. The core rule remains unchanged:
+The AI can suggest what to do, but nothing moves until Pulpo says it's allowed, and every action is recorded. If the link drops or the outcome is uncertain, Pulpo holds instead of guessing.
+
+This repository uses the same Pulpo rules as the main system, applied to machines that move rather than software alone. The core rule remains unchanged:
 
 > Pulpo Autonomous may enforce and translate delegated authority. It may never become a second authority source.
 
